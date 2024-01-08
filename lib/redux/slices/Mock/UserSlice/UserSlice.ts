@@ -1,0 +1,102 @@
+import { createSlice } from "@reduxjs/toolkit";
+
+const initialState: any = [
+    {
+        id: "1",
+        username: "jhon_dave",
+        display_name: "Jhon Dave",
+        first_name: "Jhon",
+        last_name: "Dave",
+        email: "jhondave@example.com",
+        image: "",
+        team: {
+            team_id: "1",
+            team_name: "i13 ventures",
+        },
+        warnings: {
+            credit_usage: false,
+            refill_canvas: false,
+        },
+        payment_methods: [
+            {
+                id: "pm_1",
+                card_number: "1234 5678 9012 3456",
+                expiry_date: "12/25",
+                cvv: "123",
+                card_holder_name: "Alice Smith",
+                billing_address: "123 Main St, Cityville, USA",
+                zip_code: "12345",
+            },
+            {
+                id: "pm_2",
+                card_number: "9876 5432 1098 7654",
+                expiry_date: "05/24",
+                cvv: "456",
+                card_holder_name: "Bob Johnson",
+                billing_address: "456 Oak St, Townsville, USA",
+                zip_code: "67890",
+            },
+            {
+                id: "pm_3",
+                card_number: "5678 1234 5678 4321",
+                expiry_date: "09/23",
+                cvv: "789",
+                card_holder_name: "Eva Brown",
+                billing_address: "789 Elm St, Villagetown, USA",
+                zip_code: "34567",
+            },
+            {
+                id: "pm_4",
+                card_number: "4321 8765 4321 5678",
+                expiry_date: "03/26",
+                cvv: "234",
+                card_holder_name: "Charlie White",
+                billing_address: "234 Pine St, Hamletville, USA",
+                zip_code: "89012",
+            },
+            {
+                id: "pm_5",
+                card_number: "8765 4321 0987 6543",
+                expiry_date: "07/27",
+                cvv: "567",
+                card_holder_name: "Olivia Miller",
+                billing_address: "567 Cedar St, Countryside, USA",
+                zip_code: "45678",
+            },
+        ],
+        settings: {
+            notifications: {
+                boardActivity: true,
+                boardSharedWithMe: true,
+                boardSharedWithTeam: true,
+                requestAccessToMyBoard: true,
+                commentInThreadsIFollow: true,
+                mentionInComments: true,
+                projectActivity: true,
+                addToMyProject: true,
+                teamActivity: true,
+                inviteesSignUp: true,
+                requestAccessToMyTeam: true,
+                inviteMeToATeam: true,
+                weeklySummaryOfTeamActivity: true,
+                otherEmailUpdates: {
+                    tipsAndHowTos: true,
+                    productAndFeatureUpdates: true,
+                    eventsAndPromotions: true,
+                    surveysAndProductTesting: true,
+                },
+                unsubscribeFromAll: true,
+            },
+        },
+        language: "en",
+        timezone: "UTC",
+        joined_on: "",
+        modified_on: "",
+    },
+];
+
+export const userSlice = createSlice({
+    name: "user",
+    initialState,
+    reducers: {},
+});
