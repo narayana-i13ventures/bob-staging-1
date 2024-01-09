@@ -12,14 +12,19 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ViewInArOutlinedIcon from "@mui/icons-material/ViewInArOutlined";
 import StarOutlineOutlinedIcon from "@mui/icons-material/StarOutlineOutlined";
 import PeopleOutlineOutlinedIcon from "@mui/icons-material/PeopleOutlineOutlined";
+import { useRouter } from "next/navigation";
 
 const DashboardSidebar = () => {
   const theme = useTheme();
-
+  const router = useRouter()
+  const gotToThinkbeyond = () => {
+    router.push(`/55/Thinkbeyond`)
+  }
   return (
     <Box component={"div"}>
       <MenuList sx={{ py: 0 }}>
         <MenuItem
+          onClick={gotToThinkbeyond}
           sx={{
             borderRadius: 3,
             mb: 2,
