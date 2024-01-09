@@ -131,7 +131,7 @@ export const ProjectApiSlice = createApi({
                                     (company: any) => company?.project_id === projectId
                                 );
                                 console.log(companyIndex);
-                                
+
                                 if (companyIndex !== -1) {
                                     draft?.owned_projects?.splice(companyIndex, 1);
                                 }
@@ -144,6 +144,16 @@ export const ProjectApiSlice = createApi({
                 }
             },
         }),
+        getFarFuture3: builder.mutation({
+            query: () => ({
+                url: '/v1/think_beyond/farfuture3',
+                method: 'POST',
+                body: JSON.stringify({
+                    user_id: 3,
+                    project_id: 55
+                })
+            })
+        })
     }),
 });
 export const {
@@ -154,4 +164,5 @@ export const {
     useLazyGetSharedUsersProjectQuery,
     useCreateProjectMutation,
     useDeleteProjectByIdMutation,
+    useGetFarFuture3Mutation
 } = ProjectApiSlice;

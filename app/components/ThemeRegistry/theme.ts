@@ -9,8 +9,10 @@ export const generateThemeOptions = (appTheme: AppTheme): any => {
     // const primaryColor = "#003049";
     // const secondaryColor = "#669bbc";
     // const primaryColor = "#4338ca";
-    const primaryColor = "#05668d";
-    const secondaryColor = "#05668d";
+    // const primaryColor = "#05668d";
+    // const secondaryColor = "#05668d";
+    const primaryColor = "#000000";
+    const secondaryColor = "#000000";
     const backgroundColor = mode === "light" ? "#ffffff" : "#010101";
     const cardBackgroundColor = mode === "light" ? "#f2f2f2" : "#272727";
 
