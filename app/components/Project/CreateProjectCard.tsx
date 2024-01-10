@@ -1,4 +1,4 @@
-import { Card, Typography } from "@mui/material";
+import { Card, Stack, Typography } from "@mui/material";
 import React from "react";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { appSlice, useDispatch } from "@/lib/redux";
@@ -11,19 +11,18 @@ const CreateProjectCard = () => {
   };
   return (
     <>
-      <Card
+      <Stack
+        direction={"column"}
+        alignItems={"center"}
+        justifyContent={"center"}
         component={"div"}
         onClick={OpenCreateNewProject}
         sx={{
-          
-          height: "100%",
-          backgroundColor: "white",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          cursor:'pointer',
-          borderRadius:3
+          borderRadius: 2,
+          cursor: "pointer",
+          minHeight: "220px",
+          maxHeight: "220px",
+          border: "1px solid #000",
         }}
       >
         <AddOutlinedIcon sx={{ fontSize: "50px" }} />
@@ -33,7 +32,7 @@ const CreateProjectCard = () => {
         >
           New Project
         </Typography>
-      </Card>
+      </Stack>
     </>
   );
 };

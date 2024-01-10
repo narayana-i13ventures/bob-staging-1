@@ -13,11 +13,11 @@ import {
     Stack,
     useTheme,
 } from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import RedoOutlinedIcon from "@mui/icons-material/RedoOutlined";
+import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
-import RedoOutlinedIcon from '@mui/icons-material/RedoOutlined';
-import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
+import AutorenewOutlinedIcon from "@mui/icons-material/AutorenewOutlined";
 const CanvasSettingsBtn = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
@@ -28,6 +28,10 @@ const CanvasSettingsBtn = () => {
             appSlice.actions.toggleCanvasSettings(Boolean(CanvasSettingsRef?.current))
         );
     };
+    const openCanvasShare = () => {
+        dispatch(appSlice.actions.toggleCanvasSettings(false));
+        dispatch(appSlice.actions.toggleShareModal({ open: true, data: { name: 'Value Proposition Canvas' }, type: 'cvp' }))
+    }
     return (
         <>
             <IconButton
@@ -40,7 +44,7 @@ const CanvasSettingsBtn = () => {
                     mr: 2,
                 }}
             >
-                <SettingsOutlinedIcon  fontSize="small"/>
+                <SettingsOutlinedIcon fontSize="small" />
             </IconButton>
             <Popover
                 disablePortal
@@ -60,19 +64,21 @@ const CanvasSettingsBtn = () => {
                     elevation: 1,
                     sx: {
                         p: 1,
-                        borderRadius: 3,
-                        overflowY: "hidden",
+                        mt: 1,
                         zIndex: 100,
+                        borderRadius: 2,
+                        overflowY: "hidden",
+                        backgroundColor: "#fff",
                     },
                 }}
             >
                 <MenuList>
                     <MenuItem
                         sx={{
-                            borderRadius: 3,
+                            borderRadius: 2,
                             mb: 1,
                             "&:hover": {
-                                backgroundColor: `${theme?.palette?.primary?.main}20`,
+                                backgroundColor: `#f6f5f4`,
                             },
                         }}
                     >
@@ -87,10 +93,10 @@ const CanvasSettingsBtn = () => {
                     </MenuItem>
                     <MenuItem
                         sx={{
-                            borderRadius: 3,
-                            my: 1,
+                            borderRadius: 2,
+                            mb: 1,
                             "&:hover": {
-                                backgroundColor: `${theme?.palette?.primary?.main}20`,
+                                backgroundColor: `#f6f5f4`,
                             },
                         }}
                     >
@@ -104,11 +110,12 @@ const CanvasSettingsBtn = () => {
                         </ListItemText>
                     </MenuItem>
                     <MenuItem
+                        onClick={openCanvasShare}
                         sx={{
-                            borderRadius: 3,
-                            my: 1,
+                            borderRadius: 2,
+                            mb: 1,
                             "&:hover": {
-                                backgroundColor: `${theme?.palette?.primary?.main}20`,
+                                backgroundColor: `#f6f5f4`,
                             },
                         }}
                     >
@@ -123,10 +130,10 @@ const CanvasSettingsBtn = () => {
                     </MenuItem>
                     <MenuItem
                         sx={{
-                            borderRadius: 3,
-                            my: 1,
+                            borderRadius: 2,
+                            mb: 1,
                             "&:hover": {
-                                backgroundColor: `${theme?.palette?.primary?.main}20`,
+                                backgroundColor: `#f6f5f4`,
                             },
                         }}
                     >

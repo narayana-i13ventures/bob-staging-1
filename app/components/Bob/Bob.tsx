@@ -65,8 +65,8 @@ const Bob = () => {
             component={"div"}
             sx={{
                 position: "absolute",
-                bottom: 24,
-                right: 24,
+                bottom: 20,
+                right: 20,
                 zIndex: ThinkbeyondModalOpen ? 10000 : 1,
             }}
         >

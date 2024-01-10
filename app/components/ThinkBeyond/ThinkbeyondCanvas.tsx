@@ -1,5 +1,11 @@
 "use client";
-import { Box, CircularProgress, Stack } from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Stack,
+    Typography,
+} from "@mui/material";
 import React from "react";
 import ThinkbeyondCard from "./ThinkbeyondCard";
 import ThinkbeyondModal from "./ThinkbeyondModal";
@@ -8,19 +14,17 @@ import { useParams } from "next/navigation";
 
 const ThinkbeyondCanvas = () => {
     const params = useParams();
-    console.log(params);
-    
+
     const {
         data: ThinkbeyondCards,
         isLoading,
         isError,
         isSuccess,
     } = useGetThinkBeyondQuery({});
-    console.log(ThinkbeyondCards);
-    
+
     return (
         <>
-            {(!isLoading && !isError && isSuccess) ?
+            {!isLoading && !isError && isSuccess && (
                 <Stack
                     component={"div"}
                     flexDirection={"column"}
@@ -60,7 +64,9 @@ const ThinkbeyondCanvas = () => {
                         >
                             <ThinkbeyondCard
                                 width={"50%"}
-                                card={ThinkbeyondCards?.find((card: any) => card?.cardNumber === 0)}
+                                card={ThinkbeyondCards?.find(
+                                    (card: any) => card?.cardNumber === 0
+                                )}
                             />
                         </Box>
                         <Box sx={{ gridColumn: "span 12", gridRow: "span 4" }}>
@@ -284,29 +290,48 @@ const ThinkbeyondCanvas = () => {
                             <ThinkbeyondCard
                                 width={"50%"}
                                 cardName={"what is the moonshot?"}
-                                card={ThinkbeyondCards?.find((card: any) => card?.cardNumber === 1)}
+                                card={ThinkbeyondCards?.find(
+                                    (card: any) => card?.cardNumber === 1
+                                )}
                             />
                         </Box>
                     </Box>
                     <ThinkbeyondModal />
-                </Stack> :
+                </Stack>
+            )}
+            {isLoading && !isError && !isSuccess && (
                 <Stack
                     component={"div"}
                     flexDirection={"column"}
                     justifyContent={"center"}
                     alignItems={"center"}
                     sx={{
-                        p: 2,
                         flexGrow: 1,
                         width: "100%",
-                        display: "flex",
                         overflow: "hidden",
-                        backgroundColor: "white",
-                        borderRadius: 3,
                     }}
                 >
                     <CircularProgress />
-                </Stack>}
+                </Stack>
+            )}
+            {!isLoading && isError && !isSuccess && (
+                <Stack
+                    component={"div"}
+                    flexDirection={"column"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    sx={{
+                        flexGrow: 1,
+                        width: "100%",
+                        overflow: "hidden",
+                    }}
+                >
+                    <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
+                        Something went wrong..! Try again
+                    </Typography>
+                    <Button variant="contained">Retry</Button>
+                </Stack>
+            )}
         </>
     );
 };

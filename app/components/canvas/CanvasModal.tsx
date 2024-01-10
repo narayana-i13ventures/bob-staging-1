@@ -44,7 +44,8 @@ const CanvasModal = () => {
         aria-describedby="alert-dialog-description"
         PaperProps={{
           sx: {
-            borderRadius: 3,
+            borderRadius: 2,
+            backgroundColor:'#fff'
           },
         }}
       >
@@ -337,7 +338,7 @@ const CanvasModal = () => {
                       role: "assistant",
                     },
                   ]}
-                  color={`${theme.palette.primary.main}30`}
+                  color={`#f6f5f4`}
                 />
               ) : (
                 <CommentBox
@@ -354,7 +355,7 @@ const CanvasModal = () => {
                       owner: false,
                     },
                   ]}
-                  color={`${theme.palette.primary.main}30`}
+                  color={`#f6f5f4`}
                 />
               )}
               <Stack

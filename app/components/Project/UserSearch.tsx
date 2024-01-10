@@ -13,17 +13,24 @@ const UserSearch = (props: any) => {
   const { shared_users } = props;
   const fixedOptions: any = [];
   const [value, setValue] = useState([...fixedOptions]);
-  const nonSharedUsers = users?.filter(
-    (user) =>
-      !shared_users?.some(
-        (sharedUser: any) => sharedUser.user_id === user?.user_id
-      )
-  );
+  // const nonSharedUsers = users?.filter(
+  //   (user) =>{
+  //     !shared_users?.some(
+  //       (sharedUser: any) => sharedUser.user_id === user?.user_id
+  //     )
+  //   }
+  // );
+  const nonSharedUsers: any = [];
 
   return (
     <>
       <Autocomplete
-        sx={{ mb: 3 }}
+        sx={{
+          mb: 3,
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderWidth: "1px !important",
+          },
+        }}
         multiple
         size="small"
         id={`search_user`}

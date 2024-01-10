@@ -1,12 +1,12 @@
 import React from "react";
 import ProjectMenuBtn from "./ProjectMenuBtn";
-import { Box, Card, IconButton, Typography } from "@mui/material";
+import { Box, Card, IconButton, Paper, Stack, Typography } from "@mui/material";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const ProjectCard = (props: any) => {
   const { project } = props;
+  const { project_name, project_id } = project;
   const router = useRouter();
   const gotToThinkbeyond = () => {
     router?.push(`/${project?.project_id}/Thinkbeyond`);
@@ -14,52 +14,54 @@ const ProjectCard = (props: any) => {
 
   return (
     <>
-      <Card
-        onClick={gotToThinkbeyond}
+      <Stack
         component={"div"}
         sx={{
-          backgroundColor: "white",
-          position: "relative",
+          borderRadius: 2,
+          minHeight: "220px",
           cursor: "pointer",
-          borderRadius:3
+          overflow: "hidden",
+          maxHeight: "220px",
+          position: "relative",
+          border: "1px solid #000",
         }}
       >
-        <ProjectMenuBtn projectId={project?.project_id} name={project?.project_name} />
-        <Box
+        <ProjectMenuBtn projectId={project_id} name={project_name} />
+        <Paper
+          onClick={gotToThinkbeyond}
+          elevation={0}
           sx={{
-            minHeight: "150px",
-            maxHeight: "150px",
-            backgroundColor: "#f1f1f180",
-            backgroundImage: `url('/images/test_project.png')`,
-            backgroundSize: "cover",
+            flexGrow: 1,
+            backgroundSize: "40%",
             backgroundPosition: "50% 50%",
             backgroundRepeat: "no-repeat",
+            backgroundImage: `url('/images/target.png')`,
           }}
-        ></Box>
-        <Box
+        ></Paper>
+        <Stack
           component={"div"}
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
           sx={{
-            py: 1,
-            px: 1.5,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            p: 1,
             width: "100%",
           }}
         >
           <Typography
-            variant="caption"
+            variant="body1"
             sx={{
+              pr: 2,
+              fontSize: "14px",
               fontWeight: 600,
               textAlign: "center",
               overflow: "hidden",
               whiteSpace: "nowrap",
-              pr: 2,
             }}
           >
-            {project?.project_name}
+            {project_name}
           </Typography>
-          <IconButton
+          {/* <IconButton
             disableFocusRipple
             disableRipple
             disableTouchRipple
@@ -70,9 +72,9 @@ const ProjectCard = (props: any) => {
             }}
           >
             <StarBorderOutlinedIcon fontSize="small" />
-          </IconButton>
-        </Box>
-      </Card>
+          </IconButton> */}
+        </Stack>
+      </Stack>
     </>
   );
 };

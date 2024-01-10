@@ -19,13 +19,15 @@ const CanvasCard = (props: any) => {
                 alignItems={"flex-start"}
                 justifyContent={"flex-start"}
                 sx={{
-                    p: 2,
+                    p: 1,
                     width: "100%",
                     height: "100%",
-                    borderRadius: 3,
-                    backgroundColor: props?.color,
+                    borderRadius: 2,
+                    // backgroundColor: props?.color,
+                    backgroundColor: !selected ? '#f6f5f4' : '#fff',
+                    border: '1px solid #000',
                     overflow: "hidden",
-                    boxShadow: selected ? 3 : 0,
+                    boxShadow: selected ? 2 : 0,
                 }}
             >
                 <Stack
@@ -50,10 +52,10 @@ const CanvasCard = (props: any) => {
                     sx={{
                         flexGrow: 1,
                         overflowY: "auto",
-                        // maxHeight: "calc(100% - 40px)",
+                        maxHeight: "calc(100% - 37px)",
                     }}
                 >
-                    <Typography variant="body1" sx={{ fontSize: '14px' }}>
+                    <Typography variant="body1" sx={{ fontSize: '14px', overflow: 'visible' }}>
                         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Excepturi
                         in dolor assumenda tempore odio odit quos adipisci consequuntur id!
                         Necessitatibus, iste molestias aspernatur ea assumenda dolor iusto

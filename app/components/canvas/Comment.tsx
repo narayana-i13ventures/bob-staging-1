@@ -24,7 +24,7 @@ const Comment = (props: any) => {
                     mb: 3,
                     width: "100%",
                     boxShadow: 1,
-                    overflow:'hidden',
+                    overflow: 'hidden',
                     borderRadius: 3,
                     // backgroundColor: `${theme.palette.primary.main}10`
                     backgroundColor: `#fff`
@@ -43,13 +43,13 @@ const Comment = (props: any) => {
                         direction={"row"}
                         alignItems={"flext-start"}
                         justifyContent={"flex-start"}
-                        spacing={2}
+                        spacing={1}
                     >
                         <Stack
                             alignItems={"center"}
-                            justifyContent={"center"}
+                            justifyContent={"flex-start"}
                             sx={{
-                                width: "15%",
+                                width: "12%",
                                 height: "48px",
                                 borderRadius: "100%",
                             }}
@@ -57,8 +57,9 @@ const Comment = (props: any) => {
                             <MemoryOutlinedIcon
                                 sx={{
                                     p: 0.5,
+                                    mt: 0.5,
                                     color: "white",
-                                    fontSize: "40px",
+                                    fontSize: "30px",
                                     borderRadius: "100%",
                                     backgroundColor: theme.palette.primary.main,
                                 }}
@@ -77,7 +78,7 @@ const Comment = (props: any) => {
                         </Stack>
                     </Stack>
                     <Stack direction={"column"} sx={{ mt: 1 }}>
-                        <Typography variant="body1" sx={{ fontSize: "14px" }}>
+                        <Typography variant="body1" sx={{ fontSize: "13px" }}>
                             {comment?.content}
                         </Typography>
                         <Divider sx={{ width: "100%", my: 1 }} />

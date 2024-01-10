@@ -1,76 +1,54 @@
 "use client";
-import React, { useEffect } from "react";
-import ProjectCard from "../Project/ProjectCard";
+import React from "react";
 import DashboardSidebar from "./DashboardSidebar";
 import {
-  Box,
-  CircularProgress,
+  Container,
   Divider,
-  Grid,
   IconButton,
   Stack,
   Tooltip,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import ProjectShareModal from "../Shared/ShareModal";
 import ProjectDetails from "../Project/ProjectDetails";
-import CreateProjectCard from "../Project/CreateProjectCard";
 import CreateProjectModal from "../Project/CreateProjectModal";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
-import {
-  useGetAllProjectsQuery,
-  useGetFarFuture3Mutation,
-} from "@/lib/redux/projectApi";
 import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
+import ProjectsContainer from "./ProjectsContainer";
+import ShareModal from "../Shared/ShareModal";
 const DashboardSpace = () => {
-  const {
-    data: projects,
-    isSuccess: fetch_projects_success,
-    isLoading: fetch_projects_loading,
-    isError: fetch_projects_error,
-  } = useGetAllProjectsQuery({});
-  // const [getFuture3, data] = useGetFarFuture3Mutation();
-
-  // useEffect(() => {
-  //   getFuture3({});
-  // }, []);
 
   return (
-    <Box
+    <Container
+      maxWidth={'xl'}
       component={"div"}
       sx={{
         flexGrow: 1,
         width: "100%",
-        borderRadius: 3,
         display: "flex",
         alignItems: "stretch",
-        backgroundColor: "white",
         justifyContent: "flex-start",
       }}
     >
-      <Box
+      <Stack
+        direction={'column'}
+        justifyContent={'flex-start'}
+        alignItems={'flex-start'}
         sx={{
-          p: 2,
+          mt: 3,
+          mr: 4,
           flexGrow: 1,
           width: "250px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignItems: "flex-start",
-          borderRight: "1px solid #00000010",
         }}
       >
         <DashboardSidebar />
-      </Box>
+      </Stack>
 
       <Stack
         direction={"column"}
         alignItems={"flex-start"}
         justifyContent={"flex-start"}
         sx={{
-          p: 2,
-          pr: 0,
-          pb: 0,
+          mt: 2,
           flexGrow: 1,
           width: "100%",
         }}
@@ -80,14 +58,10 @@ const DashboardSpace = () => {
           alignItems={"center"}
           justifyContent={"space-between"}
           sx={{
-            pb: 1,
-            px: 2,
-            mb: 2,
             zIndex: 100,
             width: "100%",
             position: "relative",
             backgroundColor: "white",
-            borderBottom: "1px solid #00000030",
           }}
         >
           <Typography
@@ -105,61 +79,24 @@ const DashboardSpace = () => {
             component={"div"}
           >
             <Tooltip title={"Grid View"} arrow>
-              <IconButton size="small" sx={{ mr: 1 }}>
+              <IconButton size="medium" sx={{ mr: 1 }}>
                 <GridViewOutlinedIcon fontSize="small" />
               </IconButton>
             </Tooltip>
             <Tooltip title={"List View"} arrow>
-              <IconButton size="small">
+              <IconButton size="medium">
                 <ListOutlinedIcon fontSize="small" />
               </IconButton>
             </Tooltip>
           </Stack>
         </Stack>
-        {!fetch_projects_loading &&
-        !fetch_projects_error &&
-        fetch_projects_success ? (
-          <Box
-            sx={{
-              px: 1,
-              pr: 2,
-              flexGrow: 1,
-              width: "100%",
-              overflowY: "auto",
-              maxHeight: "calc(100vh - 135px)",
-            }}
-          >
-            <Grid container spacing={4}>
-              <Grid item xs={2}>
-                <CreateProjectCard />
-              </Grid>
-              {projects?.owned_projects?.map((project: any) => {
-                return (
-                  <Grid key={project?.project_id} item xs={2}>
-                    <ProjectCard project={project} />
-                  </Grid>
-                );
-              })}
-            </Grid>
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              flexGrow: 1,
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        )}
+        <Divider sx={{ width: '100%', mb: 2, mt: 1 }} />
+        <ProjectsContainer />
       </Stack>
       <ProjectDetails />
-      <ProjectShareModal />
+      <ShareModal />
       <CreateProjectModal />
-    </Box>
+    </Container>
   );
 };
 

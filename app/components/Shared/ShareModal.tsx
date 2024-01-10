@@ -25,9 +25,17 @@ import {
   useLazyGetProjectByIdQuery,
   useLazyGetSharedUsersProjectQuery,
 } from "@/lib/redux/projectApi";
+
 const ShareModal = (props: any) => {
   const dispatch = useDispatch();
   const { ShareOpen } = useSelector(selectApp);
+
+  const test = {
+    isLoading: false,
+    isSuccess: true,
+    isError: false,
+  };
+
   const [
     getShareUsersProject,
     {
@@ -37,6 +45,7 @@ const ShareModal = (props: any) => {
       isError: error_shared_users,
     },
   ] = useLazyGetSharedUsersProjectQuery();
+
   const [
     getProjectById,
     {
@@ -53,6 +62,7 @@ const ShareModal = (props: any) => {
       getProjectById(ShareOpen?.data?.projectId);
     }
   }, [ShareOpen]);
+
   const closeProjectShareModal = () => {
     dispatch(
       appSlice.actions.toggleShareModal({ open: false, data: {}, type: "" })
@@ -66,7 +76,6 @@ const ShareModal = (props: any) => {
         maxWidth={"sm"}
         fullWidth
         disableEscapeKeyDown
-        disablePortal
         open={ShareOpen?.open}
       >
         <DialogTitle
@@ -75,41 +84,44 @@ const ShareModal = (props: any) => {
             p: 2,
             display: "flex",
             justifyContent:
-              !loading_project_data &&
-              !error_project_data &&
-              !fetching_project_data &&
-              !loading_shared_users &&
-              !fetching_shared_users &&
-              !error_shared_users
+              // !loading_project_data &&
+              //   !error_project_data &&
+              //   !fetching_project_data &&
+              //   !loading_shared_users &&
+              //   !fetching_shared_users &&
+              //   !error_shared_users
+              !test?.isLoading && test?.isSuccess && !test?.isError
                 ? "space-between"
                 : "flex-end",
             alignItems: "center",
           }}
         >
-          {!loading_project_data &&
-            !error_project_data &&
-            !fetching_project_data &&
-            !loading_shared_users &&
-            !fetching_shared_users &&
-            !error_shared_users && (
-              <Typography variant="h6">
-                {ShareOpen?.data?.name}
-              </Typography>
-            )}
+          {
+            // (!loading_project_data &&
+            //   !error_project_data &&
+            //   !fetching_project_data &&
+            //   !loading_shared_users &&
+            //   !fetching_shared_users &&
+            //   !error_shared_users)
+            !test?.isLoading && test?.isSuccess && !test?.isError && (
+              <Typography variant="h6">{ShareOpen?.data?.name}</Typography>
+            )
+          }
           <IconButton size="small" onClick={closeProjectShareModal}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <Divider />
-        {!loading_project_data &&
-        !error_project_data &&
-        !fetching_project_data &&
-        !loading_shared_users &&
-        !fetching_shared_users &&
-        !error_shared_users ? (
-          <>
-            <DialogContent sx={{ p: 2 }}>
-              <UserSearch shared_users={shared_users} />
+        <DialogContent sx={{ p: 2 }}>
+          {/* // !loading_project_data &&
+          //   !error_project_data &&
+          //   !fetching_project_data &&
+          //   !loading_shared_users &&
+          //   !fetching_shared_users &&
+          //   !error_shared_users  */}
+          {!test?.isLoading && test?.isSuccess && !test?.isError && (
+            <>
+              <UserSearch shared_users={shared_users || []} />
               <Typography variant="body1">People With Access</Typography>
               <Divider sx={{ my: 1 }} />
               <Stack
@@ -167,7 +179,7 @@ const ShareModal = (props: any) => {
                     size="small"
                     id={`global_user_role_${props?.projectId}`}
                     value={"editor"}
-                    onChange={() => {}}
+                    onChange={() => { }}
                     sx={{
                       p: 0,
                       width: "85px",
@@ -185,7 +197,37 @@ const ShareModal = (props: any) => {
                   </Select>
                 </FormControl>
               </Box>
-            </DialogContent>
+            </>
+          )}
+          {test?.isLoading && !test?.isSuccess && !test?.isError && (
+            <Stack
+              direction={"column"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              sx={{
+                with: "100%",
+                height: "200px",
+              }}
+            >
+              <CircularProgress />
+            </Stack>
+          )}
+          {!test?.isLoading && !test?.isSuccess && test?.isError && (
+            <Stack
+              direction={"column"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              sx={{ width: "100%", height: "200px" }}
+            >
+              <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
+                Something went wrong..! Try again
+              </Typography>
+              <Button variant="contained">Retry</Button>
+            </Stack>
+          )}
+        </DialogContent>
+        {!test?.isLoading && test?.isSuccess && !test?.isError && (
+          <>
             <Divider />
             <DialogActions sx={{ p: 2 }}>
               <Button
@@ -198,18 +240,6 @@ const ShareModal = (props: any) => {
               </Button>
             </DialogActions>
           </>
-        ) : (
-          <Stack
-            direction={"column"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            sx={{
-              with: "100%",
-              height: "300px",
-            }}
-          >
-            <CircularProgress />
-          </Stack>
         )}
       </Dialog>
     </>

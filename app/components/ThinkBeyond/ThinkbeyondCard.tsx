@@ -3,7 +3,7 @@ import React from "react";
 import { appSlice, useDispatch, useSelector } from "@/lib/redux";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import { Box, Chip, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Chip, IconButton, Paper, Stack, Typography } from "@mui/material";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
 import { selectedThinkbeyond } from "@/lib/redux/slices/SelectedSlice";
 import { useUpdateThinkBeyondMutation } from "@/lib/redux/Api";
@@ -16,6 +16,7 @@ const ThinkbeyondCard = (props: any) => {
   const dispatch = useDispatch();
   const selectedCard = useSelector(selectedThinkbeyond);
   const [updatedThinkbeyondCard] = useUpdateThinkBeyondMutation();
+
   const openThinkbeyondModalOpen = () => {
     switch (card?.type) {
       case "future_1_bmc":
@@ -48,23 +49,25 @@ const ThinkbeyondCard = (props: any) => {
     }
   };
   return (
-    <Box
+    <Paper
+      elevation={card?.locked ? 0 : 3}
       onClick={selectCard}
       component={"div"}
       sx={{
         p: 2,
         mx: "auto",
         width: width,
-        borderRadius: 5,
+        borderRadius: 2,
         overflow: "hidden",
-        backgroundColor: card?.complete
-          ? "#8BD52390"
-          : card?.locked
-          ? "#00000010"
-          : "#fae588",
-        boxShadow: card?.selected ? 5 : 0,
+        // backgroundColor: card?.complete
+        //   ? "#8BD52390"
+        //   : card?.locked
+        //   ? "#00000010"
+        //   : "#fae588",
+        backgroundColor: !card?.selected ? '#fff' : '',
         cursor: !card?.locked ? "pointer" : "auto",
         transition: "all ease-in 200ms",
+        border: card?.locked ? '2px solid #00000040' : '2px solid #000'
       }}
     >
       <Stack
@@ -72,7 +75,7 @@ const ThinkbeyondCard = (props: any) => {
         justifyContent={"space-between"}
         alignItems={"center"}
       >
-        <Typography variant="body1">
+        <Typography variant="body1" sx={{ color: card?.locked ? '#00000040' : '' }} >
           {card?.cardName === "BMC" ? "Microframeworks" : card?.cardName}
         </Typography>
         <IconButton
@@ -81,39 +84,39 @@ const ThinkbeyondCard = (props: any) => {
           disableTouchRipple
           disabled={card?.locked}
           onClick={() =>
-            card?.selected ? openThinkbeyondModalOpen() : () => {}
+            card?.selected ? openThinkbeyondModalOpen() : () => { }
           }
           size="large"
           sx={{
-            backgroundColor: card?.selected ? "white" : "transparent",
+            backgroundColor: card?.selected ? "black" : "transparent",
             boxShadow: !card?.locked ? (card?.selected ? 1 : 0) : 0,
             "&:hover": {
-              backgroundColor: card?.selected ? "white" : "transparent",
+              backgroundColor: card?.selected ? "black" : "transparent",
               transition: "all ease-in 200ms",
             },
           }}
         >
           {card?.type ===
-          ("future_1_bmc" || "future_2_bmc" || "future_3_bmc") ? (
+            ("future_1_bmc" || "future_2_bmc" || "future_3_bmc") ? (
             card?.locked ? (
               <LockOutlinedIcon />
             ) : (
-              <LockOpenOutlinedIcon />
+              <LockOpenOutlinedIcon sx={{ color: card?.selected ? '#fff' : '' }} />
             )
           ) : card?.locked ? (
             <LockOutlinedIcon />
           ) : card?.complete ? (
             card?.selected ? (
-              <ModeEditOutlineOutlinedIcon />
+              <ModeEditOutlineOutlinedIcon sx={{ color: card?.selected ? '#fff' : '' }} />
             ) : (
-              <CheckCircleOutlineOutlinedIcon />
+              <CheckCircleOutlineOutlinedIcon sx={{ color: card?.selected ? '#fff' : '' }} />
             )
           ) : (
             <ModeEditOutlineOutlinedIcon />
           )}
         </IconButton>
       </Stack>
-    </Box>
+    </Paper>
   );
 };
 

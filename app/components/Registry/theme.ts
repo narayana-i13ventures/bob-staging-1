@@ -43,6 +43,7 @@ export const generateThemeOptions = (appTheme: AppTheme): any => {
                 textOverflow: "ellipsis",
             },
         },
+        
         components: {
             MuiTypography: {
                 styleOverrides: {
@@ -96,14 +97,31 @@ export const generateThemeOptions = (appTheme: AppTheme): any => {
                         fontWeight: "600",
                         textTransform: "capitalize",
                         "&.MuiButton-containedSecondary:hover": {
-                            backgroundColor: secondaryColor,
+                            backgroundColor: '#fafafa',
                         },
                         "&.MuiButton-containedPrimary:hover": {
-                            backgroundColor: primaryColor,
+                            backgroundColor: '#333',
                         },
                     },
                 },
             },
+            MuiPaper  : {
+                styleOverrides: {
+                    root: {
+                        backgroundColor:'#f6f5f4'
+                    },
+                },
+            },
+            MuiIconButton : {
+                styleOverrides: {
+                    root: {
+                        color: primaryColor,
+                        '&:hover' : {
+                            backgroundColor:'#f6f5f4'
+                        }
+                    },
+                },
+            }
         },
     };
 };

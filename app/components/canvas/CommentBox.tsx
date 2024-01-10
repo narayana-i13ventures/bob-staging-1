@@ -51,12 +51,11 @@ const CommentBox = (props: any) => {
             elevation={0}
             component={"div"}
             sx={{
-                p: 1,
                 pt: 2,
                 mr: 2,
-                width: "350px",
+                width: "330px",
                 height: "100%",
-                borderRadius: 5,
+                borderRadius: 2,
                 backgroundColor: `${color || '#fff'}`,
             }}
         >
@@ -87,42 +86,44 @@ const CommentBox = (props: any) => {
                             );
                         })}
                 </Stack>
-                <TextField
-                    fullWidth
-                    disabled={bobThinking}
-                    id="comment-input"
-                    placeholder="Enter Your Message"
-                    value={comment}
-                    size="small"
-                    multiline
-                    variant="outlined"
-                    maxRows={4}
-                    onChange={(e) => setComment(e.target.value)}
-                    onKeyPress={handleEnterKeyPress}
-                    inputRef={(input) => (textFieldRef.current = input)}
-                    InputProps={{
-                        id: 'comment-input-area',
-                        sx: {
-                            fontSize: "14px",
-                            padding: "10px",
-                            borderRadius: 2,
-                            backgroundColor:'#fff',
-                            my: 1,
-                            "& .MuiOutlinedInput-notchedOutline": {
-                                borderWidth: "1px !important",
+                <Stack sx={{ px: 2, width: '100%' }}>
+                    <TextField
+                        fullWidth
+                        disabled={bobThinking}
+                        id="comment-input"
+                        placeholder="Enter Your Message"
+                        value={comment}
+                        size="small"
+                        multiline
+                        variant="outlined"
+                        maxRows={4}
+                        onChange={(e) => setComment(e.target.value)}
+                        onKeyPress={handleEnterKeyPress}
+                        inputRef={(input) => (textFieldRef.current = input)}
+                        InputProps={{
+                            id: 'comment-input-area',
+                            sx: {
+                                fontSize: "14px",
+                                padding: "10px",
+                                borderRadius: 2,
+                                backgroundColor: '#fff',
+                                my: 1,
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                    borderWidth: "1px !important",
+                                },
                             },
-                        },
-                        endAdornment: (
-                            <InputAdornment
-                                position="end"
-                                className="cursor-pointer"
-                                onClick={handlePostComment}
-                            >
-                                <SendIcon sx={{ fontSize: 20 }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
+                            endAdornment: (
+                                <InputAdornment
+                                    position="end"
+                                    className="cursor-pointer"
+                                    onClick={handlePostComment}
+                                >
+                                    <SendIcon sx={{ fontSize: 20 }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </Stack>
             </Stack>
         </Paper>
     );

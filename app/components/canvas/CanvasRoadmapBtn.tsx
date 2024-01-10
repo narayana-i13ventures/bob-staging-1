@@ -1,15 +1,15 @@
 "use client";
 import React, { useRef } from "react";
 import GrowTransition from "../Utils/Grow";
+import { useRouter } from "next/navigation";
 import { TreeView } from "@mui/x-tree-view/TreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { IconButton, Popover, useTheme } from "@mui/material";
+import { IconButton, Popover, Stack, Typography, useTheme } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
-import { useRouter } from "next/navigation";
-
 const CanvasRoadmapBtn = (props: any) => {
     const { canvasName } = props;
     const theme = useTheme();
@@ -66,17 +66,21 @@ const CanvasRoadmapBtn = (props: any) => {
                 PaperProps={{
                     elevation: 1,
                     sx: {
+                        mt: 1,
                         p: 1,
-                        width: "300px",
-                        borderRadius: 3,
-                        overflowY: "hidden",
                         zIndex: 100,
+                        width: "260px",
+                        borderRadius: 2,
+                        overflowY: "hidden",
+                        backgroundColor: "#fff",
                     },
                 }}
             >
                 <TreeView
                     expanded={["1", "2"]}
-                    selected={canvasName === "BMC" ? "3" : canvasName === "CVP" ? "4" : ""}
+                    selected={
+                        canvasName === "BMC" ? "3" : canvasName === "CVP" ? "4" : ""
+                    }
                     onNodeSelect={NavigateRoadmap}
                     aria-label="file system navigator"
                     defaultCollapseIcon={<ExpandMoreIcon />}
@@ -90,10 +94,10 @@ const CanvasRoadmapBtn = (props: any) => {
                             },
                             "& .MuiTreeItem-content": {
                                 py: 1,
-                                borderRadius: 3,
+                                borderRadius: 2,
                             },
                             "& .Mui-selected": {
-                                backgroundColor: `${theme?.palette?.primary?.main}30`,
+                                backgroundColor: `#f6f5f4`,
                             },
                         }}
                         nodeId="1"
@@ -103,14 +107,14 @@ const CanvasRoadmapBtn = (props: any) => {
                             sx={{
                                 my: 0.5,
                                 "& .MuiTreeItem-label": {
-                                    fontSize: "14px",
+                                    fontSize: "13px",
                                 },
                                 "& .MuiTreeItem-content": {
                                     py: 1,
-                                    borderRadius: 3,
+                                    borderRadius: 2,
                                 },
                                 "& .Mui-selected": {
-                                    backgroundColor: `${theme?.palette?.primary?.main}30`,
+                                    backgroundColor: `#f6f5f4`,
                                 },
                             }}
                             nodeId="2"
@@ -120,14 +124,14 @@ const CanvasRoadmapBtn = (props: any) => {
                                 sx={{
                                     my: 0.5,
                                     "& .MuiTreeItem-label": {
-                                        fontSize: "14px",
+                                        fontSize: "13px",
                                     },
                                     "& .MuiTreeItem-content": {
                                         py: 1,
-                                        borderRadius: 3,
+                                        borderRadius: 2,
                                     },
                                     "& .Mui-selected": {
-                                        backgroundColor: `${theme?.palette?.primary?.main}30`,
+                                        backgroundColor: `#f6f5f4`,
                                     },
                                 }}
                                 nodeId="3"
@@ -141,16 +145,17 @@ const CanvasRoadmapBtn = (props: any) => {
                                     },
                                     "& .MuiTreeItem-content": {
                                         py: 1,
-                                        borderRadius: 3,
+                                        borderRadius: 2,
                                     },
                                     "& .Mui-selected": {
-                                        backgroundColor: `${theme?.palette?.primary?.main}30`,
+                                        backgroundColor: `#f6f5f4`,
                                     },
                                 }}
                                 nodeId="4"
                                 label="Value Proposition Canvas"
                             />
                             <TreeItem
+                                disabled
                                 sx={{
                                     my: 0.5,
                                     "& .MuiTreeItem-label": {
@@ -158,16 +163,22 @@ const CanvasRoadmapBtn = (props: any) => {
                                     },
                                     "& .MuiTreeItem-content": {
                                         py: 1,
-                                        borderRadius: 3,
+                                        borderRadius: 2,
                                     },
                                     "& .Mui-selected": {
-                                        backgroundColor: `${theme?.palette?.primary?.main}30`,
+                                        backgroundColor: `#f6f5f4`,
                                     },
                                 }}
                                 nodeId="5"
-                                label="Empathy Canvas"
+                                label={
+                                    <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'}>
+                                        <LockOutlinedIcon fontSize="small" />
+                                        <Typography sx={{ fontSize: '13px', ml: 2 }}>Empathy Canvas</Typography>
+                                    </Stack>
+                                }
                             />
                             <TreeItem
+                                disabled
                                 sx={{
                                     my: 0.5,
                                     "& .MuiTreeItem-label": {
@@ -175,14 +186,19 @@ const CanvasRoadmapBtn = (props: any) => {
                                     },
                                     "& .MuiTreeItem-content": {
                                         py: 1,
-                                        borderRadius: 3,
+                                        borderRadius: 2,
                                     },
                                     "& .Mui-selected": {
-                                        backgroundColor: `${theme?.palette?.primary?.main}30`,
+                                        backgroundColor: `#f6f5f4`,
                                     },
                                 }}
                                 nodeId="6"
-                                label="Persona Canvas"
+                                label={
+                                    <Stack direction={'row'} justifyContent={'flex-start'} alignItems={'center'}>
+                                        <LockOutlinedIcon fontSize="small" />
+                                        <Typography sx={{ fontSize: '13px', ml: 2 }}>Persona Canvas</Typography>
+                                    </Stack>
+                                }
                             />
                         </TreeItem>
                     </TreeItem>

@@ -6,6 +6,7 @@ import {
   ListItemText,
   MenuItem,
   MenuList,
+  Paper,
   useTheme,
 } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -16,20 +17,28 @@ import { useRouter } from "next/navigation";
 
 const DashboardSidebar = () => {
   const theme = useTheme();
-  const router = useRouter()
+  const router = useRouter();
   const gotToThinkbeyond = () => {
-    router.push(`/55/Thinkbeyond`)
-  }
+    router.push(`/55/Thinkbeyond`);
+  };
   return (
-    <Box component={"div"}>
+    <Box component={"div"} sx={{ width: "100%" }}>
       <MenuList sx={{ py: 0 }}>
         <MenuItem
           onClick={gotToThinkbeyond}
           sx={{
-            borderRadius: 3,
             mb: 2,
+            borderRadius: 2,
+            transition: "all 150ms ease-in",
             "&:hover": {
-              backgroundColor: `${theme?.palette?.primary?.main}20`,
+              backgroundColor: `#000`,
+              color: "#fff",
+            },
+            "& .MuiListItemIcon-root": {
+              transition: "all 150ms ease-in",
+            },
+            "&:hover .MuiListItemIcon-root": {
+              color: "#fff",
             },
           }}
         >
@@ -42,10 +51,18 @@ const DashboardSidebar = () => {
         </MenuItem>
         <MenuItem
           sx={{
-            borderRadius: 3,
-            my: 2,
+            mb: 2,
+            borderRadius: 2,
+            transition: "all 150ms ease-in",
             "&:hover": {
-              backgroundColor: `${theme?.palette?.primary?.main}20`,
+              backgroundColor: `#000`,
+              color: "#fff",
+            },
+            "& .MuiListItemIcon-root": {
+              transition: "all 150ms ease-in",
+            },
+            "&:hover .MuiListItemIcon-root": {
+              color: "#fff",
             },
           }}
         >
@@ -58,10 +75,18 @@ const DashboardSidebar = () => {
         </MenuItem>
         <MenuItem
           sx={{
-            borderRadius: 3,
-            my: 2,
+            mb: 2,
+            borderRadius: 2,
+            transition: "all 150ms ease-in",
             "&:hover": {
-              backgroundColor: `${theme?.palette?.primary?.main}20`,
+              backgroundColor: `#000`,
+              color: "#fff",
+            },
+            "& .MuiListItemIcon-root": {
+              transition: "all 150ms ease-in",
+            },
+            "&:hover .MuiListItemIcon-root": {
+              color: "#fff",
             },
           }}
         >
@@ -74,10 +99,18 @@ const DashboardSidebar = () => {
         </MenuItem>
         <MenuItem
           sx={{
-            borderRadius: 3,
-            my: 2,
+            mb: 2,
+            borderRadius: 2,
+            transition: "all 150ms ease-in",
             "&:hover": {
-              backgroundColor: `${theme?.palette?.primary?.main}20`,
+              backgroundColor: `#000`,
+              color: "#fff",
+            },
+            "& .MuiListItemIcon-root": {
+              transition: "all 150ms ease-in",
+            },
+            "&:hover .MuiListItemIcon-root": {
+              color: "#fff",
             },
           }}
         >

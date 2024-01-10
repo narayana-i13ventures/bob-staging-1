@@ -17,7 +17,10 @@ const BMCCanvas = () => {
       }}
     >
       <Box sx={{ gridColumn: "span 2", gridRow: "span 4" }}>
-        <CanvasCard color={"#F5D6C3"} card={{ card_name: 'Key Partners' }} />
+        <CanvasCard 
+        // color={"#F5D6C3"} 
+        card={{ card_name: 'Key Partners' }} 
+        />
       </Box>
       <Box sx={{ gridColumn: "span 2", gridRow: "span 4" }}>
         <Box

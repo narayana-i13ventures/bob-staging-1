@@ -11,6 +11,7 @@ import {
   Divider,
   IconButton,
   InputAdornment,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -20,19 +21,23 @@ import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 const ProjectDetails = () => {
   const dispatch = useDispatch();
   const { projectDetailsOpen } = useSelector(selectApp);
+
   const [editProjectTitle, setEditProjectTitle] = useState({
     focus: true,
     edit: false,
   });
+
   const [editProjectDescription, setEditProjectDescription] = useState({
     focus: true,
     edit: false,
   });
+
   const [
     getProjectById,
     {
@@ -44,10 +49,18 @@ const ProjectDetails = () => {
     },
   ] = useLazyGetProjectByIdQuery();
 
+  const test = {
+    fetch_project_loading: false,
+    fetch_project_success: true,
+    fetch_project_error: false,
+    fetching_project: false,
+  };
+
   const created_date: any = moment(
     project_data?.project?.created_on,
     "ddd, DD MMM YYYY HH:mm:ss z"
   ).format("DD MMMM, YYYY");
+
   const modified_date: any = moment(
     project_data?.project?.modified_on,
     "ddd, DD MMM YYYY HH:mm:ss z"
@@ -93,24 +106,22 @@ const ProjectDetails = () => {
         <DialogTitle
           component={"div"}
           sx={{
-            pt: 3,
-            pb: 1,
-            px: 3,
+            p: 2,
             display: "flex",
             justifyContent:
-              !fetch_project_loading &&
-              !fetch_project_error &&
-              !fetching_project
+              !test?.fetch_project_loading &&
+                !test?.fetch_project_error &&
+                !test?.fetching_project
                 ? "space-between"
                 : "flex-end",
             alignItems: "center",
           }}
         >
-          {!fetch_project_loading &&
-            !fetch_project_error &&
-            !fetching_project && (
-              <Typography variant="h6">
-                {project_data?.project?.project_name}
+          {!test?.fetch_project_loading &&
+            !test?.fetch_project_error &&
+            !test?.fetching_project && (
+              <Typography variant="h6" sx={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
+                <InfoOutlinedIcon sx={{mr:2}}/>Details
               </Typography>
             )}
           <IconButton size="small" onClick={closeProjectDetails}>
@@ -118,228 +129,246 @@ const ProjectDetails = () => {
           </IconButton>
         </DialogTitle>
         <Divider />
-        {!fetch_project_loading && !fetch_project_error && !fetching_project ? (
-          <DialogContent sx={{ pt: 1 }}>
-            <TextField
-              sx={{
-                pb: 3,
-                "& .Mui-disabled": {
-                  color: "#000",
-                  WebkitTextFillColor: "#000 !important",
-                },
-              }}
-              focused={editProjectTitle?.focus}
-              id="project_details"
-              placeholder="Enter your project name"
-              variant="standard"
-              size="small"
-              fullWidth
-              disabled={!editProjectTitle?.edit}
-              // value={project_data?.project?.project_name}
-              value={project_data?.project?.project_name}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      disableFocusRipple
-                      disableRipple
-                      disableTouchRipple
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: "transparent",
-                        },
-                      }}
-                      onClick={() => {
-                        setEditProjectDescription({
-                          ...editProjectDescription,
-                          focus: false,
-                        });
-                        setEditProjectTitle({ focus: true, edit: true });
-                      }}
-                    >
-                      <EditOutlinedIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              sx={{
-                mb: 3,
-                "& .Mui-disabled": {
-                  color: "#000",
-                  WebkitTextFillColor: "#000 !important",
-                },
-              }}
-              focused={editProjectDescription?.focus}
-              id="project_description"
-              placeholder="Enter your project description"
-              variant="standard"
-              size="small"
-              fullWidth
-              disabled={!editProjectDescription?.edit}
-              value={"This is project description"}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      disableFocusRipple
-                      disableRipple
-                      disableTouchRipple
-                      sx={{
-                        "&:hover": {
-                          backgroundColor: "transparent",
-                        },
-                      }}
-                      onClick={() => {
-                        setEditProjectTitle({
-                          ...editProjectTitle,
-                          focus: false,
-                        });
-                        setEditProjectDescription({ focus: true, edit: true });
-                      }}
-                    >
-                      <EditOutlinedIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <Box
-              component={"div"}
-              sx={{
-                mb: 3,
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ width: "50%" }}>
-                Owner
-              </Typography>
-              <Typography variant="body2" sx={{ width: "50%" }}>
-                {project_data?.project?.owner?.[0]?.preferred_name}
-              </Typography>
-            </Box>
-            <Box
-              component={"div"}
-              sx={{
-                mb: 3,
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ width: "50%" }}>
-                Team
-              </Typography>
-              <Typography variant="body2" sx={{ width: "50%" }}>
-                I13 Ventures Pvt Ld
-              </Typography>
-            </Box>
-            <Box
-              component={"div"}
-              sx={{
-                mb: 3,
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ width: "50%" }}>
-                Created On
-              </Typography>
-              <Typography variant="body2" sx={{ width: "50%" }}>
-                {created_date}
-              </Typography>
-            </Box>
-            <Box
-              component={"div"}
-              sx={{
-                mb: 3,
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ width: "50%" }}>
-                Last Modified
-              </Typography>
-              <Typography variant="body2" sx={{ width: "50%" }}>
-                {modified_date}
-              </Typography>
-            </Box>
-            <Box
-              component={"div"}
-              sx={{
-                mb: 3,
-                display: "flex",
-                justifyContent: "flex-start",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body2" sx={{ width: "50%" }}>
-                Shared With
-              </Typography>
-              {project_data?.project?.shared_users?.length > 0 ? (
-                <AvatarGroup
-                  onClick={openProjectShare}
+        <DialogContent sx={{ p: 2 }}>
+          {!test?.fetch_project_loading &&
+            !test?.fetch_project_error &&
+            !test?.fetching_project && (
+              <>
+                <TextField
                   sx={{
-                    cursor: "pointer",
-                    "& .MuiAvatar-root": {
-                      width: 30,
-                      height: 30,
-                      fontSize: "14px",
+                    pb: 3,
+                    "& .Mui-disabled": {
+                      color: "#000",
+                      WebkitTextFillColor: "#000 !important",
                     },
                   }}
-                  total={project_data?.project?.shared_users?.length}
-                >
-                  {project_data?.project?.shared_users
-                    ?.slice(0, 3)
-                    .map((user: any) => {
-                      return (
-                        <Avatar
-                          key={user?.user_id}
-                          sx={{ backgroundColor: "black" }}
-                        >
-                          N
-                        </Avatar>
-                      );
-                    })}
-                </AvatarGroup>
-              ) : (
-                <Typography
-                  onClick={openProjectShare}
-                  variant="body2"
+                  focused={editProjectTitle?.focus}
+                  id="project_details"
+                  placeholder="Enter your project name"
+                  variant="standard"
+                  size="small"
+                  fullWidth
+                  disabled={!editProjectTitle?.edit}
+                  // value={project_data?.project?.project_name}
+                  value={'Uber Helicopter'}
+                  InputProps={
+                    {
+                      // endAdornment: (
+                      //   <InputAdornment position="end">
+                      //     <IconButton
+                      //       disableFocusRipple
+                      //       disableRipple
+                      //       disableTouchRipple
+                      //       sx={{
+                      //         "&:hover": {
+                      //           backgroundColor: "transparent",
+                      //         },
+                      //       }}
+                      //       onClick={() => {
+                      //         setEditProjectDescription({
+                      //           ...editProjectDescription,
+                      //           focus: false,
+                      //         });
+                      //         setEditProjectTitle({ focus: true, edit: true });
+                      //       }}
+                      //     >
+                      //       <EditOutlinedIcon />
+                      //     </IconButton>
+                      //   </InputAdornment>
+                      // ),
+                    }
+                  }
+                />
+                {/* <TextField
+                sx={{
+                  mb: 3,
+                  "& .Mui-disabled": {
+                    color: "#000",
+                    WebkitTextFillColor: "#000 !important",
+                  },
+                }}
+                focused={editProjectDescription?.focus}
+                id="project_description"
+                placeholder="Enter your project description"
+                variant="standard"
+                size="small"
+                fullWidth
+                disabled={!editProjectDescription?.edit}
+                value={"This is project description"}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        disableFocusRipple
+                        disableRipple
+                        disableTouchRipple
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: "transparent",
+                          },
+                        }}
+                        onClick={() => {
+                          setEditProjectTitle({
+                            ...editProjectTitle,
+                            focus: false,
+                          });
+                          setEditProjectDescription({ focus: true, edit: true });
+                        }}
+                      >
+                        <EditOutlinedIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              /> */}
+                <Box
                   component={"div"}
                   sx={{
-                    width: "50%",
-                    cursor: "pointer",
-                    "&:hover": { textDecoration: "underline" },
+                    mb: 3,
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
                   }}
                 >
-                  None
+                  <Typography variant="body2" sx={{ width: "50%" }}>
+                    Owner
+                  </Typography>
+                  <Typography variant="body2" sx={{ width: "50%" }}>
+                    {project_data?.project?.owner?.[0]?.preferred_name}
+                  </Typography>
+                </Box>
+                <Box
+                  component={"div"}
+                  sx={{
+                    mb: 3,
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2" sx={{ width: "50%" }}>
+                    Team
+                  </Typography>
+                  <Typography variant="body2" sx={{ width: "50%" }}>
+                    I13 Ventures Pvt Ld
+                  </Typography>
+                </Box>
+                <Box
+                  component={"div"}
+                  sx={{
+                    mb: 3,
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2" sx={{ width: "50%" }}>
+                    Created On
+                  </Typography>
+                  <Typography variant="body2" sx={{ width: "50%" }}>
+                    {created_date}
+                  </Typography>
+                </Box>
+                <Box
+                  component={"div"}
+                  sx={{
+                    mb: 3,
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2" sx={{ width: "50%" }}>
+                    Last Modified
+                  </Typography>
+                  <Typography variant="body2" sx={{ width: "50%" }}>
+                    {modified_date}
+                  </Typography>
+                </Box>
+                <Box
+                  component={"div"}
+                  sx={{
+                    mb: 3,
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2" sx={{ width: "50%" }}>
+                    Shared With
+                  </Typography>
+                  {project_data?.project?.shared_users?.length > 0 ? (
+                    <AvatarGroup
+                      onClick={openProjectShare}
+                      sx={{
+                        cursor: "pointer",
+                        "& .MuiAvatar-root": {
+                          width: 30,
+                          height: 30,
+                          fontSize: "14px",
+                        },
+                      }}
+                      total={project_data?.project?.shared_users?.length}
+                    >
+                      {project_data?.project?.shared_users
+                        ?.slice(0, 3)
+                        .map((user: any) => {
+                          return (
+                            <Avatar
+                              key={user?.user_id}
+                              sx={{ backgroundColor: "black" }}
+                            >
+                              N
+                            </Avatar>
+                          );
+                        })}
+                    </AvatarGroup>
+                  ) : (
+                    <Typography
+                      onClick={openProjectShare}
+                      variant="body2"
+                      component={"div"}
+                      sx={{
+                        width: "50%",
+                        cursor: "pointer",
+                        "&:hover": { textDecoration: "underline" },
+                      }}
+                    >
+                      None
+                    </Typography>
+                  )}
+                </Box>
+              </>
+            )}
+          {(test?.fetch_project_loading || test?.fetching_project) &&
+            !test?.fetch_project_error && (
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                sx={{ width: "100%", height: "200px" }}
+              >
+                <CircularProgress />
+              </Stack>
+            )}
+          {!(test?.fetch_project_loading || test?.fetching_project) &&
+            test?.fetch_project_error && (
+              <Stack
+                direction={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                sx={{ width: "100%", height: "200px" }}
+              >
+                <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
+                  Something went wrong..! Try again
                 </Typography>
-              )}
-            </Box>
-          </DialogContent>
-        ) : (
-          <DialogContent
-            sx={{
-              pt: 1,
-              minHeight: "300px",
-              height: "300px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <CircularProgress />
-          </DialogContent>
-        )}
+                <Button variant="contained">Retry</Button>
+              </Stack>
+            )}
+        </DialogContent>
         <Divider />
         {(editProjectDescription?.edit || editProjectTitle?.edit) && (
-          <DialogActions sx={{ px: 3, pb: 3, pt: 1 }}>
+          <DialogActions sx={{ p: 2 }}>
             <Button
               size="small"
               onClick={() => {

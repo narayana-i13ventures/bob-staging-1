@@ -33,6 +33,7 @@ const ProjectMenuBtn = (props: any) => {
     setProjectMenuOpen(true);
   };
   const CloseProjectMenu = () => {
+    event?.stopPropagation();
     setProjectMenuOpen(false);
   };
   const OpenProjectDetails = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,7 +42,7 @@ const ProjectMenuBtn = (props: any) => {
     dispatch(
       appSlice.actions.toggleProjectDetails({
         open: true,
-        projectId: projectId,
+        data: { projectId: projectId},
       })
     );
   };
@@ -51,7 +52,7 @@ const ProjectMenuBtn = (props: any) => {
     dispatch(
       appSlice.actions.toggleShareModal({
         open: true,
-        data: { projectId,name:name },
+        data: { projectId, name: name },
         type: "project",
       })
     );
@@ -74,7 +75,13 @@ const ProjectMenuBtn = (props: any) => {
         <MoreVertOutlinedIcon />
       </IconButton>
       <Popover
+        onClick={(e: any) => {
+          e?.preventDefault();
+        }}
         disablePortal
+        disableEscapeKeyDown
+        disableAutoFocus
+        disableRestoreFocus
         TransitionComponent={GrowTransition}
         anchorEl={ProjectMenuBtnRef?.current}
         open={projectMenuOpen}
@@ -91,14 +98,24 @@ const ProjectMenuBtn = (props: any) => {
           elevation: 1,
           sx: {
             p: 1,
-            width: "200px",
-            overflow: "hidden",
             zIndex: 100,
+            width: "200px",
+            borderRadius: 2,
+            overflow: "hidden",
+            backgroundColor: "#fff",
           },
         }}
       >
         <MenuList sx={{ p: 0 }}>
-          <MenuItem onClick={(e: any) => OpenProjectShare(e)}>
+          <MenuItem
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: `#f6f5f4`,
+              },
+            }}
+            onClick={(e: any) => OpenProjectShare(e)}
+          >
             <ListItemIcon sx={{ minWidth: "25px !important" }}>
               <ShareOutlinedIcon sx={{ fontSize: 18 }} />
             </ListItemIcon>
@@ -112,7 +129,17 @@ const ProjectMenuBtn = (props: any) => {
               Share
             </ListItemText>
           </MenuItem>
-          <MenuItem>
+          <MenuItem
+            onClick={(e: any) => {
+              e?.preventDefault();
+            }}
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: `#f6f5f4`,
+              },
+            }}
+          >
             <ListItemIcon sx={{ minWidth: "25px !important" }}>
               <ContentCopyOutlinedIcon sx={{ fontSize: 18 }} />
             </ListItemIcon>
@@ -126,21 +153,15 @@ const ProjectMenuBtn = (props: any) => {
               Copy Link
             </ListItemText>
           </MenuItem>
-          <MenuItem>
-            <ListItemIcon sx={{ minWidth: "25px !important" }}>
-              <EditOutlinedIcon sx={{ fontSize: 18 }} />
-            </ListItemIcon>
-            <ListItemText
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 14,
-                },
-              }}
-            >
-              Rename
-            </ListItemText>
-          </MenuItem>
-          <MenuItem onClick={(e: any) => OpenProjectDetails(e)}>
+          <MenuItem
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: `#f6f5f4`,
+              },
+            }}
+            onClick={(e: any) => OpenProjectDetails(e)}
+          >
             <ListItemIcon sx={{ minWidth: "25px !important" }}>
               <InfoOutlinedIcon sx={{ fontSize: 18 }} />
             </ListItemIcon>
@@ -154,7 +175,17 @@ const ProjectMenuBtn = (props: any) => {
               Details
             </ListItemText>
           </MenuItem>
-          <MenuItem>
+          <MenuItem
+            onClick={(e: any) => {
+              e?.preventDefault();
+            }}
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: `#f6f5f4`,
+              },
+            }}
+          >
             <ListItemIcon sx={{ minWidth: "25px !important" }}>
               <OpenInNewOutlinedIcon sx={{ fontSize: 18 }} />
             </ListItemIcon>
@@ -168,21 +199,15 @@ const ProjectMenuBtn = (props: any) => {
               Open in new tab
             </ListItemText>
           </MenuItem>
-          <MenuItem>
-            <ListItemIcon sx={{ minWidth: "25px !important" }}>
-              <LockOutlinedIcon sx={{ fontSize: 18 }} />
-            </ListItemIcon>
-            <ListItemText
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 14,
-                },
-              }}
-            >
-              Lock
-            </ListItemText>
-          </MenuItem>
-          <MenuItem onClick={DeleteProject}>
+          <MenuItem
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: `#f6f5f4`,
+              },
+            }}
+            onClick={DeleteProject}
+          >
             <ListItemIcon sx={{ minWidth: "25px !important" }}>
               <DeleteOutlineOutlinedIcon
                 fontSize="small"

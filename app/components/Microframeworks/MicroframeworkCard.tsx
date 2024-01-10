@@ -6,6 +6,7 @@ import {
   Avatar,
   AvatarGroup,
   Box,
+  Paper,
   Stack,
   Tooltip,
   Typography,
@@ -33,10 +34,12 @@ const MicroframeworkCard = (props: any) => {
   const goToCanvas = () => {
     switch (name) {
       case "Business Model Canvas":
-        router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=BMC`);
+        // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=BMC`);
+        router?.push(`/${projectId}/${futureId}/Microframeworks/BMC`);
         break;
       case "Value Proposition Canvas":
-        router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=CVP`);
+        router?.push(`/${projectId}/${futureId}/Microframeworks/CVP`);
+        // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=CVP`);
         break;
 
       default:
@@ -50,44 +53,61 @@ const MicroframeworkCard = (props: any) => {
     [`& .${tooltipClasses.tooltip}`]: {
       p: 2,
       maxWidth: 400,
-      borderRadius: "10px",
       color: "black",
-      backgroundColor: "#f4f4f4",
+      borderRadius: "10px",
+      backgroundColor: "#fff",
       fontSize: theme.typography.pxToRem(12),
       border: `1px solid ${theme.palette.primary.main}`,
     },
   }));
   return (
     <Stack
-      onClick={goToCanvas}
       component={"div"}
       direction={"column"}
       justifyContent={"center"}
       alignItems={"center"}
       sx={{
-        p: 2,
         boxShadow: 1,
-        borderRadius: 3,
+        borderRadius: 2,
         cursor: "pointer",
+        border: "1px solid #000",
+        maxWidth: "270px",
+        height: '250px',
+        overflow: 'hidden'
       }}
     >
-      <Box
+      <Paper
+        onClick={goToCanvas}
+        elevation={0}
         sx={{
-          width: "250px",
-          height: "200px",
-          borderRadius: 3,
-          backgroundColor: `${theme?.palette?.primary?.main}20`,
+          flexGrow: 1,
+          width: '100%',
+          backgroundSize: "40%",
+          backgroundPosition: "50% 50%",
+          backgroundRepeat: "no-repeat",
+          backgroundImage: `url('/images/bmc.png')`,
         }}
-      ></Box>
+      ></Paper>
       <Stack
         direction={"row"}
         alignItems={"center"}
         justifyContent={"space-between"}
-        sx={{ pt: 2, px: 1, width: "100%" }}
+        sx={{ py: 2, px: 3, width: "100%" }}
       >
-        <Typography sx={{ fontSize: "14px" }} variant="body1">
-          {name}
-        </Typography>
+        <Tooltip title={name} placement="top" arrow>
+          <Typography
+            sx={{
+              pr: 2,
+              fontSize: "15px",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+            variant="body1"
+          >
+            {name}
+          </Typography>
+        </Tooltip>
         <HtmlTooltip
           arrow
           title={

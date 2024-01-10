@@ -62,11 +62,11 @@ const MessageBox = (props: any) => {
             elevation={header ? 2 : 0}
             component={"div"}
             sx={{
-                width: "350px",
+                width: "330px",
                 backgroundColor: `${color || '#fff'}`,
-                height: height !== 1000 ? `${height}px` : "100%",
-                borderRadius: 5,
-                p: 1,
+                // height: height !== 1000 ? `${height}px` : "100%",
+                height: "100%",
+                borderRadius: 2,
                 pt: header ? 1 : 2,
                 mb: header ? 2 : 0,
                 mr: !header ? 2 : 0
@@ -79,11 +79,11 @@ const MessageBox = (props: any) => {
                 justifyContent={"space-between"}
             >
                 {header && (
-                    <>
-                        <IconButton onClick={closeMessageBox}>
+                    <Stack sx={{ px: 2, pb: 1 }}>
+                        <IconButton onClick={closeMessageBox} sx={{ p: 1 }}>
                             <CloseIcon className="!text-white" />
                         </IconButton>
-                    </>
+                    </Stack>
                 )}
                 <Stack
                     direction={"column-reverse"}
@@ -94,8 +94,9 @@ const MessageBox = (props: any) => {
                         width: '100%',
                         overflowY: "auto",
                         px: 2,
-                        maxHeight: `${height !== 1000 ? `${height - 100}px` : "calc(75vh - 60px)"
-                            }`,
+                        maxHeight: `${height !== 1000 ? '48vh' : 'calc(75vh - 60px)'}`,
+                        // maxHeight: `${height !== 1000 ? `${height - 100}px` : "calc(75vh - 60px)"
+                        //     }`,
                     }}
                     ref={messagesContainerRef}
                 >
@@ -113,42 +114,44 @@ const MessageBox = (props: any) => {
                             );
                         })}
                 </Stack>
-                <TextField
-                    fullWidth
-                    disabled={bobThinking}
-                    id="bob-message-input"
-                    placeholder="Enter Your Message"
-                    value={message}
-                    size="small"
-                    multiline={true}
-                    variant="outlined"
-                    maxRows={4}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={handleEnterKeyPress}
-                    inputRef={(input) => (textFieldRef.current = input)}
-                    InputProps={{
-                        id: 'bob-message-input-area',
-                        sx: {
-                            fontSize: "14px",
-                            padding: "10px",
-                            borderRadius: 2,
-                            backgroundColor: '#fff',
-                            my: 1,
-                            "& .MuiOutlinedInput-notchedOutline": {
-                                borderWidth: "1px !important",
+                <Stack sx={{ px: 2, width: '100%' }}>
+                    <TextField
+                        fullWidth
+                        disabled={bobThinking}
+                        id="bob-message-input"
+                        placeholder="Enter Your Message"
+                        value={message}
+                        size="small"
+                        multiline={true}
+                        variant="outlined"
+                        maxRows={4}
+                        onChange={(e) => setMessage(e.target.value)}
+                        onKeyPress={handleEnterKeyPress}
+                        inputRef={(input) => (textFieldRef.current = input)}
+                        InputProps={{
+                            id: 'bob-message-input-area',
+                            sx: {
+                                fontSize: "14px",
+                                padding: "10px",
+                                borderRadius: 2,
+                                backgroundColor: '#fff',
+                                my: 1,
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                    borderWidth: "1px !important",
+                                },
                             },
-                        },
-                        endAdornment: (
-                            <InputAdornment
-                                position="end"
-                                className="cursor-pointer"
-                                onClick={handleSendMessage}
-                            >
-                                <SendIcon sx={{ fontSize: 20 }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
+                            endAdornment: (
+                                <InputAdornment
+                                    position="end"
+                                    className="cursor-pointer"
+                                    onClick={handleSendMessage}
+                                >
+                                    <SendIcon sx={{ fontSize: 20 }} />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </Stack>
             </Stack>
         </Paper>
     );

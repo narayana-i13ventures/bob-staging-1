@@ -19,6 +19,7 @@ import {
   ContentPaste,
   Cloud,
 } from "@mui/icons-material";
+import { signOut } from "next-auth/react";
 
 const UserProfileBtn = () => {
   const dispatch = useDispatch();
@@ -31,28 +32,23 @@ const UserProfileBtn = () => {
   };
   return (
     <>
-      <IconButton
-        size="medium"
-        color="primary"
+      <Avatar
         ref={UserProfileMenuRef}
-        disableFocusRipple
         onClick={handleUserProfileMenu}
+        sx={{
+          width: 30,
+          height: 30,
+          backgroundColor: "orange",
+          cursor: "pointer",
+        }}
       >
-        <Avatar
-          sx={{
-            width: 30,
-            height: 30,
-            backgroundColor: "orange",
-          }}
-        >
-          N
-        </Avatar>
-      </IconButton>
+        N
+      </Avatar>
       <Popover
         disablePortal
+        open={userMenu}
         TransitionComponent={GrowTransition}
         anchorEl={UserProfileMenuRef?.current}
-        open={userMenu}
         onClose={() => dispatch(appSlice.actions.toggleUserMenu(false))}
         anchorOrigin={{
           vertical: "bottom",
@@ -63,24 +59,35 @@ const UserProfileBtn = () => {
           horizontal: "right",
         }}
         PaperProps={{
-          elevation: 1,
+          elevation: 3,
           sx: {
             p: 1,
-            borderRadius: 3,
-            width: "200px",
-            overflow: "hidden",
+            mt: 1,
             zIndex: 100,
+            width: "200px",
+            borderRadius: 2,
+            overflow: "hidden",
+            backgroundColor: "#fff",
+            border: "1px solid #000000",
           },
         }}
       >
         <MenuList>
-          <MenuItem>
+          <MenuItem
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: `#f6f5f4`,
+              },
+            }}
+          >
             <ListItemIcon>
               <Avatar
                 sx={{
                   width: 25,
                   height: 25,
                   backgroundColor: "orange",
+                  fontSize: '14px'
                 }}
               >
                 N
@@ -96,7 +103,14 @@ const UserProfileBtn = () => {
               Narayana Lvsaln
             </ListItemText>
           </MenuItem>
-          <MenuItem>
+          {/* <MenuItem
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: `#f6f5f4`,
+              },
+            }}
+          >
             <ListItemIcon>
               <ContentCopy fontSize="small" />
             </ListItemIcon>
@@ -110,7 +124,14 @@ const UserProfileBtn = () => {
               Settings
             </ListItemText>
           </MenuItem>
-          <MenuItem>
+          <MenuItem
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: `#f6f5f4`,
+              },
+            }}
+          >
             <ListItemIcon>
               <ContentPaste fontSize="small" />
             </ListItemIcon>
@@ -124,8 +145,16 @@ const UserProfileBtn = () => {
               Payments
             </ListItemText>
           </MenuItem>
-          <Divider />
-          <MenuItem>
+          <Divider /> */}
+          <MenuItem
+            onClick={() => signOut()}
+            sx={{
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: `#f6f5f4`,
+              },
+            }}
+          >
             <ListItemIcon>
               <Cloud fontSize="small" />
             </ListItemIcon>

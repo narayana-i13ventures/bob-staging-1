@@ -1,10 +1,10 @@
 import Canvas from '@/app/components/canvas/Canvas'
 import React from 'react'
 
-const BMC = () => {
+const CVPCanvas = () => {
   return (
-    <Canvas canvasName={'BMC'} />
+    <Canvas canvasName={'CVP'} />
   )
 }
 
-export default BMC
+export default CVPCanvas
