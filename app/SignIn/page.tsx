@@ -3,7 +3,7 @@ import { Avatar, Button, Stack, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 
-import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
+import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
 const SignInPage = () => {
   const [email, setEmail] = useState("test2@example.com");
   const [password, setPassword] = useState("123123");
@@ -53,7 +53,7 @@ const SignInPage = () => {
               height: 45,
             }}
           >
-            <MemoryOutlinedIcon fontSize="large" />
+            <AutoAwesomeSharpIcon fontSize="large" />
           </Avatar>
           <Typography variant="h4" sx={{ fontWeight: 700 }}>
             Bob

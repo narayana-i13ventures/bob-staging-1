@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
+import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
 import {
     Avatar,
     Box,
@@ -36,16 +36,8 @@ const Header = () => {
                         alignItems={"center"}
                         spacing={1}
                     >
-                        <Avatar
-                            sx={{
-                                backgroundColor: theme?.palette?.primary?.main,
-                                width: 30,
-                                height: 30,
-                            }}
-                        >
-                            <MemoryOutlinedIcon sx={{ fontSize: '25px' }} />
-                        </Avatar>
-                        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                        <AutoAwesomeSharpIcon sx={{ fontSize: '25px', color: 'black' }} />
+                        <Typography variant="h5" sx={{ fontWeight: 600 }}>
                             Bob
                         </Typography>
                     </Stack>

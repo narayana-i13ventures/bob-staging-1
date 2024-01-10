@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
+import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
 import {
   ContentCut,
   ContentCopy,
@@ -156,7 +157,7 @@ const UserProfileBtn = () => {
             }}
           >
             <ListItemIcon>
-              <Cloud fontSize="small" />
+              <LogoutSharpIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText
               sx={{

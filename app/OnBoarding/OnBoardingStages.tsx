@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import EastIcon from "@mui/icons-material/East";
 import React, { useEffect, useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
+import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
 import SkipNextOutlinedIcon from '@mui/icons-material/SkipNextOutlined';
 import FastForwardOutlinedIcon from '@mui/icons-material/FastForwardOutlined';
 const OnBoardingStages = () => {
@@ -73,7 +73,7 @@ const OnBoardingStages = () => {
                             height: 45,
                         }}
                     >
-                        <MemoryOutlinedIcon fontSize="large" />
+                        <AutoAwesomeSharpIcon fontSize="large" />
                     </Avatar>
                     <Typography variant="h4" sx={{ fontWeight: 700 }}>
                         Bob

@@ -6,7 +6,7 @@ import SlideTransition from "../Utils/Slide";
 import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
+import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import {
   Divider,
@@ -16,7 +16,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import TuneSharpIcon from '@mui/icons-material/SettingsOutlined';
 import CommentBox from "./CommentBox";
 import NotificationBtn from "../Shared/NotificationBtn/NotificationBtn";
 const CanvasModal = () => {
@@ -378,7 +378,7 @@ const CanvasModal = () => {
                     },
                   }}
                 >
-                  <MemoryOutlinedIcon
+                  <AutoAwesomeSharpIcon
                     sx={{
                       color: `${activeBubble === "bob" ? "white" : ""}`,
                       fontSize: "35px",
@@ -415,7 +415,7 @@ const CanvasModal = () => {
                     },
                   }}
                 >
-                  <SettingsOutlinedIcon
+                  <TuneSharpIcon
                     sx={{
                       color: `${activeBubble === "settings" ? "white" : ""}`,
                       fontSize: "25px",

@@ -1,7 +1,7 @@
 import { Avatar, CircularProgress, Stack, Typography } from "@mui/material";
 import React from "react";
 
-import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
+import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
 const Loading = () => {
     return (
         <Stack
@@ -28,7 +28,7 @@ const Loading = () => {
                         height: 45,
                     }}
                 >
-                    <MemoryOutlinedIcon fontSize="large" />
+                    <AutoAwesomeSharpIcon fontSize="medium" />
                 </Avatar>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                     Bob

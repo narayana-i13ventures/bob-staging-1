@@ -10,12 +10,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import CanvasSettingsBtn from "./CanvasSettingsBtn";
 import DialogContent from "@mui/material/DialogContent";
-import { Divider, IconButton, Stack, Typography } from "@mui/material";
+import { Avatar, Button, Divider, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import CanvasRoadmapBtn from "./CanvasRoadmapBtn";
 import ShareModal from "../Shared/ShareModal";
+import { appSlice, useDispatch } from "@/lib/redux";
 
 const Canvas = (props: any) => {
   const { canvasName } = props;
+  const dispatch = useDispatch();
   const router = useRouter();
   const { projectId, futureId } = useParams();
 
@@ -23,6 +25,9 @@ const Canvas = (props: any) => {
     // router.replace("Microframeworks", undefined);
     router.push(`/${projectId}/${futureId}/Microframeworks`);
   };
+  const openCanvasShare = () => {
+    dispatch(appSlice.actions.toggleShareModal({ open: true, data: { name: canvasName }, type: canvasName }))
+  }
   return (
     <>
       <Dialog
@@ -43,7 +48,7 @@ const Canvas = (props: any) => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            backgroundColor: '#f6f5f4'
+            backgroundColor: "#f6f5f4",
           }}
         >
           <Typography variant="h6">Business Model Canvas</Typography>
@@ -54,6 +59,14 @@ const Canvas = (props: any) => {
             justifyContent={"flex-end"}
             spacing={2}
           >
+              <Tooltip title="Narayana Lvsaln (me)">
+                <Avatar sx={{ width: 25, height: 25, backgroundColor: "orange",mr:2,fontSize:'14px' }}>
+                  N
+                </Avatar>
+              </Tooltip>
+            <Button variant="contained" size="small" onClick={openCanvasShare}>
+              Share
+            </Button>
             <CanvasRoadmapBtn canvasName={canvasName} />
             <CanvasSettingsBtn />
             <IconButton size="small" onClick={closeCanvas}>
@@ -68,7 +81,7 @@ const Canvas = (props: any) => {
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "flex-start",
-            backgroundColor: '#fff'
+            backgroundColor: "#fff",
           }}
         >
           {canvasName === "BMC" ? <BMCCanvas /> : <CVPCanvas />}

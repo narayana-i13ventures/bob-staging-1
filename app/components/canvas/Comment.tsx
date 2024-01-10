@@ -8,7 +8,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material";
-import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
+import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
 const Comment = (props: any) => {
@@ -54,7 +54,7 @@ const Comment = (props: any) => {
                                 borderRadius: "100%",
                             }}
                         >
-                            <MemoryOutlinedIcon
+                            <AutoAwesomeSharpIcon
                                 sx={{
                                     p: 0.5,
                                     mt: 0.5,

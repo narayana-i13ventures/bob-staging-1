@@ -6,7 +6,7 @@ import { useResetThinkBeyondMutation } from "@/lib/redux/Api";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import TuneSharpIcon from '@mui/icons-material/TuneSharp';
 const ThinkBeyondSettings = () => {
   const dispatch = useDispatch();
   const [ResetThinkBeyond] = useResetThinkBeyondMutation();
@@ -59,7 +59,7 @@ const ThinkBeyondSettings = () => {
       }}
       ariaLabel="thinkbeyond-speed-dail"
       icon={
-        <SettingsOutlinedIcon
+        <TuneSharpIcon
           sx={{
             color: "white",
           }}

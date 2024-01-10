@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import { IconButton, Stack, Tooltip, useTheme } from "@mui/material";
-import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
+import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
 
 const Bob = () => {
     const theme = useTheme();
@@ -85,17 +85,17 @@ const Bob = () => {
             </motion.div>
             <Tooltip title={`${!BobOpen ? "Bob" : ""}`} placement="top" arrow>
                 <IconButton
-                size="large"
+                    size="large"
                     sx={{
                         backgroundColor: theme.palette.primary.main,
                         "&:hover": {
                             backgroundColor: theme.palette.primary.main,
                         },
-                        p:0.5
+                        p: 1
                     }}
                     onClick={OpenBob}
                 >
-                    <MemoryOutlinedIcon sx={{ color: "white",fontSize:'35px' }} />
+                    <AutoAwesomeSharpIcon sx={{ color: "white", fontSize: '27px' }} />
                 </IconButton>
             </Tooltip>
         </Stack>

@@ -2,7 +2,7 @@ import { selectApp, useSelector } from "@/lib/redux";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material";
 // import { useSession } from "next-auth/react";
-import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
+import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
 const Message = (props: any) => {
   const theme: any = useTheme();
   const { user, message, header } = props;
@@ -35,7 +35,7 @@ const Message = (props: any) => {
             }}
           >
             {user === "assistant" ? (
-              <MemoryOutlinedIcon
+              <AutoAwesomeSharpIcon
                 sx={{
                   p: 0.5,
                   mt: 0.5,
@@ -46,7 +46,7 @@ const Message = (props: any) => {
                 }}
               />
             ) : (
-              <MemoryOutlinedIcon
+              <AutoAwesomeSharpIcon
                 sx={{
                   p: 0.5,
                   color: "white",

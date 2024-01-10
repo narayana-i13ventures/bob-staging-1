@@ -16,7 +16,7 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import RedoOutlinedIcon from "@mui/icons-material/RedoOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import TuneSharpIcon from '@mui/icons-material/TuneSharp';
 import AutorenewOutlinedIcon from "@mui/icons-material/AutorenewOutlined";
 const CanvasSettingsBtn = () => {
     const theme = useTheme();
@@ -44,7 +44,7 @@ const CanvasSettingsBtn = () => {
                     mr: 2,
                 }}
             >
-                <SettingsOutlinedIcon fontSize="small" />
+                <TuneSharpIcon fontSize="small" />
             </IconButton>
             <Popover
                 disablePortal
@@ -109,7 +109,7 @@ const CanvasSettingsBtn = () => {
                             Refill Canvas
                         </ListItemText>
                     </MenuItem>
-                    <MenuItem
+                    {/* <MenuItem
                         onClick={openCanvasShare}
                         sx={{
                             borderRadius: 2,
@@ -127,7 +127,7 @@ const CanvasSettingsBtn = () => {
                         >
                             Share Canvas
                         </ListItemText>
-                    </MenuItem>
+                    </MenuItem> */}
                     <MenuItem
                         sx={{
                             borderRadius: 2,
