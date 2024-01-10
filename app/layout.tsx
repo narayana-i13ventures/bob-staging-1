@@ -2,9 +2,9 @@
 import './styles/globals.css';
 import type { Metadata } from 'next';
 import { Providers } from '@/lib/providers'
-import ThemeRegistry from './components/Registry/ThemeRegistry'
+import ThemeRegistry from './components/ThemeRegistry/ThemeRegistry'
 import GlobalSnackbar from './components/Shared/GlobalSnackbar';
-import AuthProvider from './components/Registry/AuthProvider';
+import AuthProvider from './components/ThemeRegistry/AuthProvider';
 import Loading from './loading';
 import { Suspense } from 'react';
 

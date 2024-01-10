@@ -8,7 +8,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material";
-import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
 const Comment = (props: any) => {
@@ -62,7 +62,7 @@ const Comment = (props: any) => {
                                     backgroundColor: theme.palette.primary.main,
                                 }}
                             >
-                                <RocketLaunchOutlinedIcon
+                                <AutoAwesomeIcon
                                     sx={{
                                         color: "white",
                                         fontSize: "25px",

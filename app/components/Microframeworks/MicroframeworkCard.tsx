@@ -26,7 +26,7 @@ const MicroframeworkCard = (props: any) => {
     dispatch(
       appSlice.actions.toggleShareModal({
         open: true,
-        data: { name: name },
+        data: { },
         type: "microframeworks",
       })
     );

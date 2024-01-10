@@ -27,10 +27,10 @@ const CanvasRoadmapBtn = (props: any) => {
     const NavigateRoadmap = (event: React.SyntheticEvent, nodeIds: any) => {
         console.log(nodeIds);
         if (nodeIds === "3") {
-            router.push("Microframeworks?canvas=BMC");
+            router.push("BMC");
             dispatch(appSlice.actions.toggleCanvasRoadmap(false));
         } else if (nodeIds === "4") {
-            router.push("Microframeworks?canvas=CVP");
+            router.push("CVP");
             dispatch(appSlice.actions.toggleCanvasRoadmap(false));
         }
     };

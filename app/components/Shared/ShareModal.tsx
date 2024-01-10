@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import {
   Box,
+  Breadcrumbs,
   Button,
   Checkbox,
   CircularProgress,
@@ -27,6 +28,7 @@ import {
   useLazyGetProjectByIdQuery,
   useLazyGetSharedUsersProjectQuery,
 } from "@/lib/redux/projectApi";
+import Link from "next/link";
 
 const ShareModal = (props: any) => {
   const dispatch = useDispatch();
@@ -75,7 +77,30 @@ const ShareModal = (props: any) => {
       />
     </Box>
   );
+  console.log(ShareOpen?.type);
 
+  const shareTitle = (
+    <>
+      {ShareOpen?.type === "project" && (
+        <Breadcrumbs aria-label="breadcrumb">
+          <Typography color="text.primary">Uber for Helicopter</Typography>
+        </Breadcrumbs>
+      )}
+      {ShareOpen?.type === "thinkbeyond" && (
+        <Breadcrumbs aria-label="breadcrumb">
+          <Typography color="text.primary">Uber for Helicopter</Typography>
+          <Typography color="text.primary">Thinkbeyond</Typography>
+        </Breadcrumbs>
+      )}
+      {ShareOpen?.type !== "thinkbeyond" && ShareOpen?.type !== "project" && (
+        <Breadcrumbs aria-label="breadcrumb">
+          <Typography color="text.primary">Uber for Helicopter</Typography>
+          <Typography color="text.primary">Future1</Typography>
+          <Typography color="text.primary">{ShareOpen?.type}</Typography>
+        </Breadcrumbs>
+      )}
+    </>
+  );
   const test = {
     isLoading: false,
     isSuccess: true,
@@ -150,9 +175,7 @@ const ShareModal = (props: any) => {
             //   !loading_shared_users &&
             //   !fetching_shared_users &&
             //   !error_shared_users)
-            !test?.isLoading && test?.isSuccess && !test?.isError && (
-              <Typography variant="h6">{ShareOpen?.data?.name}</Typography>
-            )
+            !test?.isLoading && test?.isSuccess && !test?.isError && shareTitle
           }
           <IconButton size="small" onClick={closeProjectShareModal}>
             <CloseIcon />
@@ -169,9 +192,11 @@ const ShareModal = (props: any) => {
           {!test?.isLoading && test?.isSuccess && !test?.isError && (
             <>
               <UserSearch shared_users={shared_users || []} />
-              <Typography variant="body1" sx={{fontWeight:600}}>Share hierarchy</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                Share
+              </Typography>
               <Divider sx={{ my: 1 }} />
-              <Box component={'div'} sx={{ mb: 2 }}>
+              <Box component={"div"} sx={{ mb: 2 }}>
                 <FormControlLabel
                   label="Uber for Helocopter"
                   control={
@@ -181,7 +206,10 @@ const ShareModal = (props: any) => {
                         canvasChecked[1] &&
                         thinkbeyondChecked[0]
                       }
-                      indeterminate={thinkbeyondChecked[0] !== (canvasChecked[0] && canvasChecked[1])}
+                      indeterminate={
+                        thinkbeyondChecked[0] !==
+                        (canvasChecked[0] && canvasChecked[1])
+                      }
                       onChange={checkProject}
                     />
                   }
@@ -189,7 +217,9 @@ const ShareModal = (props: any) => {
                 {ThinkbeyondChildren}
                 {canvasChildren}
               </Box>
-              <Typography variant="body1" sx={{fontWeight:600}}>People With Access</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                People With Access
+              </Typography>
               <Divider sx={{ my: 1 }} />
               <Stack
                 component={"div"}
@@ -246,7 +276,7 @@ const ShareModal = (props: any) => {
                     size="small"
                     id={`global_user_role_${props?.projectId}`}
                     value={"editor"}
-                    onChange={() => { }}
+                    onChange={() => {}}
                     sx={{
                       p: 0,
                       width: "85px",

@@ -30,7 +30,7 @@ const CanvasSettingsBtn = () => {
     };
     const openCanvasShare = () => {
         dispatch(appSlice.actions.toggleCanvasSettings(false));
-        dispatch(appSlice.actions.toggleShareModal({ open: true, data: { name: 'Value Proposition Canvas' }, type: 'cvp' }))
+        dispatch(appSlice.actions.toggleShareModal({ open: true, data: {}, type: 'cvp' }))
     }
     return (
         <>

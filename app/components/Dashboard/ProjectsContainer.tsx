@@ -38,20 +38,20 @@ const ProjectsContainer = () => {
             }}
           >
             <Grid container spacing={4}>
-              <Grid item xs={2}>
+              <Grid item xs={3}>
                 <CreateProjectCard />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={3}>
                 <ProjectCard
                   project={{ project_id: "1", project_name: "Uber Helicopter" }}
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={3}>
                 <ProjectCard
                   project={{ project_id: "2", project_name: "Uber Cycles" }}
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={3}>
                 <ProjectCard
                   project={{ project_id: "3", project_name: "Car Rentals" }}
                 />

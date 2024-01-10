@@ -297,13 +297,13 @@ const ProjectStages = () => {
             }
 
             if (currentStage === 9) {
-                createProject(company)
-                    .unwrap()
-                    .then((data: any) => {
-                        console.log(data);
-                        setInputError("");
-                        setCurrentStage(currentStage + 1);
-                    });
+                // createProject(company)
+                //     .unwrap()
+                //     .then((data: any) => {
+                //         console.log(data);
+                //     });
+                setInputError("");
+                setCurrentStage(currentStage + 1);
             } else {
                 setInputError("");
                 setCurrentStage(currentStage + 1);

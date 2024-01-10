@@ -10,10 +10,20 @@ import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import CanvasSettingsBtn from "./CanvasSettingsBtn";
 import DialogContent from "@mui/material/DialogContent";
-import { Avatar, Button, Divider, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import CanvasRoadmapBtn from "./CanvasRoadmapBtn";
 import ShareModal from "../Shared/ShareModal";
 import { appSlice, useDispatch } from "@/lib/redux";
+import Link from "next/link";
 
 const Canvas = (props: any) => {
   const { canvasName } = props;
@@ -26,8 +36,14 @@ const Canvas = (props: any) => {
     router.push(`/${projectId}/${futureId}/Microframeworks`);
   };
   const openCanvasShare = () => {
-    dispatch(appSlice.actions.toggleShareModal({ open: true, data: { name: canvasName }, type: canvasName }))
-  }
+    dispatch(
+      appSlice.actions.toggleShareModal({
+        open: true,
+        data: {},
+        type: canvasName,
+      })
+    );
+  };
   return (
     <>
       <Dialog
@@ -51,19 +67,43 @@ const Canvas = (props: any) => {
             backgroundColor: "#f6f5f4",
           }}
         >
-          <Typography variant="h6">Business Model Canvas</Typography>
-
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link href={`/${projectId}/Thinkbeyond`}>
+              <Typography color="text.primary">Uber for Helicopter</Typography>
+            </Link>
+            <Link href={`/${projectId}/Future1/Microframeworks`}>
+              <Typography color="text.primary">Future1</Typography>
+            </Link>
+            {canvasName === "BMC" && (
+              <Typography color="text.primary" sx={{ cursor: 'auto' }}>
+                Business Model Canvas
+              </Typography>
+            )}
+            {canvasName === "CVP" && (
+              <Typography color="text.primary" sx={{ cursor: 'auto' }}>
+                Value Proposition Canvas
+              </Typography>
+            )}
+          </Breadcrumbs>
           <Stack
             direction={"row"}
             alignItems={"center"}
             justifyContent={"flex-end"}
             spacing={2}
           >
-              <Tooltip title="Narayana Lvsaln (me)">
-                <Avatar sx={{ width: 25, height: 25, backgroundColor: "orange",mr:2,fontSize:'14px' }}>
-                  N
-                </Avatar>
-              </Tooltip>
+            <Tooltip title="Narayana Lvsaln (me)">
+              <Avatar
+                sx={{
+                  width: 25,
+                  height: 25,
+                  backgroundColor: "orange",
+                  mr: 2,
+                  fontSize: "14px",
+                }}
+              >
+                N
+              </Avatar>
+            </Tooltip>
             <Button variant="contained" size="small" onClick={openCanvasShare}>
               Share
             </Button>

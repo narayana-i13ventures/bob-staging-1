@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import {
   Avatar,
   Box,
@@ -36,7 +36,7 @@ const Header = () => {
             alignItems={"center"}
             spacing={1}
           >
-            <RocketLaunchOutlinedIcon
+            <AutoAwesomeIcon
               sx={{ fontSize: "25px", color: "black" }}
             />
             <Typography variant="h5" sx={{ fontWeight: 600 }}>

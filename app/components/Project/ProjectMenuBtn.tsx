@@ -42,7 +42,7 @@ const ProjectMenuBtn = (props: any) => {
     dispatch(
       appSlice.actions.toggleProjectDetails({
         open: true,
-        data: { projectId: projectId},
+        data: { projectId: projectId },
       })
     );
   };
@@ -52,7 +52,7 @@ const ProjectMenuBtn = (props: any) => {
     dispatch(
       appSlice.actions.toggleShareModal({
         open: true,
-        data: { projectId, name: name },
+        data: { projectId },
         type: "project",
       })
     );

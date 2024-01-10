@@ -3,7 +3,7 @@ import ProjectMenuBtn from "./ProjectMenuBtn";
 import { Box, Card, IconButton, Paper, Stack, Typography } from "@mui/material";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import { useRouter } from "next/navigation";
-
+import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 const ProjectCard = (props: any) => {
   const { project } = props;
   const { project_name, project_id } = project;
@@ -32,12 +32,17 @@ const ProjectCard = (props: any) => {
           elevation={0}
           sx={{
             flexGrow: 1,
-            backgroundSize: "40%",
-            backgroundPosition: "50% 50%",
-            backgroundRepeat: "no-repeat",
-            backgroundImage: `url('/images/target.png')`,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+            // backgroundSize: "40%",
+            // backgroundPosition: "50% 50%",
+            // backgroundRepeat: "no-repeat",
+            // backgroundImage: `url('/images/target.png')`,
           }}
-        ></Paper>
+        >
+          <RocketLaunchOutlinedIcon sx={{ fontSize: '90px' }} />
+        </Paper>
         <Stack
           component={"div"}
           direction={"row"}
@@ -45,6 +50,7 @@ const ProjectCard = (props: any) => {
           alignItems={"center"}
           sx={{
             p: 1,
+            px: 2,
             width: "100%",
           }}
         >
@@ -52,7 +58,7 @@ const ProjectCard = (props: any) => {
             variant="body1"
             sx={{
               pr: 2,
-              fontSize: "14px",
+              fontSize: "15px",
               fontWeight: 600,
               textAlign: "center",
               overflow: "hidden",

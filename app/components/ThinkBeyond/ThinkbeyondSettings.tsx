@@ -30,7 +30,7 @@ const ThinkBeyondSettings = () => {
     dispatch(
       appSlice.actions.toggleShareModal({
         open: true,
-        data: { name: 'Thinkbeyond' },
+        data: {},
         type: "thinkbeyond",
       })
     );

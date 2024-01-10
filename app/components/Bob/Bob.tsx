@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import { IconButton, Stack, Tooltip, useTheme } from "@mui/material";
-import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 const Bob = () => {
     const theme = useTheme();
     const controls = useAnimation();
@@ -94,7 +94,7 @@ const Bob = () => {
                     }}
                     onClick={OpenBob}
                 >
-                    <RocketLaunchOutlinedIcon sx={{ color: "white", fontSize: '27px' }} />
+                    <AutoAwesomeIcon sx={{ color: "white", fontSize: '27px' }} />
                 </IconButton>
             </Tooltip>
         </Stack>

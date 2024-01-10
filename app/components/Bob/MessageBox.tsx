@@ -64,8 +64,8 @@ const MessageBox = (props: any) => {
             sx={{
                 width: "330px",
                 backgroundColor: `${color || '#fff'}`,
-                // height: height !== 1000 ? `${height}px` : "100%",
-                height: "100%",
+                height: height !== 1000 ? "65vh" : "100%",
+                // height: "65vh",
                 borderRadius: 2,
                 pt: header ? 1 : 2,
                 mb: header ? 2 : 0,
@@ -79,7 +79,7 @@ const MessageBox = (props: any) => {
                 justifyContent={"space-between"}
             >
                 {header && (
-                    <Stack sx={{ px: 2, pb: 1 }}>
+                    <Stack sx={{ px: 2 }}>
                         <IconButton onClick={closeMessageBox} sx={{ p: 1 }}>
                             <CloseIcon className="!text-white" />
                         </IconButton>
@@ -94,7 +94,7 @@ const MessageBox = (props: any) => {
                         width: '100%',
                         overflowY: "auto",
                         px: 2,
-                        maxHeight: `${height !== 1000 ? '48vh' : 'calc(75vh - 60px)'}`,
+                        // maxHeight: `${height !== 1000 ? '48vh' : 'calc(75vh - 60px)'}`,
                         // maxHeight: `${height !== 1000 ? `${height - 100}px` : "calc(75vh - 60px)"
                         //     }`,
                     }}

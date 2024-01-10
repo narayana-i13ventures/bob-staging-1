@@ -2,7 +2,7 @@ import { selectApp, useSelector } from "@/lib/redux";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material";
 // import { useSession } from "next-auth/react";
-import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 const Message = (props: any) => {
   const theme: any = useTheme();
   const { user, message, header } = props;
@@ -43,7 +43,7 @@ const Message = (props: any) => {
                   backgroundColor: theme.palette.primary.main,
                 }}
               >
-                <RocketLaunchOutlinedIcon
+                <AutoAwesomeIcon
                   sx={{
                     color: "white",
                     fontSize: "25px",
@@ -59,7 +59,7 @@ const Message = (props: any) => {
                   backgroundColor: theme.palette.primary.main,
                 }}
               >
-                <RocketLaunchOutlinedIcon
+                <AutoAwesomeIcon
                   sx={{
                     color: "white",
                     fontSize: "25px",

@@ -6,7 +6,7 @@ import SlideTransition from "../Utils/Slide";
 import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import {
   Divider,
@@ -379,7 +379,7 @@ const CanvasModal = () => {
                     },
                   }}
                 >
-                  <RocketLaunchOutlinedIcon
+                  <AutoAwesomeIcon
                     sx={{
                       color: `${activeBubble === "bob" ? "white" : ""}`,
                       fontSize: "30px",

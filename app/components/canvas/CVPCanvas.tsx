@@ -40,6 +40,7 @@ const CVPCanvas = () => {
         <CanvasCard color={"#F5D6C3"} card={{ card_name: 'Client Jobs' }} />
       </Box>
       <Box sx={{ gridColumn: "span 1", gridRow: "span 6" }}>
+        
       </Box>
       <Box sx={{ gridColumn: "span 2", gridRow: "span 6" }}>
         <CanvasCard color={"#BACFF4"} card={{ card_name: 'Products & Serveices' }} />

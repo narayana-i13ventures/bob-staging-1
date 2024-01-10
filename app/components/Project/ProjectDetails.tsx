@@ -85,8 +85,7 @@ const ProjectDetails = () => {
       appSlice.actions.toggleShareModal({
         open: true,
         data: {
-          projectId: projectDetailsOpen?.projectId,
-          name: project_data?.project_name,
+          projectId: projectDetailsOpen?.projectId
         },
         type: "project",
       })
@@ -120,8 +119,8 @@ const ProjectDetails = () => {
           {!test?.fetch_project_loading &&
             !test?.fetch_project_error &&
             !test?.fetching_project && (
-              <Typography variant="h6" sx={{display:'flex',justifyContent:'flex-start',alignItems:'center'}}>
-                <InfoOutlinedIcon sx={{mr:2}}/>Details
+              <Typography variant="h6" sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+                <InfoOutlinedIcon sx={{ mr: 2 }} />Details
               </Typography>
             )}
           <IconButton size="small" onClick={closeProjectDetails}>
