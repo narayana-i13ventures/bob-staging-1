@@ -5,12 +5,16 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { selectApp, useSelector } from "@/lib/redux";
 import NextAppDirEmotionCacheProvider from "./EmotionCache";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function ThemeRegistry({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const session: any = useSession();
   const { mode } = useSelector(selectApp);
 
   const theme = createTheme(
@@ -24,10 +28,11 @@ export default function ThemeRegistry({
       <NextAppDirEmotionCacheProvider options={{ key: "mui" }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {children}
+          <>
+            {children}
+          </>
         </ThemeProvider>
       </NextAppDirEmotionCacheProvider>
-
     </>
   );
 }
