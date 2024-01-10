@@ -189,7 +189,7 @@ const ShareModal = (props: any) => {
                 {ThinkbeyondChildren}
                 {canvasChildren}
               </Box>
-              <Typography variant="body1">People With Access</Typography>
+              <Typography variant="body1" sx={{fontWeight:600}}>People With Access</Typography>
               <Divider sx={{ my: 1 }} />
               <Stack
                 component={"div"}
