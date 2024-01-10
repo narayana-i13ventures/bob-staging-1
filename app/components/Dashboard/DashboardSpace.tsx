@@ -72,7 +72,7 @@ const DashboardSpace = () => {
           >
             My Projects
           </Typography>
-          <Stack
+          {/* <Stack
             direction={"row"}
             justifyContent={"flex-end"}
             alignItems={"center"}
@@ -88,7 +88,7 @@ const DashboardSpace = () => {
                 <ListOutlinedIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-          </Stack>
+          </Stack> */}
         </Stack>
         <Divider sx={{ width: '100%', mb: 2, mt: 1 }} />
         <ProjectsContainer />
