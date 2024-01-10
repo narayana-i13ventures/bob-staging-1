@@ -1,7 +1,7 @@
 import { Avatar, CircularProgress, Stack, Typography } from "@mui/material";
 import React from "react";
 
-import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
+import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 const Loading = () => {
     return (
         <Stack
@@ -28,7 +28,7 @@ const Loading = () => {
                         height: 45,
                     }}
                 >
-                    <AutoAwesomeSharpIcon fontSize="medium" />
+                    <RocketLaunchOutlinedIcon fontSize="medium" />
                 </Avatar>
                 <Typography variant="h4" sx={{ fontWeight: 700 }}>
                     Bob

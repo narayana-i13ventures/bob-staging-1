@@ -26,7 +26,7 @@ const UserSearch = (props: any) => {
     <>
       <Autocomplete
         sx={{
-          mb: 3,
+          mb: 2,
           "& .MuiOutlinedInput-notchedOutline": {
             borderWidth: "1px !important",
           },

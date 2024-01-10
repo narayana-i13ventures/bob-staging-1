@@ -8,7 +8,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material";
-import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
+import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
 const Comment = (props: any) => {
@@ -54,16 +54,21 @@ const Comment = (props: any) => {
                                 borderRadius: "100%",
                             }}
                         >
-                            <AutoAwesomeSharpIcon
+                            <Avatar
                                 sx={{
-                                    p: 0.5,
+                                    width: 35,
+                                    height: 35,
                                     mt: 0.5,
-                                    color: "white",
-                                    fontSize: "30px",
-                                    borderRadius: "100%",
                                     backgroundColor: theme.palette.primary.main,
                                 }}
-                            />
+                            >
+                                <RocketLaunchOutlinedIcon
+                                    sx={{
+                                        color: "white",
+                                        fontSize: "25px",
+                                    }}
+                                />
+                            </Avatar>
                         </Stack>
                         <Stack alignItems={"flex-start"} justifyContent={"flex-start"}>
                             <Typography

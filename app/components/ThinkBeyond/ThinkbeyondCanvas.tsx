@@ -20,7 +20,11 @@ const ThinkbeyondCanvas = () => {
         isLoading,
         isError,
         isSuccess,
+        refetch: refetchThinkbeyond
     } = useGetThinkBeyondQuery({});
+    const retry = () => {
+        refetchThinkbeyond()
+    }
 
     return (
         <>
@@ -329,7 +333,7 @@ const ThinkbeyondCanvas = () => {
                     <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
                         Something went wrong..! Try again
                     </Typography>
-                    <Button variant="contained">Retry</Button>
+                    <Button variant="contained" onClick={retry}>Retry</Button>
                 </Stack>
             )}
         </>

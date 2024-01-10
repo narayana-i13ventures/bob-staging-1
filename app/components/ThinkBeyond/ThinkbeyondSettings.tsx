@@ -42,7 +42,6 @@ const ThinkBeyondSettings = () => {
       name: "Reset Canvas",
       onclick: handleThinkBeyondReset,
     },
-    { icon: <SaveIcon />, name: "Save" },
     {
       icon: <ShareOutlinedIcon />,
       name: "Share",

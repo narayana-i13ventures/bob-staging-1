@@ -6,7 +6,7 @@ import SlideTransition from "../Utils/Slide";
 import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import AutoAwesomeSharpIcon from '@mui/icons-material/AutoAwesomeSharp';
+import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import {
   Divider,
@@ -16,7 +16,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
-import TuneSharpIcon from '@mui/icons-material/SettingsOutlined';
+import TuneSharpIcon from '@mui/icons-material/TuneSharp';
 import CommentBox from "./CommentBox";
 import NotificationBtn from "../Shared/NotificationBtn/NotificationBtn";
 const CanvasModal = () => {
@@ -370,6 +370,7 @@ const CanvasModal = () => {
                 <IconButton
                   onClick={() => setActiveBubble("bob")}
                   sx={{
+                    p:1.5,
                     backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
                       }`,
                     "&:hover": {
@@ -378,10 +379,10 @@ const CanvasModal = () => {
                     },
                   }}
                 >
-                  <AutoAwesomeSharpIcon
+                  <RocketLaunchOutlinedIcon
                     sx={{
                       color: `${activeBubble === "bob" ? "white" : ""}`,
-                      fontSize: "35px",
+                      fontSize: "30px",
                     }}
                   />
                 </IconButton>

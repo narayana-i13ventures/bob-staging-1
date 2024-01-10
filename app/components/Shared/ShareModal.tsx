@@ -1,13 +1,15 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import {
   Box,
   Button,
+  Checkbox,
   CircularProgress,
   DialogActions,
   Divider,
   FormControl,
+  FormControlLabel,
   IconButton,
   MenuItem,
   Select,
@@ -29,6 +31,50 @@ import {
 const ShareModal = (props: any) => {
   const dispatch = useDispatch();
   const { ShareOpen } = useSelector(selectApp);
+  const [thinkbeyondChecked, setThinkbeyondChecked] = useState([false]);
+  const [canvasChecked, setCanvasChecked] = React.useState([false, false]);
+  const checkProject = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setThinkbeyondChecked([event.target.checked]);
+    setCanvasChecked([event.target.checked, event.target.checked]);
+  };
+  const checkThinkbeyond = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCanvasChecked([event.target.checked, event.target.checked]);
+  };
+
+  const BMCChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCanvasChecked([event.target.checked, canvasChecked[1]]);
+  };
+
+  const CVPChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCanvasChecked([canvasChecked[0], event.target.checked]);
+  };
+
+  const canvasChildren = (
+    <Box sx={{ display: "flex", flexDirection: "column", ml: 6 }}>
+      <FormControlLabel
+        label="Business Model Canvas"
+        control={<Checkbox checked={canvasChecked[0]} onChange={BMCChecked} />}
+      />
+      <FormControlLabel
+        label="Value Proposition Canvas"
+        control={<Checkbox checked={canvasChecked[1]} onChange={CVPChecked} />}
+      />
+    </Box>
+  );
+  const ThinkbeyondChildren = (
+    <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
+      <FormControlLabel
+        label="Thinkbeyond Canvas"
+        control={
+          <Checkbox
+            indeterminate={canvasChecked[0] !== canvasChecked[1]}
+            checked={canvasChecked[0] && canvasChecked[1]}
+            onChange={checkThinkbeyond}
+          />
+        }
+      />
+    </Box>
+  );
 
   const test = {
     isLoading: false,
@@ -68,6 +114,7 @@ const ShareModal = (props: any) => {
       appSlice.actions.toggleShareModal({ open: false, data: {}, type: "" })
     );
   };
+
   return (
     <>
       <Dialog
@@ -122,6 +169,26 @@ const ShareModal = (props: any) => {
           {!test?.isLoading && test?.isSuccess && !test?.isError && (
             <>
               <UserSearch shared_users={shared_users || []} />
+              <Typography variant="body1" sx={{fontWeight:600}}>Share hierarchy</Typography>
+              <Divider sx={{ my: 1 }} />
+              <Box component={'div'} sx={{ mb: 2 }}>
+                <FormControlLabel
+                  label="Uber for Helocopter"
+                  control={
+                    <Checkbox
+                      checked={
+                        canvasChecked[0] &&
+                        canvasChecked[1] &&
+                        thinkbeyondChecked[0]
+                      }
+                      indeterminate={thinkbeyondChecked[0] !== (canvasChecked[0] && canvasChecked[1])}
+                      onChange={checkProject}
+                    />
+                  }
+                />
+                {ThinkbeyondChildren}
+                {canvasChildren}
+              </Box>
               <Typography variant="body1">People With Access</Typography>
               <Divider sx={{ my: 1 }} />
               <Stack
@@ -130,7 +197,7 @@ const ShareModal = (props: any) => {
                 justifyContent={"flex-start"}
                 alignItems={"flext-start"}
                 sx={{
-                  maxHeight: "300px",
+                  maxHeight: "200px",
                   overflowY: "auto",
                 }}
               >
