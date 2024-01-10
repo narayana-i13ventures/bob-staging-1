@@ -30,8 +30,8 @@ export const generateThemeOptions = (appTheme: AppTheme): any => {
             },
         },
         typography: {
-            // fontFamily: ["Montserrat"],
-            fontFamily: ["open sans"],
+            fontFamily: ["Montserrat"],
+            // fontFamily: ["open sans"],
             overflow: 'hidden',
             body1: {
                 fontWeight: 500,
