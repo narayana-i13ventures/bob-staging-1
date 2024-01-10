@@ -26,7 +26,7 @@ const OnBoardingStages = () => {
     const router = useRouter();
     const [role, setRole] = useState("");
     const [username, setUsername] = useState("");
-    const [currentStage, setCurrentStage] = useState(5);
+    const [currentStage, setCurrentStage] = useState(0);
     const [collaboration, setCollaboration] = useState<any>([]);
     const [collaborationEmail, setCollaborationEmail] = useState<any>({
         invite1: "",
