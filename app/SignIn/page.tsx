@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 
 import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
 const SignInPage = () => {
-  const [email, setEmail] = useState("jhondave@gmail.com");
+  const [email, setEmail] = useState("test2@example.com");
   const [password, setPassword] = useState("123123");
 
   const login = () => {

@@ -1,8 +1,8 @@
-import { Avatar, Stack, Typography } from "@mui/material";
+import { Avatar, CircularProgress, Stack, Typography } from "@mui/material";
 import React from "react";
 
 import MemoryOutlinedIcon from "@mui/icons-material/MemoryOutlined";
-const loading = () => {
+const Loading = () => {
     return (
         <Stack
             direction={"column"}
@@ -34,9 +34,10 @@ const loading = () => {
                     Bob
                 </Typography>
             </Stack>
-            <Typography variant="h6">Loading...</Typography>
+            <CircularProgress />
+            {/* <Typography variant="h6">Loading...</Typography> */}
         </Stack>
     );
 };
 
-export default loading;
+export default Loading;

@@ -7,6 +7,8 @@ import NextAppDirEmotionCacheProvider from "./EmotionCache";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { CircularProgress } from "@mui/material";
+import Loading from "@/app/loading";
 
 export default function ThemeRegistry({
   children,
@@ -23,14 +25,24 @@ export default function ThemeRegistry({
     })
   );
 
+  // useEffect(() => {
+  //   if (session?.status !== 'loading' && session?.status === 'authenticated' && session?.status !== 'unauthenticated') {
+  //     if (session?.data?.is_new) {
+  //       router.push('/OnBoarding');
+  //     }
+  //   }
+  // }, [session])
   return (
     <>
       <NextAppDirEmotionCacheProvider options={{ key: "mui" }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <>
-            {children}
-          </>
+          {session?.status === "loading" && (
+            <>
+              <Loading />
+            </>
+          )}
+          {<>{children}</>}
         </ThemeProvider>
       </NextAppDirEmotionCacheProvider>
     </>

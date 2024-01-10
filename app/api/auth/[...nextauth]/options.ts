@@ -5,9 +5,15 @@ import next from "next";
 const users = [
     {
         id: "42",
-        email: "jhondave@gmail.com",
+        email: "test1@example.com",
         password: "123123",
         is_new: true,
+    },
+    {
+        id: "43",
+        email: "test2@example.com",
+        password: "123123",
+        is_new: false,
     },
 ];
 
