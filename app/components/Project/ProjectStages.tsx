@@ -19,9 +19,8 @@ import { useCreateProjectMutation } from "@/lib/redux/projectApi";
 const ProjectStages = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
-    const { company } = useSelector(selectApp);
+    const { company, companyStage } = useSelector(selectApp);
     const [inputError, setInputError] = useState("");
-    const [currentStage, setCurrentStage] = useState(0);
     const [
         createProject,
         {
@@ -289,24 +288,23 @@ const ProjectStages = () => {
     }, [answerInput]);
 
     const nextStage = () => {
-        if (currentStage < stages.length - 1) {
-            const currentStageData = stages[currentStage];
-            if (currentStageData.required && !currentStageData.getter) {
-                setInputError(currentStageData.error);
+        if (companyStage < stages.length - 1) {
+            const companyStageData = stages[companyStage];
+            if (companyStageData.required && !companyStageData.getter) {
+                setInputError(companyStageData.error);
                 return;
             }
 
-            if (currentStage === 9) {
-                // createProject(company)
-                //     .unwrap()
-                //     .then((data: any) => {
-                //         console.log(data);
-                //     });
-                setInputError("");
-                setCurrentStage(currentStage + 1);
+            if (companyStage === 9) {
+                createProject(company)
+                    .unwrap()
+                    .then((data: any) => {
+                        setInputError("");
+                        dispatch(appSlice.actions.toggleCompanyStage(companyStage + 1));
+                    });
             } else {
                 setInputError("");
-                setCurrentStage(currentStage + 1);
+                dispatch(appSlice.actions.toggleCompanyStage(companyStage + 1));
                 setTimeout(() => {
                     const answerInput = document.getElementById("answer");
                     if (answerInput) {
@@ -318,8 +316,8 @@ const ProjectStages = () => {
     };
 
     const previousStage = () => {
-        if (currentStage > 0) {
-            setCurrentStage(currentStage - 1);
+        if (companyStage > 0) {
+            dispatch(appSlice.actions.toggleCompanyStage(companyStage - 1));
             setTimeout(() => {
                 const answerInput = document.getElementById("answer");
                 if (answerInput) {
@@ -330,11 +328,11 @@ const ProjectStages = () => {
     };
 
     const handleInputChange = (e: any) => {
-        const currentStageData = stages[currentStage];
-        if (inputError && currentStageData.required && e.target.value) {
+        const companyStageData = stages[companyStage];
+        if (inputError && companyStageData.required && e.target.value) {
             setInputError("");
         }
-        dispatch(currentStageData?.setter(e.target.value));
+        dispatch(companyStageData?.setter(e.target.value));
     };
 
     return (
@@ -343,7 +341,7 @@ const ProjectStages = () => {
                 <Box
                     component={"div"}
                     sx={{
-                        minHeight: '200px',
+                        minHeight: "200px",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "flex-start",
@@ -360,32 +358,32 @@ const ProjectStages = () => {
                             flexDirection: "column",
                         }}
                     >
-                        {stages[currentStage]?.content && (
+                        {stages[companyStage]?.content && (
                             <Typography variant="body1" sx={{ pb: 3, pt: 1 }}>
-                                {stages[currentStage]?.content}
+                                {stages[companyStage]?.content}
                             </Typography>
                         )}
-                        {stages[currentStage]?.type === "select" ? (
+                        {stages[companyStage]?.type === "select" ? (
                             <FormControl fullWidth size="small">
                                 <Select
                                     sx={{
                                         fontSize: "14px",
                                         "& .MuiOutlinedInput-notchedOutline": {
                                             borderWidth: "1px !important",
-                                        }
+                                        },
                                     }}
                                     fullWidth
                                     id={`answer`}
-                                    placeholder={stages[currentStage]?.placeholder}
+                                    placeholder={stages[companyStage]?.placeholder}
                                     onChange={(e) => {
                                         handleInputChange(e);
                                     }}
-                                    value={stages[currentStage]?.getter || `Select an Option`}
+                                    value={stages[companyStage]?.getter || `Select an Option`}
                                 >
                                     <MenuItem disabled value="Select an Option">
                                         Select an Option
                                     </MenuItem>
-                                    {stages[currentStage].options.map((option: any) => (
+                                    {stages[companyStage].options.map((option: any) => (
                                         <MenuItem key={option} value={option}>
                                             {option}
                                         </MenuItem>
@@ -398,19 +396,18 @@ const ProjectStages = () => {
                                     </Typography>
                                 )}
                             </FormControl>
-                        ) : stages[currentStage]?.type === "text" ? (
+                        ) : stages[companyStage]?.type === "text" ? (
                             <FormControl fullWidth>
                                 <Input
-
                                     sx={{
                                         fontSize: "14px",
                                     }}
                                     id={`answer`}
-                                    placeholder={stages[currentStage]?.placeholder}
+                                    placeholder={stages[companyStage]?.placeholder}
                                     onChange={(e) => {
                                         handleInputChange(e);
                                     }}
-                                    value={stages[currentStage].getter}
+                                    value={stages[companyStage].getter}
                                 />
                                 {/* Display the error message */}
                                 {inputError && (
@@ -435,7 +432,7 @@ const ProjectStages = () => {
                                         variant="h6"
                                         sx={{ fontWeight: 600, pb: 3, pt: 2 }}
                                     >
-                                        {stages[currentStage]?.message}
+                                        {stages[companyStage]?.message}
                                     </Typography>
                                     <Button variant="contained" sx={{ mb: 3 }}>
                                         Let's get Started
@@ -451,14 +448,14 @@ const ProjectStages = () => {
                             alignItems: "center",
                             width: "100%",
                             justifyContent:
-                                currentStage === 0
+                                companyStage === 0
                                     ? "justify-end"
-                                    : currentStage === 10
+                                    : companyStage === 10
                                         ? "justify-start"
                                         : "justify-between",
                         }}
                     >
-                        {currentStage !== 0 && currentStage !== 10 && (
+                        {companyStage !== 0 && companyStage !== 10 && (
                             <Box
                                 component={"div"}
                                 onClick={previousStage}
@@ -475,7 +472,7 @@ const ProjectStages = () => {
                                 <Typography variant="body1">Prev</Typography>
                             </Box>
                         )}
-                        {currentStage !== 10 && (
+                        {companyStage !== 10 && (
                             <Box
                                 component={"div"}
                                 onClick={nextStage}
@@ -500,8 +497,8 @@ const ProjectStages = () => {
                 <Box
                     component={"div"}
                     sx={{
-                        width: '100%',
-                        minHeight: '200px',
+                        width: "100%",
+                        minHeight: "200px",
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",

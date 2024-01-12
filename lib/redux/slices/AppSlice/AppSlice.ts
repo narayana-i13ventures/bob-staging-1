@@ -27,6 +27,7 @@ interface AppState {
         annualRevenue: String;
         businessModel: String;
     };
+    companyStage: number;
     ThinkbeyondModalOpen: boolean;
     ThinkbeyondSettings: boolean;
     BobOpen: boolean;
@@ -35,11 +36,11 @@ interface AppState {
     globalSnackBar: {
         open: boolean,
         content: String,
+        clossable: boolean
     },
     canvasModalOpen: boolean,
     canvasSettings: boolean;
     canvasRoadmap: boolean;
-    canvasTile: String;
 }
 
 const initialState: AppState = {
@@ -68,6 +69,7 @@ const initialState: AppState = {
         annualRevenue: "",
         businessModel: "",
     },
+    companyStage: 0,
     ThinkbeyondModalOpen: false,
     ThinkbeyondSettings: false,
     BobOpen: false,
@@ -97,83 +99,15 @@ const initialState: AppState = {
             content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
             role: "assistant",
         },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
     ],
     globalSnackBar: {
         open: false,
         content: "",
+        clossable: false,
     },
     canvasModalOpen: false,
     canvasSettings: false,
     canvasRoadmap: false,
-    canvasTile: ''
 
 };
 
@@ -220,9 +154,6 @@ export const appSlice = createSlice({
         toggleCanvasRoadmap: (state, action) => {
             state.canvasRoadmap = action?.payload
         },
-        toggleCanvasTile: (state, action) => {
-            state.canvasTile = action?.payload;
-        },
         //==============================================
         //=====================Bob======================
         //==============================================
@@ -248,6 +179,9 @@ export const appSlice = createSlice({
         //==============================================
         //===================Company====================
         //==============================================
+        toggleCompanyStage(state, action) {
+            state.companyStage = action.payload;
+        },
         setCompanyName(state, action) {
             state.company.companyName = action.payload;
         },
@@ -278,5 +212,19 @@ export const appSlice = createSlice({
         setBusinessModel(state, action) {
             state.company.businessModel = action.payload;
         },
+        resetCompany(state) {
+            state.company = {
+                companyName: '',
+                industry: '',
+                vertical: '',
+                companyType: '',
+                companySize: '',
+                companyHeadquarters: '',
+                companyTargetRegions: '',
+                fundingStage: '',
+                annualRevenue: '',
+                businessModel: '',
+            }
+        }
     },
 });

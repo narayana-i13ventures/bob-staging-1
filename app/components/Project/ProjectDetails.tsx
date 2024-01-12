@@ -21,13 +21,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 const ProjectDetails = () => {
   const dispatch = useDispatch();
-  const { projectDetailsOpen } = useSelector(selectApp);
-
+  const { projectDetailsOpen }: any = useSelector(selectApp);
   const [editProjectTitle, setEditProjectTitle] = useState({
     focus: true,
     edit: false,
@@ -49,13 +48,6 @@ const ProjectDetails = () => {
     },
   ] = useLazyGetProjectByIdQuery();
 
-  const test = {
-    fetch_project_loading: false,
-    fetch_project_success: true,
-    fetch_project_error: false,
-    fetching_project: false,
-  };
-
   const created_date: any = moment(
     project_data?.project?.created_on,
     "ddd, DD MMM YYYY HH:mm:ss z"
@@ -67,14 +59,17 @@ const ProjectDetails = () => {
   ).format("DD MMMM, YYYY");
 
   useEffect(() => {
-    if (projectDetailsOpen?.projectId !== "") {
+    if (projectDetailsOpen?.projectId !== "" && projectDetailsOpen?.open) {
       getProjectById(projectDetailsOpen?.projectId, false);
     }
   }, [projectDetailsOpen?.projectId]);
 
   const closeProjectDetails = () => {
     dispatch(
-      appSlice.actions.toggleProjectDetails({ open: false, projectId: "" })
+      appSlice.actions.toggleProjectDetails({
+        open: false,
+        projectId: "",
+      })
     );
   };
   const openProjectShare = () => {
@@ -85,11 +80,16 @@ const ProjectDetails = () => {
       appSlice.actions.toggleShareModal({
         open: true,
         data: {
-          projectId: projectDetailsOpen?.projectId
+          projectId: projectDetailsOpen?.projectId,
         },
         type: "project",
       })
     );
+  };
+  const retry = () => {
+    if (projectDetailsOpen?.projectId !== "" && projectDetailsOpen?.open) {
+      getProjectById(projectDetailsOpen?.projectId, false);
+    }
   };
   return (
     <>
@@ -108,19 +108,27 @@ const ProjectDetails = () => {
             p: 2,
             display: "flex",
             justifyContent:
-              !test?.fetch_project_loading &&
-                !test?.fetch_project_error &&
-                !test?.fetching_project
+              !fetch_project_loading &&
+              !fetch_project_error &&
+              !fetching_project
                 ? "space-between"
                 : "flex-end",
             alignItems: "center",
           }}
         >
-          {!test?.fetch_project_loading &&
-            !test?.fetch_project_error &&
-            !test?.fetching_project && (
-              <Typography variant="h6" sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                <InfoOutlinedIcon sx={{ mr: 2 }} />Details
+          {!fetch_project_loading &&
+            !fetch_project_error &&
+            !fetching_project && (
+              <Typography
+                variant="h6"
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+              >
+                <InfoOutlinedIcon sx={{ mr: 2 }} />
+                Details
               </Typography>
             )}
           <IconButton size="small" onClick={closeProjectDetails}>
@@ -129,9 +137,9 @@ const ProjectDetails = () => {
         </DialogTitle>
         <Divider />
         <DialogContent sx={{ p: 2 }}>
-          {!test?.fetch_project_loading &&
-            !test?.fetch_project_error &&
-            !test?.fetching_project && (
+          {!fetch_project_loading &&
+            !fetch_project_error &&
+            !fetching_project && (
               <>
                 <TextField
                   sx={{
@@ -149,7 +157,7 @@ const ProjectDetails = () => {
                   fullWidth
                   disabled={!editProjectTitle?.edit}
                   // value={project_data?.project?.project_name}
-                  value={'Uber Helicopter'}
+                  value={project_data?.project?.project_name}
                   InputProps={
                     {
                       // endAdornment: (
@@ -339,8 +347,8 @@ const ProjectDetails = () => {
                 </Box>
               </>
             )}
-          {(test?.fetch_project_loading || test?.fetching_project) &&
-            !test?.fetch_project_error && (
+          {(fetch_project_loading || fetching_project) &&
+            !fetch_project_error && (
               <Stack
                 direction={"row"}
                 alignItems={"center"}
@@ -350,8 +358,8 @@ const ProjectDetails = () => {
                 <CircularProgress />
               </Stack>
             )}
-          {!(test?.fetch_project_loading || test?.fetching_project) &&
-            test?.fetch_project_error && (
+          {!(fetch_project_loading || fetching_project) &&
+            fetch_project_error && (
               <Stack
                 direction={"column"}
                 alignItems={"center"}
@@ -361,7 +369,9 @@ const ProjectDetails = () => {
                 <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
                   Something went wrong..! Try again
                 </Typography>
-                <Button variant="contained">Retry</Button>
+                <Button variant="contained" onClick={retry}>
+                  Retry
+                </Button>
               </Stack>
             )}
         </DialogContent>

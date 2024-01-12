@@ -1,7 +1,9 @@
 /* Core */
-import { createLogger } from 'redux-logger';
-import { ProjectApiSlice } from './projectApi';
-import { apiSlice } from './Api';
+import { createLogger } from "redux-logger";
+import { ProjectApiSlice } from "./projectApi";
+import { apiSlice } from "./Api";
+import { thinkbeyondSlice } from "./ThinkbeyondApi";
+import { BMCSlice } from "./BMCApi";
 
 const middleware: any[] = [
   // createLogger({
@@ -17,9 +19,14 @@ const middleware: any[] = [
   //   },
   //   predicate: () => typeof window !== 'undefined',
   // }),
-]
+];
 
-const allMiddleware = [ProjectApiSlice.middleware,apiSlice.middleware, ...middleware];
+const allMiddleware = [
+  ProjectApiSlice.middleware,
+  apiSlice.middleware,
+  thinkbeyondSlice.middleware,
+  BMCSlice.middleware,
+  ...middleware,
+];
 
 export { allMiddleware };
-

@@ -5,6 +5,7 @@ import ShareModal from "@/app/components/Shared/ShareModal";
 import ThinkbeyondCanvas from "@/app/components/ThinkBeyond/ThinkbeyondCanvas";
 import ThinkbeyondMindmap from "@/app/components/ThinkBeyond/ThinkbeyondMindmap";
 import ThinkbeyondModal from "@/app/components/ThinkBeyond/ThinkbeyondModal";
+import ThinkbeyondNewModal from "@/app/components/ThinkBeyond/ThinkbeyondNewModal";
 import ThinkBeyondSettings from "@/app/components/ThinkBeyond/ThinkbeyondSettings";
 import { Box, Container, Stack, useTheme } from "@mui/material";
 import React from "react";
@@ -25,10 +26,11 @@ const Thinkbeyond = () => {
                 <Header />
                 <ThinkbeyondCanvas />
                 {/* <ThinkbeyondMindmap /> */}
-                <Bob />
+                {/* <Bob /> */}
                 <ThinkBeyondSettings />
                 <ShareModal />
-                <ThinkbeyondModal />
+                {/* <ThinkbeyondModal /> */}
+                <ThinkbeyondNewModal />
             </Stack>
         </>
     );

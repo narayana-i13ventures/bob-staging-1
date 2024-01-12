@@ -24,9 +24,7 @@ const Comment = (props: any) => {
                     mb: 3,
                     width: "100%",
                     boxShadow: 1,
-                    overflow: 'hidden',
                     borderRadius: 3,
-                    // backgroundColor: `${theme.palette.primary.main}10`
                     backgroundColor: `#fff`
                 }}
             >

@@ -64,8 +64,8 @@ const MessageBox = (props: any) => {
             sx={{
                 width: "330px",
                 backgroundColor: `${color || '#fff'}`,
-                height: height !== 1000 ? "65vh" : "100%",
-                // height: "65vh",
+                // height: height !== 1000 ? "65vh" : "100%",
+                height: "100%",
                 borderRadius: 2,
                 pt: header ? 1 : 2,
                 mb: header ? 2 : 0,

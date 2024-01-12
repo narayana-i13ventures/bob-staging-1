@@ -20,7 +20,6 @@ import {
   selectedThinkbeyond,
 } from "@/lib/redux/slices/SelectedSlice";
 import {
-  useGetCompanyByIdQuery,
   useNextThinkBeyondMutation,
 } from "@/lib/redux/Api";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
@@ -31,11 +30,11 @@ const ThinkbeyondModal = (props: any) => {
   const [setNextCard] = useNextThinkBeyondMutation();
   const { ThinkbeyondModalOpen, BobMessages }: any = useSelector(selectApp);
   const selectedThinkbeyondCard = useSelector(selectedThinkbeyond);
-  const {
-    data: company,
-    isLoading: companyLoading,
-    isError: companyError,
-  } = useGetCompanyByIdQuery(projectId);
+  // const {
+  //   data: company,
+  //   isLoading: companyLoading,
+  //   isError: companyError,
+  // } = useGetCompanyByIdQuery(projectId);
 
   const closeThinkbeyondModalOpen = () => {
     dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false));
@@ -215,7 +214,7 @@ const ThinkbeyondModal = (props: any) => {
                         p: 1,
                         mb:
                           selectedThinkbeyondCard?.cardInfo?.length - 1 ===
-                          index
+                            index
                             ? 0
                             : 3,
                         fontSize: "14px",

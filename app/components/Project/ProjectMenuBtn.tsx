@@ -21,7 +21,7 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import { useDeleteProjectByIdMutation } from "@/lib/redux/projectApi";
 
 const ProjectMenuBtn = (props: any) => {
-  const { projectId, name } = props;
+  const { projectId } = props;
   const dispatch = useDispatch();
   const ProjectMenuBtnRef = useRef(null);
   const [projectMenuOpen, setProjectMenuOpen] = useState(false);
@@ -42,7 +42,7 @@ const ProjectMenuBtn = (props: any) => {
     dispatch(
       appSlice.actions.toggleProjectDetails({
         open: true,
-        data: { projectId: projectId },
+        projectId: projectId,
       })
     );
   };
@@ -57,7 +57,8 @@ const ProjectMenuBtn = (props: any) => {
       })
     );
   };
-  const DeleteProject = () => {
+  const DeleteProject = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event?.stopPropagation();
     deleteProject(projectId);
   };
   return (
@@ -206,7 +207,7 @@ const ProjectMenuBtn = (props: any) => {
                 backgroundColor: `#f6f5f4`,
               },
             }}
-            onClick={DeleteProject}
+            onClick={(e: any) => DeleteProject(e)}
           >
             <ListItemIcon sx={{ minWidth: "25px !important" }}>
               <DeleteOutlineOutlinedIcon

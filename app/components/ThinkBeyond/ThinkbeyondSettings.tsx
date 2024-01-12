@@ -6,9 +6,11 @@ import { useResetThinkBeyondMutation } from "@/lib/redux/Api";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
-import TuneSharpIcon from '@mui/icons-material/TuneSharp';
+import TuneSharpIcon from "@mui/icons-material/TuneSharp";
+import { useParams } from "next/navigation";
 const ThinkBeyondSettings = () => {
   const dispatch = useDispatch();
+  const { projectId } = useParams();
   const [ResetThinkBeyond] = useResetThinkBeyondMutation();
   const { ThinkbeyondSettings } = useSelector(selectApp);
 
@@ -30,7 +32,7 @@ const ThinkBeyondSettings = () => {
     dispatch(
       appSlice.actions.toggleShareModal({
         open: true,
-        data: {},
+        data: { projectId },
         type: "thinkbeyond",
       })
     );

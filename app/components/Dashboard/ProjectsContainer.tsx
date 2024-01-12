@@ -12,23 +12,18 @@ import CreateProjectCard from "../Project/CreateProjectCard";
 import ProjectCard from "../Project/ProjectCard";
 
 const ProjectsContainer = () => {
-  // const {
-  //     data: projects,
-  //     isSuccess: fetch_projects_success,
-  //     isLoading: fetch_projects_loading,
-  //     isError: fetch_projects_error,
-  // } = useGetAllProjectsQuery({});
+  const {
+    data: projects,
+    isSuccess: fetch_projects_success,
+    isLoading: fetch_projects_loading,
+    isError: fetch_projects_error,
+  } = useGetAllProjectsQuery({});
 
-  const test = {
-    fetch_projects_success: true,
-    fetch_projects_loading: false,
-    fetch_projects_error: false,
-  };
   return (
     <>
-      {!test?.fetch_projects_loading &&
-        !test?.fetch_projects_error &&
-        test?.fetch_projects_success && (
+      {!fetch_projects_loading &&
+        !fetch_projects_error &&
+        fetch_projects_success && (
           <Box
             sx={{
               flexGrow: 1,
@@ -41,35 +36,20 @@ const ProjectsContainer = () => {
               <Grid item xs={3}>
                 <CreateProjectCard />
               </Grid>
-              <Grid item xs={3}>
-                <ProjectCard
-                  project={{ project_id: "1", project_name: "Uber Helicopter" }}
-                />
-              </Grid>
-              <Grid item xs={3}>
-                <ProjectCard
-                  project={{ project_id: "2", project_name: "Uber Cycles" }}
-                />
-              </Grid>
-              <Grid item xs={3}>
-                <ProjectCard
-                  project={{ project_id: "3", project_name: "Car Rentals" }}
-                />
-              </Grid>
-              {/* {projects?.owned_projects?.map((project: any) => {
-                            return (
-                                <Grid key={project?.project_id} item xs={2}>
-                                    <ProjectCard project={project} />
-                                </Grid>
-                            );
-                        })} */}
+              {projects?.owned_projects?.map((project: any) => {
+                return (
+                  <Grid key={project?.project_id} item xs={3}>
+                    <ProjectCard project={project} />
+                  </Grid>
+                );
+              })}
             </Grid>
           </Box>
         )}
 
-      {test?.fetch_projects_loading &&
-        !test?.fetch_projects_error &&
-        !test?.fetch_projects_success && (
+      {fetch_projects_loading &&
+        !fetch_projects_error &&
+        !fetch_projects_success && (
           <Box
             sx={{
               mt: 7,
@@ -83,9 +63,9 @@ const ProjectsContainer = () => {
             <CircularProgress />
           </Box>
         )}
-      {!test?.fetch_projects_loading &&
-        test?.fetch_projects_error &&
-        !test?.fetch_projects_success && (
+      {!fetch_projects_loading &&
+        fetch_projects_error &&
+        !fetch_projects_success && (
           <Stack
             direction={"column"}
             justifyContent={"center"}

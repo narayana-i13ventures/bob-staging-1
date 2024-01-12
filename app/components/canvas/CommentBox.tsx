@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import SendIcon from "@mui/icons-material/Send";
-import {
-    TextField,
-    InputAdornment,
-    Paper,
-    Stack,
-} from "@mui/material";
+import { TextField, InputAdornment, Paper, Stack } from "@mui/material";
 import Comment from "./Comment";
 import { selectApp, useSelector } from "@/lib/redux";
 
@@ -14,11 +9,7 @@ const CommentBox = (props: any) => {
     const [comment, setComment] = useState<any>("");
     const textFieldRef = useRef<HTMLInputElement | null>(null);
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-    const {
-        comments,
-        postComment,
-        color
-    } = props;
+    const { comments, postComment, color } = props;
 
     const handlePostComment = () => {
         if (comment.trim() !== "") {
@@ -56,12 +47,12 @@ const CommentBox = (props: any) => {
                 width: "330px",
                 height: "100%",
                 borderRadius: 2,
-                backgroundColor: `${color || '#fff'}`,
+                backgroundColor: `${color || "#fff"}`,
             }}
         >
             <Stack
                 direction={"column"}
-                sx={{ height: "100%", width: '100%' }}
+                sx={{ height: "100%" }}
                 alignItems={"flex-end"}
                 justifyContent={"space-between"}
             >
@@ -71,22 +62,21 @@ const CommentBox = (props: any) => {
                     alignItems={"flex-start"}
                     flexGrow={1}
                     sx={{
-                        px: 2,
+                        width: '100%',
                         overflowY: "auto",
-                        maxHeight: "calc(75vh - 60px)",
+                        px: 2,
                     }}
                     ref={messagesContainerRef}
                 >
-                    {comments?.slice()
+                    {comments
+                        ?.slice()
                         .reverse()
                         .filter((comment: any) => comment.role !== "system")
                         .map((comment: any, index: number) => {
-                            return (
-                                <Comment key={index} comment={comment} />
-                            );
+                            return <Comment key={index} comment={comment} />;
                         })}
                 </Stack>
-                <Stack sx={{ px: 2, width: '100%' }}>
+                <Stack sx={{ px: 2, width: "100%" }}>
                     <TextField
                         fullWidth
                         disabled={bobThinking}
@@ -101,12 +91,12 @@ const CommentBox = (props: any) => {
                         onKeyPress={handleEnterKeyPress}
                         inputRef={(input) => (textFieldRef.current = input)}
                         InputProps={{
-                            id: 'comment-input-area',
+                            id: "comment-input-area",
                             sx: {
                                 fontSize: "14px",
                                 padding: "10px",
                                 borderRadius: 2,
-                                backgroundColor: '#fff',
+                                backgroundColor: "#fff",
                                 my: 1,
                                 "& .MuiOutlinedInput-notchedOutline": {
                                     borderWidth: "1px !important",

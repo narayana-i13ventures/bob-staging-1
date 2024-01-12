@@ -28,17 +28,24 @@ import {
   useLazyGetProjectByIdQuery,
   useLazyGetSharedUsersProjectQuery,
 } from "@/lib/redux/projectApi";
-import Link from "next/link";
 
 const ShareModal = (props: any) => {
   const dispatch = useDispatch();
   const { ShareOpen } = useSelector(selectApp);
   const [thinkbeyondChecked, setThinkbeyondChecked] = useState([false]);
   const [canvasChecked, setCanvasChecked] = React.useState([false, false]);
+  const [status, setStatus] = useState({
+    loading: false,
+    error: false,
+    success: true,
+  });
+  const [sharedUsers, setSharedUsers] = useState<any>([]);
+
   const checkProject = (event: React.ChangeEvent<HTMLInputElement>) => {
     setThinkbeyondChecked([event.target.checked]);
     setCanvasChecked([event.target.checked, event.target.checked]);
   };
+
   const checkThinkbeyond = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCanvasChecked([event.target.checked, event.target.checked]);
   };
@@ -77,35 +84,6 @@ const ShareModal = (props: any) => {
       />
     </Box>
   );
-  console.log(ShareOpen?.type);
-
-  const shareTitle = (
-    <>
-      {ShareOpen?.type === "project" && (
-        <Breadcrumbs aria-label="breadcrumb">
-          <Typography color="text.primary">Uber for Helicopter</Typography>
-        </Breadcrumbs>
-      )}
-      {ShareOpen?.type === "thinkbeyond" && (
-        <Breadcrumbs aria-label="breadcrumb">
-          <Typography color="text.primary">Uber for Helicopter</Typography>
-          <Typography color="text.primary">Thinkbeyond</Typography>
-        </Breadcrumbs>
-      )}
-      {ShareOpen?.type !== "thinkbeyond" && ShareOpen?.type !== "project" && (
-        <Breadcrumbs aria-label="breadcrumb">
-          <Typography color="text.primary">Uber for Helicopter</Typography>
-          <Typography color="text.primary">Future1</Typography>
-          <Typography color="text.primary">{ShareOpen?.type}</Typography>
-        </Breadcrumbs>
-      )}
-    </>
-  );
-  const test = {
-    isLoading: false,
-    isSuccess: true,
-    isError: false,
-  };
 
   const [
     getShareUsersProject,
@@ -114,6 +92,7 @@ const ShareModal = (props: any) => {
       isLoading: loading_shared_users,
       isFetching: fetching_shared_users,
       isError: error_shared_users,
+      isSuccess: shared_users_success,
     },
   ] = useLazyGetSharedUsersProjectQuery();
 
@@ -124,19 +103,53 @@ const ShareModal = (props: any) => {
       isLoading: loading_project_data,
       isFetching: fetching_project_data,
       isError: error_project_data,
+      isSuccess: project_data_success,
     },
   ] = useLazyGetProjectByIdQuery();
 
   useEffect(() => {
-    if (ShareOpen?.type === "project" && ShareOpen?.data?.projectId !== "") {
-      getShareUsersProject(ShareOpen?.data?.projectId);
+    if (ShareOpen?.data !== "") {
+      if (ShareOpen?.type === "project") {
+        getShareUsersProject(ShareOpen?.data?.projectId);
+      }
       getProjectById(ShareOpen?.data?.projectId);
     }
   }, [ShareOpen]);
 
+  useEffect(() => {
+    if (ShareOpen?.data !== "") {
+      if (ShareOpen?.type === "project") {
+        setStatus({
+          loading: fetching_shared_users,
+          error: error_shared_users,
+          success: shared_users_success,
+        });
+      }
+    }
+  }, [
+    loading_shared_users,
+    fetching_shared_users,
+    error_shared_users,
+    shared_users_success,
+  ]);
+
+  useEffect(() => {
+    if (ShareOpen?.data !== "") {
+      if (ShareOpen?.type === "project") {
+        setSharedUsers(shared_users);
+      }
+    }
+  }, [shared_users]);
+
+  const retry = () => {
+    if (ShareOpen?.type === "project" && ShareOpen?.data?.projectId !== "") {
+      getShareUsersProject(ShareOpen?.data?.projectId);
+      getProjectById(ShareOpen?.data?.projectId);
+    }
+  };
   const closeProjectShareModal = () => {
     dispatch(
-      appSlice.actions.toggleShareModal({ open: false, data: {}, type: "" })
+      appSlice.actions.toggleShareModal({ open: false, data: "", type: "" })
     );
   };
 
@@ -156,188 +169,183 @@ const ShareModal = (props: any) => {
             p: 2,
             display: "flex",
             justifyContent:
-              // !loading_project_data &&
-              //   !error_project_data &&
-              //   !fetching_project_data &&
-              //   !loading_shared_users &&
-              //   !fetching_shared_users &&
-              //   !error_shared_users
-              !test?.isLoading && test?.isSuccess && !test?.isError
+              !error_project_data &&
+              !fetching_project_data &&
+              !status?.loading &&
+              !status?.error &&
+              status?.success &&
+              project_data_success
                 ? "space-between"
                 : "flex-end",
             alignItems: "center",
           }}
         >
-          {
-            // (!loading_project_data &&
-            //   !error_project_data &&
-            //   !fetching_project_data &&
-            //   !loading_shared_users &&
-            //   !fetching_shared_users &&
-            //   !error_shared_users)
-            !test?.isLoading && test?.isSuccess && !test?.isError && shareTitle
-          }
+          {!error_project_data &&
+            !fetching_project_data &&
+            !status?.loading &&
+            !status?.error &&
+            status?.success &&
+            project_data_success && <>{project_data?.project?.project_name}</>}
           <IconButton size="small" onClick={closeProjectShareModal}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <Divider />
         <DialogContent sx={{ p: 2 }}>
-          {/* // !loading_project_data &&
-          //   !error_project_data &&
-          //   !fetching_project_data &&
-          //   !loading_shared_users &&
-          //   !fetching_shared_users &&
-          //   !error_shared_users  */}
-          {!test?.isLoading && test?.isSuccess && !test?.isError && (
-            <>
-              <UserSearch shared_users={shared_users || []} />
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                Share
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Box component={"div"} sx={{ mb: 2 }}>
-                <FormControlLabel
-                  label="Uber for Helocopter"
-                  control={
-                    <Checkbox
-                      checked={
-                        canvasChecked[0] &&
-                        canvasChecked[1] &&
-                        thinkbeyondChecked[0]
-                      }
-                      indeterminate={
-                        thinkbeyondChecked[0] !==
-                        (canvasChecked[0] && canvasChecked[1])
-                      }
-                      onChange={checkProject}
-                    />
-                  }
-                />
-                {ThinkbeyondChildren}
-                {canvasChildren}
-              </Box>
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                People With Access
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Stack
-                component={"div"}
-                direction={"column"}
-                justifyContent={"flex-start"}
-                alignItems={"flext-start"}
-                sx={{
-                  maxHeight: "200px",
-                  overflowY: "auto",
-                }}
-              >
-                {shared_users?.length > 0 ? (
+          {!error_project_data &&
+            !fetching_project_data &&
+            !status?.loading &&
+            !status?.error &&
+            status?.success &&
+            project_data_success && (
+              <>
+                <UserSearch shared_users={sharedUsers || []} />
+                <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                  Share
+                </Typography>
+                <Divider sx={{ my: 1 }} />
+                <Box component={"div"} sx={{ mb: 2 }}>
+                  <FormControlLabel
+                    label="Uber for Helocopter"
+                    control={
+                      <Checkbox
+                        checked={
+                          canvasChecked[0] &&
+                          canvasChecked[1] &&
+                          thinkbeyondChecked[0]
+                        }
+                        indeterminate={
+                          thinkbeyondChecked[0] !==
+                          (canvasChecked[0] && canvasChecked[1])
+                        }
+                        onChange={checkProject}
+                      />
+                    }
+                  />
+                  {ThinkbeyondChildren}
+                  {canvasChildren}
+                </Box>
+                {sharedUsers?.length > 0 && (
                   <>
-                    {shared_users?.map((user: any) => {
-                      return (
-                        <SharedUserCard
-                          project_id={ShareOpen?.data?.projectId}
-                          key={user?.user_id}
-                          deleteUser={true}
-                          editRole={false}
-                          user={user}
-                        />
-                      );
-                    })}
-                  </>
-                ) : (
-                  <>
-                    <Typography
-                      variant="h5"
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      People With Access
+                    </Typography>
+                    <Divider sx={{ my: 1 }} />
+                    <Stack
+                      component={"div"}
+                      direction={"column"}
+                      justifyContent={"flex-start"}
+                      alignItems={"flext-start"}
                       sx={{
-                        width: "100%",
-                        textAlign: "center",
-                        py: 4,
-                        color: "#00000050",
+                        maxHeight: "200px",
+                        overflowY: "auto",
                       }}
                     >
-                      No Users have access
-                    </Typography>
+                      {sharedUsers?.map((user: any) => {
+                        return (
+                          <SharedUserCard
+                            project_id={ShareOpen?.data?.projectId}
+                            key={user?.user_id}
+                            deleteUser={true}
+                            editRole={false}
+                            user={user}
+                          />
+                        );
+                      })}
+                    </Stack>
                   </>
                 )}
-              </Stack>
-              <Divider sx={{ my: 1 }} />
-              <Box
-                component={"div"}
+                <Divider sx={{ my: 1 }} />
+                <Box
+                  component={"div"}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography>Anyone with the link</Typography>
+                  <FormControl>
+                    <Select
+                      size="small"
+                      id={`global_user_role_${props?.projectId}`}
+                      value={"editor"}
+                      onChange={() => {}}
+                      sx={{
+                        p: 0,
+                        width: "85px",
+                        "& .MuiSelect-select": {
+                          p: 1,
+                          fontSize: 12,
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderWidth: "1px !important",
+                        },
+                      }}
+                    >
+                      <MenuItem value={"editor"}>Editor</MenuItem>
+                      <MenuItem value={"viewer"}>Viewer</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </>
+            )}
+          {!error_project_data &&
+            (fetching_project_data || status?.loading) &&
+            !status?.error && (
+              <Stack
+                direction={"column"}
+                justifyContent={"center"}
+                alignItems={"center"}
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  with: "100%",
+                  height: "50vh",
                 }}
               >
-                <Typography>Anyone with the link</Typography>
-                <FormControl>
-                  <Select
-                    size="small"
-                    id={`global_user_role_${props?.projectId}`}
-                    value={"editor"}
-                    onChange={() => {}}
-                    sx={{
-                      p: 0,
-                      width: "85px",
-                      "& .MuiSelect-select": {
-                        p: 1,
-                        fontSize: 12,
-                      },
-                      "& .MuiOutlinedInput-notchedOutline": {
-                        borderWidth: "1px !important",
-                      },
-                    }}
-                  >
-                    <MenuItem value={"editor"}>Editor</MenuItem>
-                    <MenuItem value={"viewer"}>Viewer</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
+                <CircularProgress />
+              </Stack>
+            )}
+          {(error_project_data || status?.error) &&
+            !fetching_project_data &&
+            !status?.loading &&
+            !status?.success &&
+            !project_data_success && (
+              <Stack
+                direction={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                sx={{ width: "100%", height: "50vh" }}
+              >
+                <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
+                  Something went wrong..! Try again
+                </Typography>
+                <Button variant="contained" onClick={retry}>
+                  Retry
+                </Button>
+              </Stack>
+            )}
+        </DialogContent>
+        {!loading_project_data &&
+          !error_project_data &&
+          !fetching_project_data &&
+          !status?.loading &&
+          !status?.error &&
+          status?.success &&
+          project_data_success && (
+            <>
+              <Divider />
+              <DialogActions sx={{ p: 2 }}>
+                <Button
+                  onClick={closeProjectShareModal}
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                >
+                  Done
+                </Button>
+              </DialogActions>
             </>
           )}
-          {test?.isLoading && !test?.isSuccess && !test?.isError && (
-            <Stack
-              direction={"column"}
-              justifyContent={"center"}
-              alignItems={"center"}
-              sx={{
-                with: "100%",
-                height: "200px",
-              }}
-            >
-              <CircularProgress />
-            </Stack>
-          )}
-          {!test?.isLoading && !test?.isSuccess && test?.isError && (
-            <Stack
-              direction={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              sx={{ width: "100%", height: "200px" }}
-            >
-              <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
-                Something went wrong..! Try again
-              </Typography>
-              <Button variant="contained">Retry</Button>
-            </Stack>
-          )}
-        </DialogContent>
-        {!test?.isLoading && test?.isSuccess && !test?.isError && (
-          <>
-            <Divider />
-            <DialogActions sx={{ p: 2 }}>
-              <Button
-                onClick={closeProjectShareModal}
-                size="small"
-                variant="contained"
-                color="primary"
-              >
-                Done
-              </Button>
-            </DialogActions>
-          </>
-        )}
       </Dialog>
     </>
   );

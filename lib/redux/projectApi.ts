@@ -61,6 +61,41 @@ export const ProjectApiSlice = createApi({
             //     }
             // },
         }),
+        deleteProjectById: builder.mutation({
+            query: (projectId: any) => ({
+                url: "/v1/project/delete",
+                method: "POST",
+                body: JSON.stringify({
+                    user_id: 3,
+                    project_id: projectId,
+                }),
+            }),
+            async onQueryStarted(projectId, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(
+                        ProjectApiSlice.util.updateQueryData(
+                            "getAllProjects",
+                            {},
+                            (draft: any) => {
+                                const companyIndex = draft?.owned_projects?.findIndex(
+                                    (company: any) => company?.project_id === projectId
+                                );
+                                if (companyIndex !== -1) {
+                                    draft?.owned_projects?.splice(companyIndex, 1);
+                                }
+                                return draft;
+                            }
+                        )
+                    );
+                } catch (error) {
+                    // Handle errors
+                }
+            },
+        }),
+        //=====================================
+        //=============== Share ===============
+        //=====================================
         getSharedUsersProject: builder.query({
             query: (projectId: any) => ({
                 url: `/v1/project/shared_with?user_id=3&project_id=${projectId}`,
@@ -109,60 +144,13 @@ export const ProjectApiSlice = createApi({
                 }
             },
         }),
-        deleteProjectById: builder.mutation({
-            query: (projectId: any) => ({
-                url: "/v1/project/delete",
-                method: "POST",
-                body: JSON.stringify({
-                    user_id: 1,
-                    project_id: projectId,
-                }),
-            }),
-            async onQueryStarted(projectId, { dispatch, queryFulfilled }) {
-                try {
-                    await queryFulfilled;
-                    console.log(projectId);
-                    dispatch(
-                        ProjectApiSlice.util.updateQueryData(
-                            "getAllProjects",
-                            {},
-                            (draft: any) => {
-                                const companyIndex = draft?.owned_projects?.findIndex(
-                                    (company: any) => company?.project_id === projectId
-                                );
-                                console.log(companyIndex);
-
-                                if (companyIndex !== -1) {
-                                    draft?.owned_projects?.splice(companyIndex, 1);
-                                }
-                                return draft;
-                            }
-                        )
-                    );
-                } catch (error) {
-                    // Handle errors
-                }
-            },
-        }),
-        getFarFuture3: builder.mutation({
-            query: () => ({
-                url: '/v1/think_beyond/farfuture3',
-                method: 'POST',
-                body: JSON.stringify({
-                    user_id: 3,
-                    project_id: 55
-                })
-            })
-        })
     }),
 });
 export const {
     useGetAllProjectsQuery,
     useLazyGetProjectByIdQuery,
-    // useGetProjectByIdQuery,
     useUnShareProjectMutation,
     useLazyGetSharedUsersProjectQuery,
     useCreateProjectMutation,
     useDeleteProjectByIdMutation,
-    useGetFarFuture3Mutation
 } = ProjectApiSlice;

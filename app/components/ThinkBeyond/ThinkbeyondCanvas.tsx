@@ -6,25 +6,26 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import ThinkbeyondCard from "./ThinkbeyondCard";
 import ThinkbeyondModal from "./ThinkbeyondModal";
-import { useGetThinkBeyondQuery } from "@/lib/redux/Api";
 import { useParams } from "next/navigation";
+import { useLazyGetThinkbeyondCanvasQuery } from "@/lib/redux/ThinkbeyondApi";
 
 const ThinkbeyondCanvas = () => {
-    const params = useParams();
+    const { projectId } = useParams();
+    const [
+        getThinkbeyondCanvas,
+        { data: ThinkbeyondCanvasCards, isLoading, isError, isSuccess },
+    ] = useLazyGetThinkbeyondCanvasQuery();
 
-    const {
-        data: ThinkbeyondCards,
-        isLoading,
-        isError,
-        isSuccess,
-        refetch: refetchThinkbeyond
-    } = useGetThinkBeyondQuery({});
+    useEffect(() => {
+        getThinkbeyondCanvas(projectId);
+    }, [projectId]);
+
     const retry = () => {
-        refetchThinkbeyond()
-    }
+        getThinkbeyondCanvas(projectId);
+    };
 
     return (
         <>
@@ -68,9 +69,7 @@ const ThinkbeyondCanvas = () => {
                         >
                             <ThinkbeyondCard
                                 width={"50%"}
-                                card={ThinkbeyondCards?.find(
-                                    (card: any) => card?.cardNumber === 0
-                                )}
+                                card={ThinkbeyondCanvasCards?.[0]?.change}
                             />
                         </Box>
                         <Box sx={{ gridColumn: "span 12", gridRow: "span 4" }}>
@@ -109,9 +108,7 @@ const ThinkbeyondCanvas = () => {
                                             <ThinkbeyondCard
                                                 width={"100%"}
                                                 cardName={"Future 1"}
-                                                card={ThinkbeyondCards?.find(
-                                                    (card: any) => card?.cardNumber === 2
-                                                )}
+                                                card={ThinkbeyondCanvasCards?.[0]?.future_1}
                                             />
                                         </Box>
                                         <Box
@@ -126,9 +123,7 @@ const ThinkbeyondCanvas = () => {
                                             <ThinkbeyondCard
                                                 width={"100%"}
                                                 cardName={"Future 1 OKR"}
-                                                card={ThinkbeyondCards?.find(
-                                                    (card: any) => card?.cardNumber === 3
-                                                )}
+                                                card={ThinkbeyondCanvasCards?.[0]?.future_1_okrs}
                                             />
                                         </Box>
                                         <Box
@@ -143,9 +138,7 @@ const ThinkbeyondCanvas = () => {
                                             <ThinkbeyondCard
                                                 width={"100%"}
                                                 cardName={"Microframeworks"}
-                                                card={ThinkbeyondCards?.find(
-                                                    (card: any) => card?.cardNumber === 4
-                                                )}
+                                                card={ThinkbeyondCanvasCards?.[0]?.future_1_mfs}
                                             />
                                         </Box>
                                     </Box>
@@ -174,9 +167,7 @@ const ThinkbeyondCanvas = () => {
                                             <ThinkbeyondCard
                                                 width={"100%"}
                                                 cardName={"Future 2"}
-                                                card={ThinkbeyondCards?.find(
-                                                    (card: any) => card?.cardNumber === 5
-                                                )}
+                                                card={ThinkbeyondCanvasCards?.[0]?.future_2}
                                             />
                                         </Box>
                                         <Box
@@ -191,9 +182,7 @@ const ThinkbeyondCanvas = () => {
                                             <ThinkbeyondCard
                                                 width={"100%"}
                                                 cardName={"Future 2 OKR"}
-                                                card={ThinkbeyondCards?.find(
-                                                    (card: any) => card?.cardNumber === 6
-                                                )}
+                                                card={ThinkbeyondCanvasCards?.[0]?.future_2_okrs}
                                             />
                                         </Box>
                                         <Box
@@ -208,9 +197,7 @@ const ThinkbeyondCanvas = () => {
                                             <ThinkbeyondCard
                                                 width={"100%"}
                                                 cardName={"Microframeworks"}
-                                                card={ThinkbeyondCards?.find(
-                                                    (card: any) => card?.cardNumber === 7
-                                                )}
+                                                card={ThinkbeyondCanvasCards?.[0]?.future_2_mfs}
                                             />
                                         </Box>
                                     </Box>
@@ -239,9 +226,7 @@ const ThinkbeyondCanvas = () => {
                                             <ThinkbeyondCard
                                                 width={"100%"}
                                                 cardName={"Future 3"}
-                                                card={ThinkbeyondCards?.find(
-                                                    (card: any) => card?.cardNumber === 8
-                                                )}
+                                                card={ThinkbeyondCanvasCards?.[0]?.future_3}
                                             />
                                         </Box>
                                         <Box
@@ -256,9 +241,7 @@ const ThinkbeyondCanvas = () => {
                                             <ThinkbeyondCard
                                                 width={"100%"}
                                                 cardName={"Future3 OkR"}
-                                                card={ThinkbeyondCards?.find(
-                                                    (card: any) => card?.cardNumber === 9
-                                                )}
+                                                card={ThinkbeyondCanvasCards?.[0]?.future_3_okrs}
                                             />
                                         </Box>
                                         <Box
@@ -273,9 +256,7 @@ const ThinkbeyondCanvas = () => {
                                             <ThinkbeyondCard
                                                 width={"100%"}
                                                 cardName={"Microframeworks"}
-                                                card={ThinkbeyondCards?.find(
-                                                    (card: any) => card?.cardNumber === 10
-                                                )}
+                                                card={ThinkbeyondCanvasCards?.[0]?.future_3_mfs}
                                             />
                                         </Box>
                                     </Box>
@@ -294,13 +275,10 @@ const ThinkbeyondCanvas = () => {
                             <ThinkbeyondCard
                                 width={"50%"}
                                 cardName={"what is the moonshot?"}
-                                card={ThinkbeyondCards?.find(
-                                    (card: any) => card?.cardNumber === 1
-                                )}
+                                card={ThinkbeyondCanvasCards?.[0]?.moonshot}
                             />
                         </Box>
                     </Box>
-                    <ThinkbeyondModal />
                 </Stack>
             )}
             {isLoading && !isError && !isSuccess && (
@@ -333,7 +311,9 @@ const ThinkbeyondCanvas = () => {
                     <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
                         Something went wrong..! Try again
                     </Typography>
-                    <Button variant="contained" onClick={retry}>Retry</Button>
+                    <Button variant="contained" onClick={retry}>
+                        Retry
+                    </Button>
                 </Stack>
             )}
         </>

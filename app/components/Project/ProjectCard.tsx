@@ -3,7 +3,7 @@ import ProjectMenuBtn from "./ProjectMenuBtn";
 import { Box, Card, IconButton, Paper, Stack, Typography } from "@mui/material";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import { useRouter } from "next/navigation";
-import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
+import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
 const ProjectCard = (props: any) => {
   const { project } = props;
   const { project_name, project_id } = project;
@@ -26,22 +26,18 @@ const ProjectCard = (props: any) => {
           border: "1px solid #000",
         }}
       >
-        <ProjectMenuBtn projectId={project_id} name={project_name} />
+        <ProjectMenuBtn projectId={project_id} />
         <Paper
           onClick={gotToThinkbeyond}
           elevation={0}
           sx={{
             flexGrow: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-            // backgroundSize: "40%",
-            // backgroundPosition: "50% 50%",
-            // backgroundRepeat: "no-repeat",
-            // backgroundImage: `url('/images/target.png')`,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <RocketLaunchOutlinedIcon sx={{ fontSize: '90px' }} />
+          <RocketLaunchOutlinedIcon sx={{ fontSize: "90px" }} />
         </Paper>
         <Stack
           component={"div"}

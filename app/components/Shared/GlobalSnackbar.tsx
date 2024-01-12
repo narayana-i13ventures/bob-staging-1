@@ -33,7 +33,7 @@ const GlobalSnackbar = () => {
                 autoHideDuration={6000}
                 onClose={handleClose}
                 message={globalSnackBar?.content}
-                action={action}
+                action={globalSnackBar?.clossable ? action : <></>}
             />
         </>
     )

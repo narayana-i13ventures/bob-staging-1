@@ -88,10 +88,45 @@ const Message = (props: any) => {
                 </Typography>
               ) : (
                 <>
-                  <Box className="flex justify-center items-center px-3 py-1">
-                    <Box className="animate-bounce w-2 h-2 rounded-full bg-primary"></Box>
-                    <Box className="animate-bounce delay-200 w-2 h-2 rounded-full bg-primary mx-3"></Box>
-                    <Box className="animate-bounce delay-500 w-2 h-2 rounded-full bg-primary"></Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      px: 3,
+                      py: 1,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        animation: "bounce 1s infinite",
+                        width: "5px",
+                        height: "5px",
+                        borderRadius: "50%",
+                        backgroundColor: theme?.palette?.primary?.main,
+                      }}
+                    ></Box>
+                    <Box
+                      sx={{
+                        animation: "bounce 1s infinite",
+                        animationDelay: "200ms",
+                        width: "5px",
+                        height: "5px",
+                        borderRadius: "50%",
+                        backgroundColor: theme?.palette?.primary?.main,
+                        mx: 2,
+                      }}
+                    ></Box>
+                    <Box
+                      sx={{
+                        animation: "bounce 1s infinite",
+                        animationDelay: "500ms",
+                        width: "5px",
+                        height: "5px",
+                        borderRadius: "50%",
+                        backgroundColor: theme?.palette?.primary?.main,
+                      }}
+                    ></Box>
                   </Box>
                 </>
               )}

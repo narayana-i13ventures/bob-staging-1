@@ -35,6 +35,7 @@ const Canvas = (props: any) => {
     // router.replace("Microframeworks", undefined);
     router.push(`/${projectId}/${futureId}/Microframeworks`);
   };
+
   const openCanvasShare = () => {
     dispatch(
       appSlice.actions.toggleShareModal({
@@ -44,6 +45,7 @@ const Canvas = (props: any) => {
       })
     );
   };
+  
   return (
     <>
       <Dialog
