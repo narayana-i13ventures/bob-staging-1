@@ -45,6 +45,24 @@ export const BMCSlice = createApi({
                     cardNumber: card?.cardNumber,
                 }),
             }),
+            async onQueryStarted(data, { dispatch, queryFulfilled }) {
+                const patchResult = dispatch(
+                    BMCSlice.util.updateQueryData("GetBMCCanvas", {}, (draft: any) => {
+                        const updatedCardIndex = draft.findIndex(
+                            (card: any) => card?.cardNumber === data?.cardNumber
+                        );
+                        if (updatedCardIndex !== -1) {
+                            draft[updatedCardIndex] = data;
+                        }
+                        return draft;
+                    })
+                );
+                try {
+                    await queryFulfilled;
+                } catch (error) {
+                    patchResult.undo();
+                }
+            },
         }),
         nextBMCCard: builder.mutation({
             query: ({ projectId, future, cardNumber }) => ({

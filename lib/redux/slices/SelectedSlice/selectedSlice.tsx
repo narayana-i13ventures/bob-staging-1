@@ -129,12 +129,22 @@ export const selectedCards = createSlice({
       .addMatcher(
         BMCSlice.endpoints.GetBMCCanvas.matchFulfilled,
         (state, action) => {
-          console.log(action?.payload?.[0]);
-          state.Future1BMCSelected = action?.payload?.[0];
-          // state.Future1BMCCard = action?.payload?.find(
-          //   (card: any) => card?.selected === true
-          // );
+          console.log(action?.payload);
+          
+          state.Future1BMCSelected = action?.payload?.find(
+            (card: any) => card?.selected === true
+          );
         }
-      );
+      )
+      .addMatcher(
+        BMCSlice.endpoints.updateBMCCard.matchFulfilled,
+        (state, action) => {
+          console.log(action?.payload?.[0]?.selected === true);
+
+          if (action?.payload?.[0]?.selected === true) {
+            state.Future1BMCSelected = action?.payload?.[0]
+          }
+        }
+      )
   },
 });

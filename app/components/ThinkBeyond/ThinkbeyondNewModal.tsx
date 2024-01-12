@@ -346,31 +346,6 @@ const ThinkbeyondNewModal = () => {
                     similique libero fuga`,
                       owner: false,
                     },
-                    {
-                      content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    similique libero fuga`,
-                      owner: false,
-                    },
-                    {
-                      content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    similique libero fuga`,
-                      owner: false,
-                    },
-                    {
-                      content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    similique libero fuga`,
-                      owner: false,
-                    },
-                    {
-                      content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    similique libero fuga`,
-                      owner: false,
-                    },
-                    {
-                      content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    similique libero fuga`,
-                      owner: false,
-                    },
                   ]}
                   color={`#f6f5f4`}
                 />

@@ -24,7 +24,8 @@ const MessageBox = (props: any) => {
         height,
         messages,
         sendMessage,
-        color
+        color,
+        textbox
     } = props;
 
     const handleSendMessage = () => {
@@ -114,7 +115,7 @@ const MessageBox = (props: any) => {
                             );
                         })}
                 </Stack>
-                <Stack sx={{ px: 2, width: '100%' }}>
+                {textbox && <Stack sx={{ px: 2, width: '100%' }}>
                     <TextField
                         fullWidth
                         disabled={bobThinking}
@@ -151,7 +152,7 @@ const MessageBox = (props: any) => {
                             ),
                         }}
                     />
-                </Stack>
+                </Stack>}
             </Stack>
         </Paper>
     );

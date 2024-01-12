@@ -54,10 +54,12 @@ const CanvasCard = (props: any) => {
         }
     }, [UpdateFuture1BMCError, UpdateFuture1BMCSuccess, UpdateFuture1BMCLoading]);
     const selectCard = () => {
+        console.log(selectedCard);
+        
         if (!card?.locked) {
             if (selectedCard && selectedCard.cardNumber !== card.cardNumber) {
-                const updatedSelectedCard = { ...selectedCard, selected: false };
-                if (pathName.includes("/Future1/BMC")) {
+                if (pathName.includes("/Future1/Microframeworks/BMC")) {
+                    const updatedSelectedCard = { ...selectedCard, selected: false };
                     updateFuture1BMCCard({ card: updatedSelectedCard, projectId, future })
                         .unwrap()
                         .then((data: any) => {
@@ -69,13 +71,6 @@ const CanvasCard = (props: any) => {
                             });
                         });
                 }
-            } else {
-                const updatedCard = { ...card, selected: true };
-                updateFuture1BMCCard({
-                    card: updatedCard,
-                    projectId,
-                    future,
-                });
             }
         }
     };
@@ -97,7 +92,7 @@ const CanvasCard = (props: any) => {
                     border: "1px solid #000",
                     overflow: "hidden",
                     cursor: "pointer",
-                    boxShadow: card?.selected ? 2 : 0,
+                    boxShadow: !card?.selected ? 2 : 0,
                 }}
             >
                 <Stack
@@ -110,7 +105,7 @@ const CanvasCard = (props: any) => {
                     }}
                 >
                     <Typography variant="body1">{card?.cardName}</Typography>
-                    {card?.selected && (
+                    {!card?.selected && (
                         <IconButton size="small" onClick={openCanvasModal}>
                             <SettingsOverscanOutlinedIcon fontSize="small" />
                         </IconButton>

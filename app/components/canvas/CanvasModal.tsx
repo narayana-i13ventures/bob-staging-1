@@ -9,7 +9,10 @@ import DialogContent from "@mui/material/DialogContent";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import {
+  Button,
+  ButtonBase,
   CircularProgress,
+  DialogActions,
   Divider,
   IconButton,
   Stack,
@@ -119,7 +122,7 @@ const CanvasModal = () => {
               content: `Hi Bob, I am starting a new company and I am trying to figure out my ${selectedCard?.cardName}!`,
             },
           ];
-          
+
           if (pathName.includes("/Future1/Microframeworks/BMC")) {
             // updateFuture1BMCCard({
             //   projectId,
@@ -468,6 +471,7 @@ const CanvasModal = () => {
                   sendMessage={userMessage}
                   messages={selectedCard?.chat}
                   color={`#f6f5f4`}
+                  textbox={true}
                 />
               ) : (
                 <CommentBox
@@ -556,6 +560,34 @@ const CanvasModal = () => {
             </Stack>
           </Stack>
         </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+            sx={{
+              width: "100%",
+            }}
+          >
+            <Button
+              size="small"
+              variant="outlined"
+              color="primary"
+            >
+              Ask Bob's Help
+            </Button>
+            <Stack component={"div"} direction={"row"} alignItems={"center"}>
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                sx={{ mr: 2 }}
+              >
+                Next Card
+              </Button>
+            </Stack>
+          </Stack>
+        </DialogActions>
       </Dialog>
     </>
   );

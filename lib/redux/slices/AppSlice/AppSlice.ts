@@ -78,27 +78,7 @@ const initialState: AppState = {
         {
             content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
             role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
-        {
-            content: "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-            role: "assistant",
-        },
+        }
     ],
     globalSnackBar: {
         open: false,
