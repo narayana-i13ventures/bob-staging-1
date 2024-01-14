@@ -25,6 +25,7 @@ export default function ThemeRegistry({
     })
   );
   const matches = useMediaQuery("(max-width:920px)");
+  console.log(session);
 
   // useEffect(() => {
   //   if (session?.status !== 'loading' && session?.status === 'authenticated' && session?.status !== 'unauthenticated') {
@@ -38,37 +39,39 @@ export default function ThemeRegistry({
       <NextAppDirEmotionCacheProvider options={{ key: "mui" }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {session?.status === "loading" && (
+          {session?.status === "loading" ? (
             <>
               <Loading />
             </>
-          )}
-          {!matches ? (
-            <>{children}</>
-          ) : (
-            <Stack
-              spacing={4}
-              direction={"column"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              sx={{ minHeight: "100vh" }}
-            >
+          ) : (<>
+            {!matches ? (
+              <>{children}</>
+            ) : (
               <Stack
-                direction={"row"}
-                justifyContent={"flex-start"}
+                spacing={4}
+                direction={"column"}
                 alignItems={"center"}
-                spacing={1}
+                justifyContent={"center"}
+                sx={{ minHeight: "100vh" }}
               >
-                <AutoAwesomeIcon sx={{ fontSize: "25px", color: "black" }} />
-                <Typography variant="h5" sx={{ fontWeight: 600 }}>
-                  Bob
+                <Stack
+                  direction={"row"}
+                  justifyContent={"flex-start"}
+                  alignItems={"center"}
+                  spacing={1}
+                >
+                  <AutoAwesomeIcon sx={{ fontSize: "25px", color: "black" }} />
+                  <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                    Bob
+                  </Typography>
+                </Stack>
+                <Typography variant="body1">
+                  For best experience of Bob use Desktop Version
                 </Typography>
               </Stack>
-              <Typography variant="body1">
-                For best experience of Bob use Desktop Version
-              </Typography>
-            </Stack>
-          )}
+            )}
+          </>)}
+
         </ThemeProvider>
       </NextAppDirEmotionCacheProvider>
     </>

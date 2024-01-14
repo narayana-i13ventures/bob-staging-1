@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useGetAllProjectsQuery } from "@/lib/redux/projectApi";
 import {
   Grid,
@@ -18,8 +18,11 @@ const ProjectsContainer = () => {
     isSuccess: fetch_projects_success,
     isLoading: fetch_projects_loading,
     isError: fetch_projects_error,
+    refetch: getAllProjects,
   } = useGetAllProjectsQuery({});
-
+  const retry = () => {
+    getAllProjects();
+  };
   return (
     <>
       {!fetch_projects_loading &&
@@ -80,7 +83,9 @@ const ProjectsContainer = () => {
             <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
               Something went wrong..! Try again
             </Typography>
-            <Button variant="contained">Retry</Button>
+            <Button variant="contained" onClick={retry}>
+              Retry
+            </Button>
           </Stack>
         )}
     </>
