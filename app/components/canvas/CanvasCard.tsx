@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import { appSlice, useDispatch, useSelector } from "@/lib/redux";
+import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import {
     Button,
     CircularProgress,
@@ -12,13 +12,15 @@ import {
 import SettingsOverscanOutlinedIcon from "@mui/icons-material/SettingsOverscanOutlined";
 import { useParams, usePathname } from "next/navigation";
 import { selectedFuture1BMCCard } from "@/lib/redux/slices/SelectedSlice";
-import { useUpdateBMCCardMutation } from "@/lib/redux/BMCApi";
+import { useUpdateFuture1BMCCardMutation } from "@/lib/redux/BMCApi";
 const CanvasCard = (props: any) => {
     const { card }: any = props;
     const pathName = usePathname();
     const dispatch = useDispatch();
     const { projectId, futureId } = useParams();
-    const selectedCard = useSelector(selectedFuture1BMCCard);
+    const { bobThinking } = useSelector(selectApp);
+    const Future1BMCCard = useSelector(selectedFuture1BMCCard);
+    const [selectedCard, setSelectedCard] = useState<any>(null);
     const future =
         futureId === "Future1"
             ? 1
@@ -33,6 +35,17 @@ const CanvasCard = (props: any) => {
         success: true,
     });
 
+    useEffect(() => {
+        if (pathName.includes("/Future1/Microframeworks/BMC")) {
+            setSelectedCard(Future1BMCCard);
+        } else {
+            setSelectedCard(null);
+        }
+        return () => {
+            setSelectedCard(null);
+        };
+    }, [pathName, Future1BMCCard]);
+
     const openCanvasModal = () => {
         dispatch(appSlice.actions.toggleCanvasModalOpen(true));
     };
@@ -43,7 +56,7 @@ const CanvasCard = (props: any) => {
             isSuccess: UpdateFuture1BMCSuccess,
             isLoading: UpdateFuture1BMCLoading,
         },
-    ] = useUpdateBMCCardMutation();
+    ] = useUpdateFuture1BMCCardMutation();
     useEffect(() => {
         if (pathName.includes("/Future1/Microframeworks/BMC")) {
             setCardStatus({
@@ -54,8 +67,6 @@ const CanvasCard = (props: any) => {
         }
     }, [UpdateFuture1BMCError, UpdateFuture1BMCSuccess, UpdateFuture1BMCLoading]);
     const selectCard = () => {
-        console.log(selectedCard);
-        
         if (!card?.locked) {
             if (selectedCard && selectedCard.cardNumber !== card.cardNumber) {
                 if (pathName.includes("/Future1/Microframeworks/BMC")) {
@@ -71,6 +82,13 @@ const CanvasCard = (props: any) => {
                             });
                         });
                 }
+            } else if (selectedCard.cardNumber !== card.cardNumber) {
+                const updatedCard = { ...card, selected: true };
+                updateFuture1BMCCard({
+                    card: updatedCard,
+                    projectId,
+                    future,
+                });
             }
         }
     };
@@ -105,7 +123,7 @@ const CanvasCard = (props: any) => {
                     }}
                 >
                     <Typography variant="body1">{card?.cardName}</Typography>
-                    {!card?.selected && (
+                    {card?.selected && (
                         <IconButton size="small" onClick={openCanvasModal}>
                             <SettingsOverscanOutlinedIcon fontSize="small" />
                         </IconButton>
@@ -123,50 +141,53 @@ const CanvasCard = (props: any) => {
                         maxHeight: "calc(100% - 37px)",
                     }}
                 >
-                    {!cardStatus?.loading && !cardStatus?.error && (
-                        <>
-                            {card?.keyPoints !== "" && card?.keyPoints !== null ? (
-                                <ul style={{ margin: "0px", padding: "0px 0px 0px 20px" }}>
-                                    {card?.keyPoints
-                                        ?.split("--")
-                                        .filter((keypoint: any) => keypoint !== "")
-                                        .map((keypoint: any, index: number) => (
-                                            <li key={index}>
-                                                <Typography
-                                                    variant="body1"
-                                                    sx={{ fontSize: "14px", mb: 1 }}
-                                                >
-                                                    {keypoint}
-                                                </Typography>
-                                            </li>
-                                        ))}
-                                </ul>
-                            ) : (
-                                <Typography
-                                    variant="h6"
-                                    sx={{
-                                        my: 5,
-                                        width: "100%",
-                                        fontSize: "16PX",
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    No Information Available
-                                </Typography>
-                            )}
-                        </>
-                    )}
-                    {cardStatus?.loading && !cardStatus?.error && (
-                        <Stack
-                            direction={"column"}
-                            flexGrow={1}
-                            justifyContent={"center"}
-                            alignItems={"center"}
-                            sx={{ width: "100%" }}
-                        >
-                            <CircularProgress />
-                        </Stack>
-                    )}
+                    {!cardStatus?.loading &&
+                        !cardStatus?.error &&
+                        !card?.loadingKeyPoints && (
+                            <>
+                                {card?.keyPoints !== "" && card?.keyPoints !== null ? (
+                                    <ul style={{ margin: "0px", padding: "0px 0px 0px 20px" }}>
+                                        {card?.keyPoints
+                                            ?.split("--")
+                                            .filter((keypoint: any) => keypoint !== "")
+                                            .map((keypoint: any, index: number) => (
+                                                <li key={index}>
+                                                    <Typography
+                                                        variant="body1"
+                                                        sx={{ fontSize: "14px", mb: 1 }}
+                                                    >
+                                                        {keypoint}
+                                                    </Typography>
+                                                </li>
+                                            ))}
+                                    </ul>
+                                ) : (
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            my: 5,
+                                            width: "100%",
+                                            fontSize: "16PX",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        No Information Available
+                                    </Typography>
+                                )}
+                            </>
+                        )}
+                    {(cardStatus?.loading || card?.loadingKeyPoints) &&
+                        !cardStatus?.error && (
+                            <Stack
+                                direction={"column"}
+                                flexGrow={1}
+                                justifyContent={"center"}
+                                alignItems={"center"}
+                                sx={{ width: "100%" }}
+                            >
+                                <CircularProgress />
+                            </Stack>
+                        )}
                 </Stack>
             </Stack>
         </>

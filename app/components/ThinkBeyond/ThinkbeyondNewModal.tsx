@@ -17,7 +17,7 @@ import {
   useUpdateThinkbeyondCardMutation,
 } from "@/lib/redux/ThinkbeyondApi";
 import {
-  selectedCards,
+  selectedCardsSlice,
   selectedThinkbeyond,
 } from "@/lib/redux/slices/SelectedSlice";
 import Dialog from "@mui/material/Dialog";
@@ -76,7 +76,7 @@ const ThinkbeyondNewModal = () => {
   ) => {
     const updatedText = e?.target?.value;
     dispatch(
-      selectedCards.actions.updateThinkbeyondText({
+      selectedCardsSlice.actions.updateThinkbeyondText({
         heading,
         text: updatedText,
       })
@@ -87,11 +87,56 @@ const ThinkbeyondNewModal = () => {
     const shouldSendRequest = selectedThinkbeyondCard?.cardInfo?.every(
       (info: any) => info?.text && info.text.trim() !== ""
     );
-    if (shouldSendRequest) {
+    if (selectedThinkbeyondCard?.cardNumber !== 3 && selectedThinkbeyondCard?.cardNumber !== 6 && selectedThinkbeyondCard?.cardNumber !== 9) {
+      if (shouldSendRequest) {
+        setNextCardTransition(true);
+        updatedThinkbeyondCard({ card: selectedThinkbeyondCard, projectId })
+          .unwrap()
+          .then((data: any) => {
+            nextThinkbeyondCard({
+              projectId,
+              cardNumber: selectedThinkbeyondCard?.cardNumber,
+            })
+              .unwrap()
+              .then((data: any) => {
+                setNextCardTransition(false);
+              })
+              .catch(() => {
+                setNextCardTransition(false);
+                dispatch(
+                  appSlice.actions.setGlobalSnackBar({
+                    open: true,
+                    content: `Error Going to next Card`,
+                    clossable: true,
+                  })
+                );
+              });
+          })
+          .catch(() => {
+            setNextCardTransition(false);
+            dispatch(
+              appSlice.actions.setGlobalSnackBar({
+                open: true,
+                content: `Error Going to next Card`,
+                clossable: true,
+              })
+            );
+          });
+      } else {
+        dispatch(
+          appSlice.actions.setGlobalSnackBar({
+            open: true,
+            content: `Complete The Card Information to go to Next Card`,
+            clossable: true,
+          })
+        );
+      }
+    } else {
       setNextCardTransition(true);
       updatedThinkbeyondCard({ card: selectedThinkbeyondCard, projectId })
         .unwrap()
         .then((data: any) => {
+          dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false))
           nextThinkbeyondCard({
             projectId,
             cardNumber: selectedThinkbeyondCard?.cardNumber,
@@ -121,14 +166,6 @@ const ThinkbeyondNewModal = () => {
             })
           );
         });
-    } else {
-      dispatch(
-        appSlice.actions.setGlobalSnackBar({
-          open: true,
-          content: `Complete The Card Information to go to Next Card`,
-          clossable: true,
-        })
-      );
     }
   };
 
@@ -288,7 +325,7 @@ const ThinkbeyondNewModal = () => {
                               mb:
                                 selectedThinkbeyondCard?.cardInfo?.length -
                                   1 ===
-                                index
+                                  index
                                   ? 0
                                   : 3,
                               fontSize: "13px",
@@ -333,13 +370,13 @@ const ThinkbeyondNewModal = () => {
                 <MessageBox
                   header={false}
                   height={1000}
-                  sendMessage={() => {}}
+                  sendMessage={() => { }}
                   messages={BobMessages}
                   color={`#f6f5f4`}
                 />
               ) : (
                 <CommentBox
-                  postComment={() => {}}
+                  postComment={() => { }}
                   comments={[
                     {
                       content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
@@ -364,13 +401,11 @@ const ThinkbeyondNewModal = () => {
                   onClick={() => setActiveBubble("bob")}
                   sx={{
                     p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${
-                      activeBubble === "bob" ? "" : "30"
-                    }`,
-                    "&:hover": {
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "bob" ? "" : "30"
+                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
                       }`,
+                    "&:hover": {
+                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
+                        }`,
                     },
                   }}
                 >
@@ -385,13 +420,11 @@ const ThinkbeyondNewModal = () => {
                   onClick={() => setActiveBubble("comment")}
                   sx={{
                     p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${
-                      activeBubble === "comment" ? "" : "30"
-                    }`,
-                    "&:hover": {
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "comment" ? "" : "30"
+                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
                       }`,
+                    "&:hover": {
+                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
+                        }`,
                     },
                   }}
                 >
@@ -405,13 +438,11 @@ const ThinkbeyondNewModal = () => {
                 <IconButton
                   sx={{
                     p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${
-                      activeBubble === "settings" ? "" : "30"
-                    }`,
-                    "&:hover": {
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "settings" ? "" : "30"
+                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "settings" ? "" : "30"
                       }`,
+                    "&:hover": {
+                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "settings" ? "" : "30"
+                        }`,
                     },
                   }}
                 >

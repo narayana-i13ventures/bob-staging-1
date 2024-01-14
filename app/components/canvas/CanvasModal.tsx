@@ -22,16 +22,15 @@ import {
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import TuneSharpIcon from "@mui/icons-material/TuneSharp";
 import CommentBox from "./CommentBox";
-import NotificationBtn from "../Shared/NotificationBtn/NotificationBtn";
 import {
-  selectedCards,
+  selectedCardsSlice,
   selectedFuture1BMCCard,
 } from "@/lib/redux/slices/SelectedSlice";
 import { useParams, usePathname } from "next/navigation";
 import {
   BMCSlice,
-  useNextBMCCardMutation,
-  useUpdateBMCCardMutation,
+  useNextFuture1BMCCardMutation,
+  useUpdateFuture1BMCCardMutation,
 } from "@/lib/redux/BMCApi";
 import { useLazyGetThinkbeyondCanvasQuery } from "@/lib/redux/ThinkbeyondApi";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
@@ -58,9 +57,19 @@ const CanvasModal = () => {
     error: false,
     success: true,
   });
+  const [nextCardTransition, setNextCardTransition] = useState(false);
 
   const [getThinkbeyondCanvas, { data: ThinkbeyondCanvas }] =
     useLazyGetThinkbeyondCanvasQuery();
+
+  const [
+    nextFuture1BMCCard,
+    {
+      isLoading: nextFuture1BMCLoading,
+      isError: nextFuture1BMCError,
+      isSuccess: nextFuture1BMCSuccess,
+    },
+  ] = useNextFuture1BMCCardMutation();
 
   const [
     updateFuture1BMCCard,
@@ -69,10 +78,7 @@ const CanvasModal = () => {
       isSuccess: UpdateFuture1BMCSuccess,
       isLoading: UpdateFuture1BMCLoading,
     },
-  ] = useUpdateBMCCardMutation();
-
-  const [nextFuture1BMCCard, { isLoading, isSuccess, isError }] =
-    useNextBMCCardMutation();
+  ] = useUpdateFuture1BMCCardMutation();
 
   useEffect(() => {
     getThinkbeyondCanvas(projectId);
@@ -113,6 +119,7 @@ const CanvasModal = () => {
             {
               role: "system",
               content: `You are Bob, a helpful and experienced business advisor, and i13 venture builder, that is helping someone put together their ${selectedCard?.cardCanvas}. You work for i13. You are currently talking about ${selectedCard?.cardName}! Your questions should only relate to ${selectedCard?.cardName}. Never ask about any other sections of the business model canvas except for the one you are currently working on. This is very important. You are asking the user questions to help them build a good ${selectedCard?.cardName} section. Engage in the conversation until you have helped the user piece together a good ${selectedCard?.cardName} section. The user will always end their latest message with information about their business. Keep this in mind and try to use that information in your responses. Only ever ask 1 question at a time. Once you have asked enough questions, you have enough information for this section or you are ready to move on to the next section, respond with exactly the following: "That's all my questions now; it's your turn to ask me anything!" and nothing else.`,
+              time: "",
             },
           ];
           updatedCard.chat = [
@@ -120,6 +127,7 @@ const CanvasModal = () => {
             {
               role: "user",
               content: `Hi Bob, I am starting a new company and I am trying to figure out my ${selectedCard?.cardName}!`,
+              time: "",
             },
           ];
 
@@ -131,6 +139,11 @@ const CanvasModal = () => {
             // }).then(({ data }: any) => {
             //   streamResponse(data, false, false);
             // });
+            dispatch(
+              selectedCardsSlice.actions.updateSelectedFuture1BMCCard(
+                updatedCard
+              )
+            );
           }
         }
       }
@@ -141,21 +154,22 @@ const CanvasModal = () => {
     if (ThinkbeyondCanvas && ThinkbeyondCanvas?.length > 0) {
       const change = ThinkbeyondCanvas?.[0]?.change;
       const moonshot = ThinkbeyondCanvas?.[0]?.moonshot;
+
       let future,
         okrs = null;
 
       switch (currentFuture) {
         case 1:
-          future = ThinkbeyondCanvas?.[0]?.future1;
-          okrs = ThinkbeyondCanvas?.[0]?.future1_okrs;
+          future = ThinkbeyondCanvas?.[0]?.future_1;
+          okrs = ThinkbeyondCanvas?.[0]?.future_1_okrs;
           break;
         case 2:
-          future = ThinkbeyondCanvas?.[0]?.future2;
-          okrs = ThinkbeyondCanvas?.[0]?.future2_okrs;
+          future = ThinkbeyondCanvas?.[0]?.future_2;
+          okrs = ThinkbeyondCanvas?.[0]?.future_2_okrs;
           break;
         case 3:
-          future = ThinkbeyondCanvas?.[0]?.future2;
-          okrs = ThinkbeyondCanvas?.[0]?.future2_okrs;
+          future = ThinkbeyondCanvas?.[0]?.future_3;
+          okrs = ThinkbeyondCanvas?.[0]?.future_3_okrs;
           break;
         default:
           break;
@@ -205,11 +219,15 @@ const CanvasModal = () => {
         { role: "user", content: message },
       ];
       if (pathName.includes("/Future1/Microframeworks/BMC")) {
-        updateFuture1BMCCard({ card: updatedCard, projectId, currentFuture })
-          .unwrap()
-          .then((data) => {
-            streamResponse(data, false, false);
-          });
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture1BMCCard(updatedCard)
+        );
+        streamResponse(updatedCard, false, false);
+        // updateFuture1BMCCard({ card: updatedCard, projectId, currentFuture })
+        //   .unwrap()
+        //   .then((data) => {
+        //     streamResponse(data, false, false);
+        //   });
       }
     }
   };
@@ -219,10 +237,17 @@ const CanvasModal = () => {
     ResponseCard.loadingKeyPoints = true;
     ResponseCard.keyPoints = "";
     if (pathName.includes("/Future1/Microframeworks/BMC")) {
-      updateFuture1BMCCard({ card: ResponseCard, projectId, currentFuture })
+      dispatch(
+        selectedCardsSlice.actions.updateSelectedFuture1BMCCard(ResponseCard)
+      );
+      updateFuture1BMCCard({
+        card: ResponseCard,
+        projectId,
+        future: currentFuture,
+      })
         .unwrap()
         .then((data: any) => {
-          streamResponse(data, true, next);
+          streamResponse(ResponseCard, true, next);
         });
     }
   };
@@ -230,7 +255,13 @@ const CanvasModal = () => {
   const streamResponse = async (card: any, keypoints = false, next: any) => {
     const ResponseCard: any = { ...card };
     let endpoint = "keypoints";
-    let streamBody: any = {};
+    let streamBody: any = {
+      user_id: 3,
+      project_id: projectId,
+      future: currentFuture,
+      card_number: ResponseCard?.cardNumber,
+      chat: ResponseCard?.chat,
+    };
     if (!!card) {
       if (!keypoints) {
         endpoint = "message";
@@ -244,12 +275,14 @@ const CanvasModal = () => {
         ];
         if (pathName.includes("/Future1/Microframeworks/BMC")) {
           dispatch(
-            selectedCards.actions.updateSelectedFuture1BMCCard(ResponseCard)
+            selectedCardsSlice.actions.updateSelectedFuture1BMCCard(
+              ResponseCard
+            )
           );
         }
       }
       dispatch(appSlice.actions.toggleBobThinking(true));
-      const baseUrl = "https://bobapi.i13ventures.com/v1";
+      const baseUrl = "https://bobapi.azurewebsites.net/v1";
       let apiUrl = `${baseUrl}/bmc`;
       await fetchEventSource(`${apiUrl}/${endpoint}`, {
         method: "POST",
@@ -258,7 +291,20 @@ const CanvasModal = () => {
         },
         body: JSON.stringify(streamBody),
         onopen: async function (response: Response) {
-          console.log("Connection opened");
+          if (!keypoints) {
+            if (response?.status === 500) {
+              dispatch(appSlice.actions.toggleBobThinking(false));
+              ResponseCard.chat = ResponseCard?.chat?.slice(
+                0,
+                ResponseCard?.chat?.length - 1
+              );
+              dispatch(
+                selectedCardsSlice.actions.updateSelectedFuture1BMCCard(
+                  ResponseCard
+                )
+              );
+            }
+          }
           return Promise.resolve();
         },
         onmessage: function (res: any) {
@@ -269,17 +315,20 @@ const CanvasModal = () => {
             if (keypoints) {
               ResponseCard.loadingKeyPoints = false;
               ResponseCard.keyPoints = ResponseCard.keyPoints + suggestion;
+              dispatch(appSlice.actions.toggleBobThinking(false));
               if (pathName.includes("/Future1/Microframeworks/BMC")) {
                 dispatch(
-                  selectedCards.actions.updateFuture1BMCKeyPoints(suggestion)
+                  selectedCardsSlice.actions.updateFuture1BMCKeyPoints(
+                    suggestion
+                  )
                 );
                 dispatch(
                   BMCSlice.util.updateQueryData(
-                    "GetBMCCanvas",
-                    {},
+                    "GetFuture1BMCCanvas",
+                    { projectId: projectId, future: currentFuture },
                     (draft: any) => {
                       return draft.map((card: any) => {
-                        if (card.id === ResponseCard?.id) {
+                        if (card.cardNumber === ResponseCard?.cardNumber) {
                           return {
                             ...card,
                             keyPoints: card.keyPoints + suggestion,
@@ -301,13 +350,15 @@ const CanvasModal = () => {
               ResponseCard.chat[ResponseCard.chat.length - 1] = lastMessage;
               if (pathName.includes("/Future1/Microframeworks/BMC")) {
                 dispatch(
-                  selectedCards.actions.updateFuture1BMCChat(suggestion)
+                  selectedCardsSlice.actions.updateFuture1BMCChat(suggestion)
                 );
               }
             }
           }
         },
         onerror: function (error: any) {
+          dispatch(appSlice.actions.toggleBobThinking(false));
+          console.log(error);
           if (keypoints) {
             ResponseCard.loadingKeyPoints = false;
             if (pathName.includes("/Future1/Microframeworks/BMC")) {
@@ -315,30 +366,35 @@ const CanvasModal = () => {
                 card: ResponseCard,
                 projectId,
                 currentFuture,
-              })
-                .unwrap()
-                .then((data: any) => {
-                  dispatch(appSlice.actions.toggleBobThinking(false));
-                });
+              });
             }
           }
         },
         onclose: function () {
           console.log("connection closed");
           if (pathName.includes("/Future1/Microframeworks/BMC")) {
-            updateFuture1BMCCard({
-              card: ResponseCard,
-              projectId,
-              currentFuture,
-            })
-              .unwrap()
-              .then((data: any) => {
-                dispatch(appSlice.actions.toggleBobThinking(false));
-                if (next && ResponseCard?.cardName !== "Revenue Streams") {
-                  // dispatch(appSlice.actions.toggleCanvasCardModal(false));
-                  nextFuture1BMCCard(ResponseCard);
-                }
+            if (next && ResponseCard?.cardName !== "Revenue Streams") {
+              updateFuture1BMCCard({
+                card: ResponseCard,
+                projectId,
+                future: currentFuture,
+              })
+                .unwrap()
+                .then((data: any) => {
+                  nextFuture1BMCCard({
+                    projectId,
+                    future: currentFuture,
+                    cardNumber: ResponseCard?.cardNumber,
+                  });
+                });
+            }
+            if (!next && keypoints) {
+              updateFuture1BMCCard({
+                card: ResponseCard,
+                projectId,
+                future: currentFuture,
               });
+            }
           }
         },
       });
@@ -373,219 +429,256 @@ const CanvasModal = () => {
             alignItems: "center",
           }}
         >
-          <Typography variant="body1">{selectedCard?.cardName}</Typography>
+          {!nextCardTransition ? (
+            <Typography variant="body1">{selectedCard?.cardName}</Typography>
+          ) : (
+            <CircularProgress size={20} />
+          )}
           <IconButton size="small" onClick={closeCanvasModal}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <Divider />
         <DialogContent sx={{ p: 2 }}>
-          <Stack
-            direction={"row"}
-            alignItems={"stretch"}
-            justifyContent={"flex-start"}
-            sx={{ width: "100%" }}
-          >
-            <Stack
-              direction={"column"}
-              justifyContent={"flex-start"}
-              alignItems={"flext-start"}
-              sx={{
-                pr: 2,
-                width: "50%",
-                height: "75vh",
-                overflowY: "auto",
-              }}
-            >
-              {!cardStatus?.loading && !cardStatus?.error && (
-                <>
-                  {selectedCard?.keyPoints !== "" &&
-                    selectedCard?.keyPoints !== null ? (
-                    <ul style={{ margin: "0px", padding: "0px 0px 0px 20px" }}>
-                      {selectedCard?.keyPoints
-                        ?.split("--")
-                        .filter((keypoint: any) => keypoint !== "")
-                        .map((keypoint: any, index: number) => (
-                          <li key={index}>
-                            <Typography
-                              variant="body1"
-                              sx={{ fontSize: "14px", mb: 1 }}
-                            >
-                              {keypoint}
-                            </Typography>
-                          </li>
-                        ))}
-                    </ul>
-                  ) : (
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        my: 5,
-                        width: "100%",
-                        fontSize: "16PX",
-                        textAlign: "center",
-                      }}
-                    >
-                      No Information Available
-                    </Typography>
-                  )}
-                </>
-              )}
-              {cardStatus?.loading && !cardStatus?.error && (
-                <Stack
-                  direction={"column"}
-                  flexGrow={1}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  sx={{ width: "100%" }}
-                >
-                  <CircularProgress />
-                </Stack>
-              )}
-              {!cardStatus?.loading && cardStatus?.error && (
-                <Stack
-                  direction={"column"}
-                  flexGrow={1}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  sx={{ width: "100%" }}
-                >
-                  <Typography>Something went Wrong..!</Typography>
-                </Stack>
-              )}
-            </Stack>
+          {!nextFuture1BMCLoading && !nextFuture1BMCError && (
             <Stack
               direction={"row"}
+              alignItems={"stretch"}
               justifyContent={"flex-start"}
-              alignItems={"flext-start"}
-              sx={{
-                pl: 2,
-                width: "50%",
-                height: "75vh",
-              }}
+              sx={{ width: "100%" }}
             >
-              {activeBubble === "bob" ? (
-                <MessageBox
-                  header={false}
-                  height={1000}
-                  sendMessage={userMessage}
-                  messages={selectedCard?.chat}
-                  color={`#f6f5f4`}
-                  textbox={true}
-                />
-              ) : (
-                <CommentBox
-                  postComment={() => { }}
-                  comments={[
-                    {
-                      content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    similique libero fuga`,
-                      owner: false,
-                    },
-                    {
-                      content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    similique libero fuga`,
-                      owner: false,
-                    },
-                  ]}
-                  color={`#f6f5f4`}
-                />
-              )}
               <Stack
-                spacing={2}
                 direction={"column"}
-                alignItems={"center"}
                 justifyContent={"flex-start"}
+                alignItems={"flext-start"}
                 sx={{
-                  pt: 1,
+                  pr: 2,
+                  width: "50%",
+                  height: "65vh",
+                  overflowY: "auto",
                 }}
               >
-                <IconButton
-                  onClick={() => setActiveBubble("bob")}
+                {!bobThinking ? (
+                  <>
+                    {!cardStatus?.loading && !cardStatus?.error && (
+                      <>
+                        {selectedCard?.keyPoints !== "" &&
+                          selectedCard?.keyPoints !== null ? (
+                          <ul
+                            style={{
+                              margin: "0px",
+                              padding: "0px 0px 0px 20px",
+                            }}
+                          >
+                            {selectedCard?.keyPoints
+                              ?.split("--")
+                              .filter((keypoint: any) => keypoint !== "")
+                              .map((keypoint: any, index: number) => (
+                                <li key={index}>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{ fontSize: "14px", mb: 1 }}
+                                  >
+                                    {keypoint}
+                                  </Typography>
+                                </li>
+                              ))}
+                          </ul>
+                        ) : (
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              my: 5,
+                              width: "100%",
+                              fontSize: "16PX",
+                              textAlign: "center",
+                            }}
+                          >
+                            No Information Available
+                          </Typography>
+                        )}
+                      </>
+                    )}
+                    {cardStatus?.loading && !cardStatus?.error && (
+                      <Stack
+                        direction={"column"}
+                        flexGrow={1}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                        sx={{ width: "100%" }}
+                      >
+                        <CircularProgress />
+                      </Stack>
+                    )}
+                    {!cardStatus?.loading && cardStatus?.error && (
+                      <Stack
+                        direction={"column"}
+                        flexGrow={1}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                        sx={{ width: "100%" }}
+                      >
+                        <Typography>Something went Wrong..!</Typography>
+                      </Stack>
+                    )}
+                  </>
+                ) : (
+                  <Stack
+                    flexGrow={1}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    sx={{ width: "100%" }}
+                  >
+                    <CircularProgress />
+                  </Stack>
+                )}
+              </Stack>
+              <Stack
+                direction={"row"}
+                justifyContent={"flex-start"}
+                alignItems={"flext-start"}
+                sx={{
+                  pl: 2,
+                  width: "50%",
+                  height: "65vh",
+                }}
+              >
+                {activeBubble === "bob" ? (
+                  <MessageBox
+                    header={false}
+                    height={1000}
+                    sendMessage={userMessage}
+                    messages={selectedCard?.chat}
+                    color={`#f6f5f4`}
+                    textbox={true}
+                  />
+                ) : (
+                  <CommentBox
+                    postComment={() => { }}
+                    comments={[
+                      {
+                        content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
+                    similique libero fuga`,
+                        owner: false,
+                      },
+                      {
+                        content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
+                    similique libero fuga`,
+                        owner: false,
+                      },
+                    ]}
+                    color={`#f6f5f4`}
+                  />
+                )}
+                <Stack
+                  spacing={2}
+                  direction={"column"}
+                  alignItems={"center"}
+                  justifyContent={"flex-start"}
                   sx={{
-                    p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                      }`,
-                    "&:hover": {
+                    pt: 1,
+                  }}
+                >
+                  <IconButton
+                    onClick={() => setActiveBubble("bob")}
+                    sx={{
+                      p: 1.5,
                       backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
                         }`,
-                    },
-                  }}
-                >
-                  <AutoAwesomeIcon
-                    sx={{
-                      color: `${activeBubble === "bob" ? "white" : ""}`,
-                      fontSize: "30px",
+                      "&:hover": {
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
+                          }`,
+                      },
                     }}
-                  />
-                </IconButton>
-                <IconButton
-                  onClick={() => setActiveBubble("comment")}
-                  sx={{
-                    p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
-                      }`,
-                    "&:hover": {
+                  >
+                    <AutoAwesomeIcon
+                      sx={{
+                        color: `${activeBubble === "bob" ? "white" : ""}`,
+                        fontSize: "30px",
+                      }}
+                    />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => setActiveBubble("comment")}
+                    sx={{
+                      p: 1.5,
                       backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
                         }`,
-                    },
-                  }}
-                >
-                  <ChatBubbleOutlineOutlinedIcon
-                    sx={{
-                      color: `${activeBubble === "comment" ? "white" : ""}`,
-                      fontSize: "25px",
+                      "&:hover": {
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
+                          }`,
+                      },
                     }}
-                  />
-                </IconButton>
-                <IconButton
-                  sx={{
-                    p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "settings" ? "" : "30"
-                      }`,
-                    "&:hover": {
+                  >
+                    <ChatBubbleOutlineOutlinedIcon
+                      sx={{
+                        color: `${activeBubble === "comment" ? "white" : ""}`,
+                        fontSize: "25px",
+                      }}
+                    />
+                  </IconButton>
+                  <IconButton
+                    sx={{
+                      p: 1.5,
                       backgroundColor: `${theme.palette.primary.main}${activeBubble === "settings" ? "" : "30"
                         }`,
-                    },
-                  }}
-                >
-                  <TuneSharpIcon
-                    sx={{
-                      color: `${activeBubble === "settings" ? "white" : ""}`,
-                      fontSize: "25px",
+                      "&:hover": {
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "settings" ? "" : "30"
+                          }`,
+                      },
                     }}
-                  />
-                </IconButton>
+                  >
+                    <TuneSharpIcon
+                      sx={{
+                        color: `${activeBubble === "settings" ? "white" : ""}`,
+                        fontSize: "25px",
+                      }}
+                    />
+                  </IconButton>
+                </Stack>
               </Stack>
             </Stack>
-          </Stack>
+          )}
+          {nextFuture1BMCLoading && !nextFuture1BMCError && (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              sx={{ width: "100%", height: "65vh" }}
+            >
+              <CircularProgress />
+            </Stack>
+          )}
         </DialogContent>
+        <Divider />
         <DialogActions sx={{ p: 2 }}>
           <Stack
             direction={"row"}
             alignItems={"center"}
-            justifyContent={"space-between"}
+            justifyContent={"flex-end"}
             sx={{
               width: "100%",
             }}
           >
             <Button
+              disabled={nextCardTransition}
+              onClick={() => generateKeypoints(false)}
               size="small"
               variant="outlined"
               color="primary"
+              sx={{ mr: 2 }}
             >
-              Ask Bob's Help
+              Load Keypoints
             </Button>
-            <Stack component={"div"} direction={"row"} alignItems={"center"}>
-              <Button
-                size="small"
-                variant="contained"
-                color="primary"
-                sx={{ mr: 2 }}
-              >
-                Next Card
-              </Button>
-            </Stack>
+            <Button
+              disabled={nextCardTransition}
+              onClick={() => generateKeypoints(true)}
+              size="small"
+              variant="contained"
+              color="primary"
+            >
+              Next Card
+            </Button>
           </Stack>
         </DialogActions>
       </Dialog>

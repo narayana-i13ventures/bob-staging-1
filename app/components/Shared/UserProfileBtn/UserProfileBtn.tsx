@@ -3,34 +3,35 @@ import React, { useRef } from "react";
 import GrowTransition from "../../Utils/Grow";
 import {
   Avatar,
-  Divider,
-  IconButton,
   ListItemIcon,
   ListItemText,
   MenuItem,
   MenuList,
   Popover,
-  Typography,
 } from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
-import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
-import {
-  ContentCut,
-  ContentCopy,
-  ContentPaste,
-  Cloud,
-} from "@mui/icons-material";
+import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const UserProfileBtn = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
-  const UserProfileMenuRef = useRef(null);
+  const UserProfileMenuRef: any = useRef(null);
   const { userMenu } = useSelector(selectApp);
-  const handleUserProfileMenu = () => {
+
+  const handleUserProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
     dispatch(
-      appSlice.actions.toggleUserMenu(Boolean(UserProfileMenuRef?.current))
+      appSlice.actions.toggleUserMenu(true)
     );
   };
+
+  const goToProfile = (e: React.MouseEvent<HTMLElement>) => {
+    e?.preventDefault();
+    dispatch(appSlice.actions.toggleUserMenu(false));
+    router.push("/profile/new_profile");
+  };
+
   return (
     <>
       <Avatar
@@ -75,6 +76,9 @@ const UserProfileBtn = () => {
       >
         <MenuList>
           <MenuItem
+            onClick={(e: any) => {
+              goToProfile(e);
+            }}
             sx={{
               borderRadius: 2,
               "&:hover": {
@@ -88,7 +92,7 @@ const UserProfileBtn = () => {
                   width: 25,
                   height: 25,
                   backgroundColor: "orange",
-                  fontSize: '14px'
+                  fontSize: "14px",
                 }}
               >
                 N

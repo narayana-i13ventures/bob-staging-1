@@ -8,9 +8,8 @@ import {
 } from "@mui/material";
 import React, { useEffect } from "react";
 import ThinkbeyondCard from "./ThinkbeyondCard";
-import ThinkbeyondModal from "./ThinkbeyondModal";
-import { useParams } from "next/navigation";
 import { useLazyGetThinkbeyondCanvasQuery } from "@/lib/redux/ThinkbeyondApi";
+import { useParams } from "next/navigation";
 
 const ThinkbeyondCanvas = () => {
     const { projectId } = useParams();

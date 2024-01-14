@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import DashboardSidebar from "./DashboardSidebar";
 import {
   Container,
   Divider,
@@ -8,13 +7,12 @@ import {
   Stack,
   Tooltip,
 } from "@mui/material";
+import ShareModal from "../Shared/ShareModal";
+import DashboardSidebar from "./DashboardSidebar";
 import Typography from "@mui/material/Typography";
+import ProjectsContainer from "./ProjectsContainer";
 import ProjectDetails from "../Project/ProjectDetails";
 import CreateProjectModal from "../Project/CreateProjectModal";
-import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
-import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
-import ProjectsContainer from "./ProjectsContainer";
-import ShareModal from "../Shared/ShareModal";
 const DashboardSpace = () => {
 
   return (

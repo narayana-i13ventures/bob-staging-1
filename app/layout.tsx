@@ -11,26 +11,26 @@ import { Suspense } from 'react';
 export const metadata: Metadata = {
   title: "Bob",
   description: "Bob Ui with Mui Library",
-  icons: '/images/favicon.png'
+  icons: '/images/i13logo.png'
 };
 
 export default function RootLayout(props: React.PropsWithChildren) {
   return (
-    <AuthProvider>
-      <Providers>
-        <html lang="en">
-          <body suppressHydrationWarning={true}>
-            <main>
-              <Suspense fallback={<Loading />}>
-                <ThemeRegistry>
+    <html lang="en">
+      <body suppressHydrationWarning={true}>
+        <main>
+          <AuthProvider>
+            <Providers>
+              <ThemeRegistry>
+                {/* <Suspense fallback={<Loading />}> */}
                   {props.children}
-                  <GlobalSnackbar />
-                </ThemeRegistry>
-              </Suspense>
-            </main>
-          </body>
-        </html>
-      </Providers>
-    </AuthProvider>
+                {/* </Suspense> */}
+                <GlobalSnackbar />
+              </ThemeRegistry>
+            </Providers>
+          </AuthProvider>
+        </main>
+      </body>
+    </html>
   )
 }

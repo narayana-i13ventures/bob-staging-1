@@ -4,11 +4,11 @@ import { thinkbeyondSlice } from "../../ThinkbeyondApi";
 import { BMCSlice } from "../../BMCApi";
 
 const initialState: any = {
-  ThinkBeyondSelectedCard: {},
+  ThinkBeyondSelectedCard: null,
   Future1BMCSelected: null,
 };
 
-export const selectedCards = createSlice({
+export const selectedCardsSlice = createSlice({
   name: "selectedCards",
   initialState,
   reducers: {
@@ -40,10 +40,14 @@ export const selectedCards = createSlice({
       }
     },
     updateFuture1BMCChat(state, action: PayloadAction<string>) {
-      if (state.Future1BMCSelected !== null && state.Future1BMCSelected !== undefined) {
+      if (
+        state.Future1BMCSelected !== null &&
+        state.Future1BMCSelected !== undefined
+      ) {
         const updatedBMCCard: any = { ...state.Future1BMCSelected };
         if (updatedBMCCard?.chat?.length > 0) {
-          const lastMessage = updatedBMCCard?.chat?.[updatedBMCCard?.chat?.length - 1];
+          const lastMessage =
+            updatedBMCCard?.chat?.[updatedBMCCard?.chat?.length - 1];
           lastMessage.content += action.payload;
         }
         state.Future1BMCSelected.chat = updatedBMCCard.chat;
@@ -53,7 +57,10 @@ export const selectedCards = createSlice({
     },
     updateFuture1BMCKeyPoints: (state, action: PayloadAction<string>) => {
       state.Future1BMCSelected.loadingKeyPoints = false;
-      if (state.Future1BMCSelected !== null && state.Future1BMCSelected !== undefined) {
+      if (
+        state.Future1BMCSelected !== null &&
+        state.Future1BMCSelected !== undefined
+      ) {
         const updatedBMCCard = { ...state.Future1BMCSelected };
         updatedBMCCard.keyPoints += action.payload;
         state.Future1BMCSelected = updatedBMCCard;
@@ -61,7 +68,10 @@ export const selectedCards = createSlice({
     },
     updateSelectedFuture1BMCCard: (state, action: PayloadAction<any>) => {
       const card: any = action.payload;
-      if (state.Future1BMCSelected !== null && state.Future1BMCSelected !== undefined) {
+      if (
+        state.Future1BMCSelected !== null &&
+        state.Future1BMCSelected !== undefined
+      ) {
         const updatedCard = {
           ...state.Future1BMCSelected,
           ...card,
@@ -127,24 +137,30 @@ export const selectedCards = createSlice({
         }
       )
       .addMatcher(
-        BMCSlice.endpoints.GetBMCCanvas.matchFulfilled,
+        BMCSlice.endpoints.GetFuture1BMCCanvas.matchFulfilled,
         (state, action) => {
-          console.log(action?.payload);
-          
           state.Future1BMCSelected = action?.payload?.find(
             (card: any) => card?.selected === true
           );
         }
       )
       .addMatcher(
-        BMCSlice.endpoints.updateBMCCard.matchFulfilled,
+        BMCSlice.endpoints.updateFuture1BMCCard.matchFulfilled,
         (state, action) => {
-          console.log(action?.payload?.[0]?.selected === true);
-
           if (action?.payload?.[0]?.selected === true) {
-            state.Future1BMCSelected = action?.payload?.[0]
+            state.Future1BMCSelected = action?.payload?.[0];
           }
         }
       )
+      .addMatcher(
+        BMCSlice.endpoints.nextFuture1BMCCard.matchFulfilled,
+        (state, action) => {
+          if (action?.payload?.[0]?.selected === true) {
+            state.Future1BMCSelected = action?.payload?.[0];
+          } else if (action?.payload?.[1]?.selected === true) {
+            state.Future1BMCSelected = action?.payload?.[1];
+          }
+        }
+      );
   },
 });

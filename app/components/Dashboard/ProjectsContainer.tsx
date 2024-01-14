@@ -1,3 +1,4 @@
+'use client';
 import { useGetAllProjectsQuery } from "@/lib/redux/projectApi";
 import {
   Grid,

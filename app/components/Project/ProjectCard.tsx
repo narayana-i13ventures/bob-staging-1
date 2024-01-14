@@ -1,7 +1,6 @@
 import React from "react";
 import ProjectMenuBtn from "./ProjectMenuBtn";
-import { Box, Card, IconButton, Paper, Stack, Typography } from "@mui/material";
-import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
+import { Paper, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
 const ProjectCard = (props: any) => {

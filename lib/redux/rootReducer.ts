@@ -3,7 +3,7 @@ import { BMCSlice } from './BMCApi'
 import { thinkbeyondSlice } from './ThinkbeyondApi'
 import { ProjectApiSlice } from './projectApi'
 import { appSlice, pruchaseHistorySlice, teamSlice, userSlice } from './slices'
-import { selectedCards } from './slices/SelectedSlice'
+import { selectedCardsSlice } from './slices/SelectedSlice'
 
 export const reducer = {
   api: apiSlice.reducer,
@@ -13,6 +13,6 @@ export const reducer = {
   App: appSlice.reducer,
   Team: teamSlice.reducer,
   user: userSlice.reducer,
-  selectedCards: selectedCards.reducer,
+  selectedCards: selectedCardsSlice.reducer,
   purchaseHistory: pruchaseHistorySlice.reducer,
 }

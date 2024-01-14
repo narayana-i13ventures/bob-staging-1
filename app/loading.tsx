@@ -1,3 +1,4 @@
+'use client';
 import { Avatar, CircularProgress, Stack, Typography } from "@mui/material";
 import React from "react";
 
@@ -8,7 +9,7 @@ const Loading = () => {
             direction={"column"}
             alignItems={"center"}
             justifyContent={"center"}
-            sx={{ minHeight: "100vh" }}
+            sx={{ minHeight: "100vh", maxHeight: '100vh', overflow: 'hidden' }}
         >
             <Stack
                 direction={"row"}

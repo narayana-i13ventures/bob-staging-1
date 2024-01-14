@@ -22,12 +22,12 @@ export const BMCSlice = createApi({
                 }),
             }),
         }),
-        GetBMCCanvas: builder.query({
+        GetFuture1BMCCanvas: builder.query({
             query: ({ projectId, future }) => ({
                 url: `/v1/bmc/getcanvas?user_id=3&future=${future}&project_id=${projectId}`,
             }),
         }),
-        updateBMCCard: builder.mutation({
+        updateFuture1BMCCard: builder.mutation({
             query: ({ projectId, card, future }) => ({
                 url: `/v1/bmc/updatecard`,
                 method: "POST",
@@ -46,25 +46,25 @@ export const BMCSlice = createApi({
                 }),
             }),
             async onQueryStarted(data, { dispatch, queryFulfilled }) {
-                const patchResult = dispatch(
-                    BMCSlice.util.updateQueryData("GetBMCCanvas", {}, (draft: any) => {
-                        const updatedCardIndex = draft.findIndex(
-                            (card: any) => card?.cardNumber === data?.cardNumber
-                        );
-                        if (updatedCardIndex !== -1) {
-                            draft[updatedCardIndex] = data;
-                        }
-                        return draft;
-                    })
-                );
                 try {
-                    await queryFulfilled;
-                } catch (error) {
-                    patchResult.undo();
-                }
+                    const response: any = await queryFulfilled;
+                    const patchResult = dispatch(
+                        BMCSlice.util.updateQueryData("GetFuture1BMCCanvas", { projectId: data?.projectId, future: data?.future }, (draft: any) => {
+                            const updatedCardIndex = draft.findIndex(
+                                (card: any) => {
+                                    return card?.cardNumber === response?.data?.[0]?.cardNumber
+                                }
+                            );
+                            if (updatedCardIndex !== -1) {
+                                draft[updatedCardIndex] = response?.data?.[0];
+                            }
+                            return draft;
+                        })
+                    );
+                } catch (error) { }
             },
         }),
-        nextBMCCard: builder.mutation({
+        nextFuture1BMCCard: builder.mutation({
             query: ({ projectId, future, cardNumber }) => ({
                 url: `/v1/bmc/nextcard`,
                 method: "POST",
@@ -75,13 +75,31 @@ export const BMCSlice = createApi({
                     card_number: cardNumber,
                 }),
             }),
+            async onQueryStarted(data, { dispatch, queryFulfilled }) {
+                try {
+                    const response: any = await queryFulfilled;
+                    const patchResult = dispatch(
+                        BMCSlice.util.updateQueryData("GetFuture1BMCCanvas", { projectId: data?.projectId, future: data?.future }, (draft: any) => {
+                            return draft.map((card: any) => {
+                                if (card.cardNumber === response?.data?.[0]?.cardNumber) {
+                                    return response?.data[0];
+                                } else if (card.cardNumber === response?.data?.[1]?.cardNumber) {
+                                    return response?.data[1];
+                                } else {
+                                    return card;
+                                }
+                            });
+                        })
+                    );
+                } catch (error) { }
+            },
         }),
     }),
 });
 
 export const {
-    useLazyGetBMCCanvasQuery,
+    useLazyGetFuture1BMCCanvasQuery,
     usePrefillFutuer1BMCMutation,
-    useUpdateBMCCardMutation,
-    useNextBMCCardMutation
+    useUpdateFuture1BMCCardMutation,
+    useNextFuture1BMCCardMutation,
 } = BMCSlice;
