@@ -111,7 +111,7 @@ const SignInPage = () => {
         </Button>
         <Divider sx={{ my: 2, width: "100%" }} />
         <Button
-          onClick={() => signIn("google",{callbackUrl:'/Dashboard'})}
+          onClick={() => signIn("google")}
           disableElevation
           variant="outlined"
           fullWidth
