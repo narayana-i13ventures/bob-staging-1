@@ -25,7 +25,6 @@ export default function ThemeRegistry({
     })
   );
   const matches = useMediaQuery("(max-width:920px)");
-  console.log(session);
 
   // useEffect(() => {
   //   if (session?.status !== 'loading' && session?.status === 'authenticated' && session?.status !== 'unauthenticated') {

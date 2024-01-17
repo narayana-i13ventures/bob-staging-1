@@ -1,3 +1,4 @@
+import { useUnshareThinkbeyondMutation } from "@/lib/redux/ThinkbeyondApi";
 import { useUnShareProjectMutation } from "@/lib/redux/projectApi";
 import { CloseOutlined } from "@mui/icons-material";
 import {
@@ -11,20 +12,35 @@ import {
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 
 const SharedUserCard = (props: any) => {
-  const { editRole = true, deleteUser = true, project_id } = props;
+  const { data }: any = useSession();
+  const { editRole = true, deleteUser = true, type, metadata } = props;
   const { owner = false, user_id, preferred_name, email_address } = props?.user;
 
   const [role, SetRole] = useState("editor");
-  const [unshareProject, { data, isLoading, isError }] =
-    useUnShareProjectMutation();
+  const [unshareProject, { isLoading, isError }] = useUnShareProjectMutation();
+  const [unshareThinkbeyond] = useUnshareThinkbeyondMutation();
   const changeRole = (event: SelectChangeEvent) => {
     SetRole(event.target.value as string);
   };
   const unShare = () => {
-    unshareProject({ project_id: project_id, shared_id: user_id });
+    unshareProject({
+      projectId: metadata?.projectId,
+      shared_id: user_id,
+      userId: data?.user?.user_id,
+    });
+    // if (type === "project") {
+    // }
+    // if (type === "thinkbeyond") {
+    //   unshareThinkbeyond({
+    //     projectId: metadata?.projectId,
+    //     shared_user_id: user_id,
+    //     userId: data?.user?.user_id,
+    //   });
+    // }
   };
   return (
     <Box

@@ -2,7 +2,15 @@
 import React, { useRef } from "react";
 import Notification from "./Notification";
 import GrowTransition from "../../Utils/Grow";
-import { Badge, Box, Chip, Divider, IconButton, Popover, Stack } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Chip,
+  Divider,
+  IconButton,
+  Popover,
+  Stack,
+} from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 const NotificationBtn = () => {
@@ -23,7 +31,8 @@ const NotificationBtn = () => {
         disableFocusRipple
         onClick={handleOpenNotificationMenu}
         sx={{
-          mr: 2
+          p: 1,
+          mr: 2,
         }}
       >
         <Badge badgeContent={4} color="error">
@@ -48,7 +57,7 @@ const NotificationBtn = () => {
           elevation: 1,
           sx: {
             borderRadius: 3,
-            height: '600px',
+            height: "600px",
             width: "400px",
             overflowY: "hidden",
             zIndex: 100,
@@ -57,13 +66,13 @@ const NotificationBtn = () => {
       >
         <Stack
           component={"div"}
-          direction={'row'}
-          alignItems={'center'}
-          justifyContent={'space-between'}
+          direction={"row"}
+          alignItems={"center"}
+          justifyContent={"space-between"}
           sx={{
             p: 2,
-            width: '100%',
-            backgroundColor: 'white',
+            width: "100%",
+            backgroundColor: "white",
           }}
         >
           <Box component={"div"}>
@@ -73,7 +82,7 @@ const NotificationBtn = () => {
               label="All"
               variant="filled"
               color="primary"
-              onClick={() => { }}
+              onClick={() => {}}
             />
             <Chip
               size="small"
@@ -81,7 +90,7 @@ const NotificationBtn = () => {
               label="Unread"
               variant="outlined"
               color="primary"
-              onClick={() => { }}
+              onClick={() => {}}
             />
           </Box>
           <Box component={"div"}>
@@ -91,7 +100,7 @@ const NotificationBtn = () => {
               label="Clear All"
               variant="outlined"
               color="error"
-              onClick={() => { }}
+              onClick={() => {}}
             />
           </Box>
         </Stack>
@@ -101,23 +110,16 @@ const NotificationBtn = () => {
           sx={{
             p: 2,
             maxHeight: "550px",
-            overflowY: 'auto'
+            overflowY: "auto",
           }}
         >
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
-          <Notification />
+          <Notification
+            notification={{
+              content:
+                "Jhon Dave Shared a New Project with you. Click to view details",
+              action: "/69/Thinkbeyond",
+            }}
+          />
         </Box>
       </Popover>
     </>

@@ -1,106 +1,234 @@
-import { Avatar, Divider, IconButton, TextField } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 
 const Profile = () => {
   const { data }: any = useSession();
   const [editEmailOpen, setEmailEditOpen] = useState(false);
   return (
-    <div className="flex flex-col justify-start items-start w-[70%] pt-5">
-      <div className="flex justify-start items-start w-full mb-8">
-        <div className="relative rounded-full w-[150px]">
+    <Stack
+      direction={"column"}
+      justifyContent={"flex-start"}
+      alignItems={"flex-start"}
+      sx={{ width: "50%" }}
+    >
+      <Stack
+        direction={"row"}
+        justifyContent={"flex-start"}
+        alignItems={"center"}
+        spacing={4}
+        sx={{ width: "100%" }}
+      >
+        <Box sx={{ position: "relative" }}>
           {data?.user?.image ? (
             <img
-              className="w-[120px] h-[120px] rounded-full max-w-full"
               src={data?.user?.image}
               alt={data?.user?.name}
               referrerPolicy="no-referrer"
+              style={{ borderRadius: "100%" }}
             />
           ) : (
             <Avatar sx={{ width: "120px", height: "120px" }}>N</Avatar>
           )}
-          <div className="absolute bottom-[-15px] right-1 rounded-full w-[50px] h-[50px] z-1 flex justify-center items-center">
-            <IconButton color="primary" className="!bg-gray-300">
-              <EditIcon className="!text-white !text-[25px]" />
-            </IconButton>
-          </div>
-        </div>
-        <div className="w-full pl-10 mt-3">
-          <p className="mb-2 font-semibold">Firstname & Lastname</p>
+          <IconButton
+            sx={{
+              position: "absolute",
+              bottom: "0px",
+              right: "0px",
+              backgroundColor: "white",
+            }}
+          >
+            <EditIcon className="!text-white !text-[25px]" />
+          </IconButton>
+        </Box>
+        <Box sx={{ width: "100%" }}>
+          <Typography variant="body1" sx={{ mb: 1, fontSize: "14px" }}>
+            First Name
+          </Typography>
           <TextField
             fullWidth
-            className="w-full !mb-4"
             size="small"
             type="text"
             id="profile-firstname"
             variant="outlined"
-            value={data?.user?.name}
+            value={data?.user?.name?.split(" ")?.[0]}
             disabled={true}
+            sx={{
+              mb: 2,
+              "& .MuiInputBase-input": {
+                p: 1,
+                fontSize: "14px",
+              },
+            }}
           />
-        </div>
-      </div>
-      <p className="mb-2 font-semibold">Role</p>
+          <Typography variant="body1" sx={{ mb: 1, fontSize: "14px" }}>
+            Last Name
+          </Typography>
+          <TextField
+            fullWidth
+            size="small"
+            type="text"
+            id="profile-lastname"
+            variant="outlined"
+            value={data?.user?.name?.split(" ")?.[1]}
+            disabled={true}
+            sx={{
+              mb: 2,
+              "& .MuiInputBase-input": {
+                p: 1,
+                fontSize: "14px",
+              },
+            }}
+          />
+        </Box>
+      </Stack>
+      <Typography variant="body1" sx={{ mb: 1, fontSize: "14px" }}>
+        Display Name
+      </Typography>
       <TextField
         fullWidth
-        className="w-full !mb-4"
+        size="small"
+        type="text"
+        id="profile-display-name"
+        variant="outlined"
+        value={data?.user?.name}
+        disabled={true}
+        sx={{
+          mb: 2,
+          "& .MuiInputBase-input": {
+            p: 1,
+            fontSize: "14px",
+          },
+        }}
+      />
+      <Typography variant="body1" sx={{ mb: 1, fontSize: "14px" }}>
+        Role
+      </Typography>
+      <TextField
+        fullWidth
         size="small"
         type="text"
         id="profile-role"
         variant="outlined"
         value={"Business Strategist"}
         disabled={true}
+        sx={{
+          mb: 2,
+          "& .MuiInputBase-input": {
+            p: 1,
+            fontSize: "14px",
+          },
+        }}
       />
-      <p className="mb-2 font-semibold">Company</p>
+      <Typography variant="body1" sx={{ mb: 1, fontSize: "14px" }}>
+        Team
+      </Typography>
       <TextField
         fullWidth
-        className="w-full !mb-4"
         size="small"
         type="text"
-        id="profile-company"
+        id="profile-team"
         variant="outlined"
-        value={"i13 Ventures"}
+        value={"I13 Ventures"}
         disabled={true}
+        sx={{
+          mb: 2,
+          "& .MuiInputBase-input": {
+            p: 1,
+            fontSize: "14px",
+          },
+        }}
       />
-      <Divider className="w-full !my-8" />
-      <p className="mb-4 font-semibold">Email</p>
+      <Divider sx={{ width: "100%", my: 1 }} />
+      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+        Email
+      </Typography>
       {!editEmailOpen ? (
-        <div className="flex justify-between items-center w-full">
-          <p>
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          sx={{ my: 2, width: "100%" }}
+        >
+          <Typography variant="body1" sx={{ fontSize: "14px" }}>
             Your Email With Bob is <b>{data?.user?.email}</b>
-          </p>
-          <p onClick={() => setEmailEditOpen(true)} className="text-blue-500 hover:underline underline-offset-2 cursor-pointer font-semibold">
+          </Typography>
+          <Button
+            size="small"
+            onClick={() => setEmailEditOpen(true)}
+            variant="outlined"
+          >
             Change
-          </p>
-        </div>
+          </Button>
+        </Stack>
       ) : (
-        <div className="flex justify-start items-center w-full">
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          sx={{ my: 2, width: "100%" }}
+        >
           <TextField
             autoFocus
-            fullWidth
-            className="w-full max-w-[300px]"
             size="small"
             type="text"
             id="profile-email"
             variant="outlined"
             value={data?.user?.email}
+            sx={{
+              width: "350px",
+              "& .MuiInputBase-input": {
+                p: 1,
+                fontSize: "14px",
+              },
+            }}
           />
           <IconButton className="!ml-4" onClick={() => setEmailEditOpen(false)}>
             <CloseIcon />
           </IconButton>
-        </div>
+        </Stack>
       )}
-      <Divider className="w-full !my-8" />
-      <div className="flex justify-between items-center w-full">
-        <p className="font-semibold">Password</p>
-        <p className="font-semibold text-blue-500 hover:underline underline-offset-2">Change</p>
-      </div>
-      <Divider className="w-full !my-8" />
-      <p className="font-semibold text-red-500 underline underline-offset-2 hover:text-red-900">Delete my Profile</p>
-      <p className="text-xs mt-3">You will receive an email to confirm your decision. This will not end your subscription or payments and you will continue to be charged. You can cancel your subscription, or switch payment methods to keep the team active.
-        This can’t be reversed. All boards you’ve created will be permanently erased. You can save backups or export them.</p>
-    </div>
+      <Divider sx={{ width: "100%", my: 1 }} />
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        sx={{ width: "100%" }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          Password
+        </Typography>
+        <Button
+          size="small"
+          onClick={() => setEmailEditOpen(true)}
+          variant="outlined"
+        >
+          Change
+        </Button>
+      </Stack>
+      <Divider sx={{ width: "100%", mt: 1, mb: 2 }} />
+      <Button variant="outlined" color="error">
+        Delete my Profile
+      </Button>
+      <Typography variant="caption" sx={{ fontWeight: 500, mt: 3, mb: 5 }}>
+        You will receive an email to confirm your decision. This will not end
+        your subscription or payments and you will continue to be charged. You
+        can cancel your subscription, or switch payment methods to keep the team
+        active. This can’t be reversed. All boards you’ve created will be
+        permanently erased. You can save backups or export them.
+      </Typography>
+    </Stack>
   );
 };
 

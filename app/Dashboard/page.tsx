@@ -6,8 +6,6 @@ import DashboardSpace from "../components/Dashboard/DashboardSpace";
 import { useSession } from "next-auth/react";
 
 const Dashboard = () => {
-  const {data} = useSession();
-  console.log(data);
   
   return (
     <Stack

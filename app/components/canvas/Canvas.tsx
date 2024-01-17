@@ -12,6 +12,7 @@ import CanvasSettingsBtn from "./CanvasSettingsBtn";
 import DialogContent from "@mui/material/DialogContent";
 import {
   Avatar,
+  Box,
   Breadcrumbs,
   Button,
   CircularProgress,
@@ -26,15 +27,23 @@ import ShareModal from "../Shared/ShareModal";
 import { appSlice, useDispatch } from "@/lib/redux";
 import Link from "next/link";
 import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
+import { useSession } from "next-auth/react";
 
 const Canvas = (props: any) => {
+  const router = useRouter();
   const { canvasName } = props;
   const dispatch = useDispatch();
-  const router = useRouter();
+  const { data }: any = useSession();
   const { projectId, futureId } = useParams();
-
+  const currentFuture =
+    futureId === "Future1"
+      ? 1
+      : futureId === "Future2"
+      ? 2
+      : futureId === "Future3"
+      ? 3
+      : 0;
   const closeCanvas = () => {
-    // router.replace("Microframeworks", undefined);
     router.push(`/${projectId}/${futureId}/Microframeworks`);
   };
 
@@ -42,18 +51,24 @@ const Canvas = (props: any) => {
     dispatch(
       appSlice.actions.toggleShareModal({
         open: true,
-        data: {},
+        data: { projectId, future: currentFuture },
         type: canvasName,
       })
     );
   };
+
   const [
     getProjectById,
-    { data: project_data, isLoading, isSuccess, isError },
+    { data: project_data, isLoading, isSuccess, isFetching, isError },
   ] = useLazyGetProjectByIdQuery();
+
   useEffect(() => {
-    getProjectById(projectId);
-  }, [projectId]);
+    getProjectById({ projectId, userId: data?.user?.user_id });
+  }, [projectId, data?.user?.user_id]);
+
+  const retry = () => {
+    getProjectById({ projectId, userId: data?.user?.user_id });
+  };
   return (
     <>
       <Dialog
@@ -77,8 +92,9 @@ const Canvas = (props: any) => {
             backgroundColor: "#f6f5f4",
           }}
         >
-          {!isLoading && !isError && (
-            <>
+          <>
+            {isLoading && !isError && <CircularProgress size={20} />}
+            {!isLoading && !isError && (
               <Breadcrumbs aria-label="breadcrumb">
                 <Link href={`/${projectId}/Thinkbeyond`}>
                   <Typography color="text.primary">
@@ -86,7 +102,9 @@ const Canvas = (props: any) => {
                   </Typography>
                 </Link>
                 <Link href={`/${projectId}/Future1/Microframeworks`}>
-                  <Typography color="text.primary">{futureId}</Typography>
+                  <Typography color="text.primary">
+                    {futureId.slice(0, -1)} {currentFuture}
+                  </Typography>
                 </Link>
                 {canvasName === "BMC" && (
                   <Typography color="text.primary" sx={{ cursor: "auto" }}>
@@ -99,41 +117,50 @@ const Canvas = (props: any) => {
                   </Typography>
                 )}
               </Breadcrumbs>
-              <Stack
-                direction={"row"}
-                alignItems={"center"}
-                justifyContent={"flex-end"}
-                spacing={2}
-              >
-                <Tooltip title="Narayana Lvsaln (me)">
-                  <Avatar
-                    sx={{
-                      width: 25,
-                      height: 25,
-                      backgroundColor: "orange",
-                      mr: 2,
-                      fontSize: "14px",
-                    }}
-                  >
-                    N
-                  </Avatar>
-                </Tooltip>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={openCanvasShare}
-                >
-                  Share
-                </Button>
-                <CanvasRoadmapBtn canvasName={canvasName} />
-                <CanvasSettingsBtn />
-                <IconButton size="small" onClick={closeCanvas}>
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Stack>
-            </>
-          )}
-          {isLoading && !isError && <CircularProgress size={20} />}
+            )}
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"flex-end"}
+              spacing={2}
+            >
+              {!isLoading && !isError && (
+                <>
+                  {/* {project_data?.project?.is_owner && (
+                    <Tooltip
+                      title={project_data?.project?.owner?.[0]?.preferred_name}
+                      arrow
+                    >
+                      <img
+                        referrerPolicy="no-referrer"
+                        className="!bg-indigo-500"
+                        style={{
+                          width: "30px",
+                          height: "30px",
+                          borderRadius: "100%",
+                        }}
+                        src={data?.user?.image}
+                      />
+                    </Tooltip>
+                  )} */}
+                  {project_data?.project?.is_owner && (
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={openCanvasShare}
+                    >
+                      Share
+                    </Button>
+                  )}
+                  <CanvasRoadmapBtn canvasName={canvasName} />
+                  {/* {project_data?.project?.is_owner && <CanvasSettingsBtn />} */}
+                </>
+              )}
+              <IconButton size="small" onClick={closeCanvas}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Stack>
+          </>
         </DialogTitle>
         <Divider />
         <DialogContent
@@ -153,9 +180,24 @@ const Canvas = (props: any) => {
               flexGrow={1}
               justifyContent={"center"}
               alignItems={"center"}
-              sx={{ width: "100%",height:'100%' }}
+              sx={{ width: "100%", height: "100%" }}
             >
               <CircularProgress />
+            </Stack>
+          )}
+          {!isLoading && isError && (
+            <Stack
+              direction={"column"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              sx={{ width: "100%", height: "200px" }}
+            >
+              <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
+                Something went wrong..! Try again
+              </Typography>
+              <Button variant="contained" onClick={retry}>
+                Retry
+              </Button>
             </Stack>
           )}
         </DialogContent>

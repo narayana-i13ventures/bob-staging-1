@@ -2,6 +2,7 @@
 import React, { useRef } from "react";
 import GrowTransition from "../../Utils/Grow";
 import {
+  Box,
   Avatar,
   ListItemIcon,
   ListItemText,
@@ -11,41 +12,47 @@ import {
 } from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const UserProfileBtn = () => {
   const router = useRouter();
+  const { data }: any = useSession();
   const dispatch = useDispatch();
   const UserProfileMenuRef: any = useRef(null);
   const { userMenu } = useSelector(selectApp);
 
   const handleUserProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
-    dispatch(
-      appSlice.actions.toggleUserMenu(true)
-    );
+    dispatch(appSlice.actions.toggleUserMenu(true));
   };
 
   const goToProfile = (e: React.MouseEvent<HTMLElement>) => {
     e?.preventDefault();
     dispatch(appSlice.actions.toggleUserMenu(false));
-    router.push("/profile/new_profile");
+    router.push(`/profile/${data?.user?.name}`);
   };
 
   return (
     <>
-      <Avatar
+      <Box
         ref={UserProfileMenuRef}
         onClick={handleUserProfileMenu}
+        component={"div"}
         sx={{
-          width: 30,
-          height: 30,
-          backgroundColor: "orange",
-          cursor: "pointer",
+          cursor:'pointer'
         }}
       >
-        N
-      </Avatar>
+        <img
+          referrerPolicy="no-referrer"
+          className="!bg-indigo-500"
+          style={{
+            width: "30px",
+            height: "30px",
+            borderRadius: "100%",
+          }}
+          src={data?.user?.image}
+        />
+      </Box>
       <Popover
         disablePortal
         open={userMenu}
@@ -87,16 +94,18 @@ const UserProfileBtn = () => {
             }}
           >
             <ListItemIcon>
-              <Avatar
-                sx={{
-                  width: 25,
-                  height: 25,
-                  backgroundColor: "orange",
-                  fontSize: "14px",
-                }}
-              >
-                N
-              </Avatar>
+              <Box component={"div"}>
+                <img
+                  referrerPolicy="no-referrer"
+                  className="!bg-indigo-500"
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "100%",
+                  }}
+                  src={data?.user?.image}
+                />
+              </Box>
             </ListItemIcon>
             <ListItemText
               sx={{
@@ -105,7 +114,7 @@ const UserProfileBtn = () => {
                 },
               }}
             >
-              Narayana Lvsaln
+              {data?.user?.name}
             </ListItemText>
           </MenuItem>
           {/* <MenuItem

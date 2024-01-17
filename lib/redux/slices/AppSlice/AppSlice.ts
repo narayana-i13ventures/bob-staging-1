@@ -9,6 +9,7 @@ interface AppState {
     open: boolean;
     projectId: string;
   };
+  show_projects:String;
   ShareOpen: {
     open: boolean;
     type: String;
@@ -30,8 +31,20 @@ interface AppState {
   companyStage: number;
   ThinkbeyondModalOpen: boolean;
   ThinkbeyondSettings: boolean;
+  ThinkbeyondActivity: {
+    open: boolean;
+    type: String;
+  };
   BobOpen: boolean;
   bobThinking: boolean;
+  bobGenerating: boolean;
+  bobPrefill: {
+    loading: boolean,
+    error: boolean,
+    projectId: String,
+    userId: String,
+    futureId: String
+  },
   BobMessages: any[];
   globalSnackBar: {
     open: boolean;
@@ -52,6 +65,7 @@ const initialState: AppState = {
     open: false,
     projectId: "",
   },
+  show_projects:'all',
   ShareOpen: {
     open: false,
     type: "",
@@ -73,8 +87,20 @@ const initialState: AppState = {
   companyStage: 0,
   ThinkbeyondModalOpen: false,
   ThinkbeyondSettings: false,
+  ThinkbeyondActivity: {
+    open: false,
+    type: "",
+  },
   BobOpen: false,
   bobThinking: false,
+  bobGenerating: false,
+  bobPrefill: {
+    loading: false,
+    error: false,
+    projectId: '',
+    userId: '',
+    futureId: ''
+  },
   BobMessages: [
     {
       content:
@@ -106,6 +132,9 @@ export const appSlice = createSlice({
     toggleProjectDetails: (state, action) => {
       state.projectDetailsOpen = action?.payload;
     },
+    toggleShowProjects: (state, action) => {
+      state.show_projects = action?.payload;
+    },
     toggleShareModal: (state, action) => {
       state.ShareOpen = action?.payload;
     },
@@ -115,11 +144,20 @@ export const appSlice = createSlice({
     toggleThinkbeyondModalOpen: (state, action) => {
       state.ThinkbeyondModalOpen = action?.payload;
     },
+    toggleThinkbeyondActivity: (state, action) => {
+      state.ThinkbeyondActivity = action?.payload;
+    },
     toggleBobOpen: (state, action) => {
       state.BobOpen = action?.payload;
     },
     toggleBobThinking: (state, action) => {
       state.bobThinking = action?.payload;
+    },
+    toggleBobGenerating: (state, action) => {
+      state.bobGenerating = action?.payload;
+    },
+    toggleBobPrefill: (state, action) => {
+      state.bobPrefill = action?.payload;
     },
     setGlobalSnackBar: (state, action) => {
       state.globalSnackBar = action.payload;

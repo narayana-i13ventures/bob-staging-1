@@ -1,17 +1,28 @@
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import React from "react";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-const Notification = () => {
+import { useRouter } from "next/navigation";
+import { appSlice, useDispatch } from "@/lib/redux";
+const Notification = (props: any) => {
+  const router = useRouter();
   const theme: any = useTheme();
+  const dispatch = useDispatch();
+  const { notification } = props;
+  const notificationAction = () => {
+    dispatch(appSlice.actions.toggleNotificationMenu(false));
+    router.push(notification?.action);
+  };
   return (
     <Box
+      onClick={notificationAction}
       component={"div"}
       sx={{
+        my: 1,
+        p: 1,
+        cursor: "pointer",
         display: "flex",
         justifyContent: "flex-start",
         alignItems: "center",
-        my: 1,
-        p: 1,
         borderRadius: 2,
         backgroundColor: `${theme.palette.primary.main}10`,
       }}
@@ -32,7 +43,7 @@ const Notification = () => {
           fontSize: "14px",
         }}
       >
-        Jhon Dave Shared a canvas with you. click to see the canvas.
+        {notification?.content}
       </Typography>
       <IconButton size="small">
         <CloseOutlinedIcon fontSize="small" />

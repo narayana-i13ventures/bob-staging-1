@@ -11,15 +11,19 @@ import {
 import React from "react";
 import CreateProjectCard from "../Project/CreateProjectCard";
 import ProjectCard from "../Project/ProjectCard";
+import { useSession } from "next-auth/react";
+import { selectApp, useSelector } from "@/lib/redux";
 
 const ProjectsContainer = () => {
+  const { data }: any = useSession();
+  const { show_projects } = useSelector(selectApp);
   const {
     data: projects,
     isSuccess: fetch_projects_success,
     isLoading: fetch_projects_loading,
     isError: fetch_projects_error,
     refetch: getAllProjects,
-  } = useGetAllProjectsQuery({});
+  } = useGetAllProjectsQuery(data?.user?.user_id);
   const retry = () => {
     getAllProjects();
   };
@@ -40,13 +44,46 @@ const ProjectsContainer = () => {
               <Grid item xs={3}>
                 <CreateProjectCard />
               </Grid>
-              {projects?.owned_projects?.map((project: any) => {
-                return (
-                  <Grid key={project?.project_id} item xs={3}>
-                    <ProjectCard project={project} />
-                  </Grid>
-                );
-              })}
+              {show_projects === "only_me" && (
+                <>
+                  {projects?.owned_projects?.map((project: any) => {
+                    return (
+                      <Grid key={project?.project_id} item xs={3}>
+                        <ProjectCard project={project} />
+                      </Grid>
+                    );
+                  })}
+                </>
+              )}
+              {show_projects === "shared" && (
+                <>
+                  {projects?.shared_projects?.map((project: any) => {
+                    return (
+                      <Grid key={project?.project_id} item xs={3}>
+                        <ProjectCard project={project} />
+                      </Grid>
+                    );
+                  })}
+                </>
+              )}
+              {show_projects === "all" && (
+                <>
+                  {projects?.owned_projects?.map((project: any) => {
+                    return (
+                      <Grid key={project?.project_id} item xs={3}>
+                        <ProjectCard project={project} />
+                      </Grid>
+                    );
+                  })}
+                  {projects?.shared_projects?.map((project: any) => {
+                    return (
+                      <Grid key={project?.project_id} item xs={3}>
+                        <ProjectCard project={project} />
+                      </Grid>
+                    );
+                  })}
+                </>
+              )}
             </Grid>
           </Box>
         )}

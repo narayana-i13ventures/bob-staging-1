@@ -137,6 +137,16 @@ export const selectedCardsSlice = createSlice({
         }
       )
       .addMatcher(
+        thinkbeyondSlice.endpoints.selectThinkbeyondCard.matchFulfilled,
+        (state, action) => {
+          if (action?.payload?.[0]?.selected === true) {
+            state.ThinkBeyondSelectedCard = action?.payload?.[0];
+          } else if (action?.payload?.[1]?.selected === true) {
+            state.ThinkBeyondSelectedCard = action?.payload?.[1];
+          }
+        }
+      )
+      .addMatcher(
         BMCSlice.endpoints.GetFuture1BMCCanvas.matchFulfilled,
         (state, action) => {
           state.Future1BMCSelected = action?.payload?.find(
@@ -159,6 +169,20 @@ export const selectedCardsSlice = createSlice({
             state.Future1BMCSelected = action?.payload?.[0];
           } else if (action?.payload?.[1]?.selected === true) {
             state.Future1BMCSelected = action?.payload?.[1];
+          }
+        }
+      )
+      .addMatcher(
+        BMCSlice.endpoints.selectFuture1BMCCard.matchFulfilled,
+        (state, action) => {
+          if (action?.payload?.cards?.[0]?.selected === true) {
+            console.log("checkpoint 1");
+            console.log(action?.payload?.cards?.[0]);
+            state.Future1BMCSelected = action?.payload?.cards?.[0];
+          } else if (action?.payload?.cards?.[1]?.selected === true) {
+            console.log("checkpoint 2");
+            console.log(action?.payload?.cards?.[1]);
+            state.Future1BMCSelected = action?.payload?.cards?.[1];
           }
         }
       );

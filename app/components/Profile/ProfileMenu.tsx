@@ -1,12 +1,20 @@
 "use client";
 import React from "react";
-import { List, ListItemButton, useTheme, Card } from "@mui/material";
+import {
+    List,
+    ListItemButton,
+    useTheme,
+    Card,
+    Box,
+    Typography,
+} from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
-import PersonIcon from '@mui/icons-material/Person';
-import SettingsIcon from '@mui/icons-material/Settings';
-import GroupsIcon from '@mui/icons-material/Groups';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import PersonIcon from "@mui/icons-material/Person";
+import SettingsIcon from "@mui/icons-material/Settings";
+import GroupsIcon from "@mui/icons-material/Groups";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import { SettingsInputComponentTwoTone } from "@mui/icons-material";
 const ProfileMenu = () => {
     const theme: any = useTheme();
     const dispatch = useDispatch();
@@ -16,94 +24,124 @@ const ProfileMenu = () => {
         dispatch(appSlice.actions.toggleActiveProfileTab(menuItem));
     };
     return (
-        <Card className="sticky top-[70px] flex min-w-[250px] w-[250px] flex-col justify-start items-start p-3 rounded-md shadow-md">
-            <List
-                component="nav"
-                aria-label="main mailbox folders"
-                className="w-full"
-            >
+        <Box component={"div"}>
+            <List sx={{ width: "250px" }}>
                 <ListItemButton
                     sx={{
+                        mb: 1,
+                        borderRadius: 2,
+                        "& .MuiTypography-root": {
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                        },
                         "&.Mui-selected , &:hover.Mui-selected": {
                             backgroundColor: theme.palette.primary.main,
                             color: "white",
                         },
                     }}
-                    className="!rounded-md !my-4"
                     selected={activeProfileTab === "profile"}
                     onClick={(event) => handleProfileMenuChange("profile")}
                 >
-                    <p className="!font-semibold flex items-center">
-                        <PersonIcon className="mr-3" />
+                    <Typography>
+                        <PersonIcon sx={{ mr: 2 }} />
                         Profile
-                    </p>
+                    </Typography>
                 </ListItemButton>
                 <ListItemButton
+                    disabled
                     sx={{
+                        mb: 1,
+                        borderRadius: 2,
+                        "& .MuiTypography-root": {
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                        },
                         "&.Mui-selected , &:hover.Mui-selected": {
                             backgroundColor: theme.palette.primary.main,
                             color: "white",
                         },
                     }}
-                    className="!rounded-md !my-4"
                     selected={activeProfileTab === "settings"}
                     onClick={(event) => handleProfileMenuChange("settings")}
                 >
-                    <p className="!font-semibold flex items-center">
-                        <SettingsIcon className="mr-3" />
+                    <Typography>
+                        <SettingsInputComponentTwoTone sx={{ mr: 2 }} />
                         Settings
-                    </p>
+                    </Typography>
                 </ListItemButton>
                 <ListItemButton
+                    disabled
                     sx={{
+                        mb: 1,
+                        borderRadius: 2,
+                        "& .MuiTypography-root": {
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                        },
                         "&.Mui-selected , &:hover.Mui-selected": {
                             backgroundColor: theme.palette.primary.main,
                             color: "white",
                         },
                     }}
-                    className="!rounded-md !my-4"
                     selected={activeProfileTab === "teams"}
                     onClick={(event) => handleProfileMenuChange("teams")}
                 >
-                    <p className="!font-semibold flex items-center">
-                        <GroupsIcon className="mr-3" />
+                    <Typography>
+                        <GroupsIcon sx={{ mr: 2 }} />
                         Teams
-                    </p>
+                    </Typography>
                 </ListItemButton>
                 <ListItemButton
+                    disabled
                     sx={{
+                        mb: 1,
+                        borderRadius: 2,
+                        "& .MuiTypography-root": {
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                        },
                         "&.Mui-selected , &:hover.Mui-selected": {
                             backgroundColor: theme.palette.primary.main,
                             color: "white",
                         },
                     }}
-                    className="!rounded-md !my-4"
                     selected={activeProfileTab === "payments"}
                     onClick={(event) => handleProfileMenuChange("payments")}
                 >
-                    <p className="!font-semibold flex items-center">
-                        <CreditCardIcon className="mr-3" />
+                    <Typography>
+                        <CreditCardIcon sx={{ mr: 2 }} />
                         Payments
-                    </p>
+                    </Typography>
                 </ListItemButton>
                 <ListItemButton
+                    disabled
                     sx={{
+                        mb: 1,
+                        borderRadius: 2,
+                        "& .MuiTypography-root": {
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                        },
                         "&.Mui-selected , &:hover.Mui-selected": {
                             backgroundColor: theme.palette.primary.main,
                             color: "white",
                         },
                     }}
-                    className="!rounded-md !my-4"
                     selected={activeProfileTab === "subscriptions"}
                     onClick={(event) => handleProfileMenuChange("subscriptions")}
                 >
-                    <p className="!font-semibold flex items-center">
-                        <VerifiedUserIcon className="mr-3" />
+                    <Typography>
+                        <VerifiedUserIcon sx={{ mr: 2 }} />
                         Subscriptions
-                    </p>
+                    </Typography>
                 </ListItemButton>
             </List>
-        </Card>
+        </Box>
     );
 };
 

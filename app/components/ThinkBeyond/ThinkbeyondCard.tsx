@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { appSlice, useDispatch, useSelector } from "@/lib/redux";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
@@ -12,18 +12,25 @@ import {
 } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
 import { selectedThinkbeyond } from "@/lib/redux/slices/SelectedSlice";
-import { useUpdateThinkbeyondCardMutation } from "@/lib/redux/ThinkbeyondApi";
+import {
+  useSelectThinkbeyondCardMutation,
+  useUpdateThinkbeyondCardMutation,
+} from "@/lib/redux/ThinkbeyondApi";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import { useSession } from "next-auth/react";
 const ThinkbeyondCard = (props: any) => {
   const router = useRouter();
   const { width, card } = props;
   const dispatch = useDispatch();
+  const { data }: any = useSession();
   const { projectId, futureId } = useParams();
   const selectedCard = useSelector(selectedThinkbeyond);
+  const [selectThinkbeyondCard, { isLoading, isSuccess, isError }] =
+    useSelectThinkbeyondCardMutation();
 
-  const [updatedThinkbeyondCard, { isLoading, isSuccess, isError }] =
-    useUpdateThinkbeyondCardMutation();
+  // const [updatedThinkbeyondCard, { isLoading, isSuccess, isError }] =
+  //   useUpdateThinkbeyondCardMutation();
 
   const openThinkbeyondModalOpen = () => {
     if (card?.cardName === "Microframeworks" && card?.cardNumber === 4) {
@@ -40,16 +47,42 @@ const ThinkbeyondCard = (props: any) => {
     }
   };
 
+  useEffect(() => {
+    if (isError === true) {
+      dispatch(
+        appSlice.actions.setGlobalSnackBar({
+          open: true,
+          content: "Error Updating Card",
+          clossable: true,
+        })
+      );
+    }
+  }, [isError]);
+
   const selectCard = () => {
     if (!card?.locked) {
       if (selectedCard && selectedCard.cardNumber !== card.cardNumber) {
-        const updatedSelectedCard = { ...selectedCard, selected: false };
-        updatedThinkbeyondCard({ card: updatedSelectedCard, projectId })
-          .unwrap()
-          .then((data: any) => {
-            const updatedCard = { ...card, selected: true };
-            updatedThinkbeyondCard({ card: updatedCard, projectId });
-          });
+        selectThinkbeyondCard({
+          userId: data?.user?.user_id,
+          projectId,
+          current_card_number: selectedCard.cardNumber,
+          next_card_number: card.cardNumber,
+        });
+        // const updatedSelectedCard = { ...selectedCard, selected: false };
+        // updatedThinkbeyondCard({
+        //   card: updatedSelectedCard,
+        //   projectId,
+        //   userId: data?.user?.user_id,
+        // })
+        //   .unwrap()
+        //   .then((response: any) => {
+        //     const updatedCard = { ...card, selected: true };
+        //     updatedThinkbeyondCard({
+        //       card: updatedCard,
+        //       projectId,
+        //       userId: data?.user?.user_id,
+        //     });
+        //   });
       }
     }
   };
@@ -67,7 +100,7 @@ const ThinkbeyondCard = (props: any) => {
         overflow: "hidden",
         transition: "all ease-in 200ms",
         cursor: !card?.locked ? "pointer" : "auto",
-        backgroundColor: !card?.selected ? "#fff" : "",
+        backgroundColor: !card?.selected ? "#fff" : "#f6f5f4  ",
         border: card?.locked ? "2px solid #00000040" : "2px solid #000",
       }}
     >
@@ -81,7 +114,7 @@ const ThinkbeyondCard = (props: any) => {
             variant="body1"
             sx={{ color: card?.locked ? "#00000040" : "" }}
           >
-            {card?.cardName === "BMC" ? "Microframeworks" : card?.cardName}
+            {card?.cardName === "Microframeworks" ? "Micro Frameworks" : card?.cardName}
           </Typography>
           <IconButton
             disableRipple
@@ -89,7 +122,7 @@ const ThinkbeyondCard = (props: any) => {
             disableTouchRipple
             disabled={card?.locked}
             onClick={() =>
-              card?.selected ? openThinkbeyondModalOpen() : () => { }
+              card?.selected ? openThinkbeyondModalOpen() : () => {}
             }
             size="large"
             sx={{
@@ -102,7 +135,7 @@ const ThinkbeyondCard = (props: any) => {
             }}
           >
             {card?.type ===
-              ("future_1_bmc" || "future_2_bmc" || "future_3_bmc") ? (
+            ("future_1_bmc" || "future_2_bmc" || "future_3_bmc") ? (
               card?.locked ? (
                 <LockOutlinedIcon />
               ) : (

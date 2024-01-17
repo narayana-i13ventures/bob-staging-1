@@ -4,6 +4,7 @@ import { ProjectApiSlice } from "./projectApi";
 import { apiSlice } from "./Api";
 import { thinkbeyondSlice } from "./ThinkbeyondApi";
 import { BMCSlice } from "./BMCApi";
+import { chatSlice } from "./ChatApi";
 
 const middleware: any[] = [
   // createLogger({
@@ -22,6 +23,7 @@ const middleware: any[] = [
 ];
 
 const allMiddleware = [
+  chatSlice.middleware,
   ProjectApiSlice.middleware,
   apiSlice.middleware,
   thinkbeyondSlice.middleware,

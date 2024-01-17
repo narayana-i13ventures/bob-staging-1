@@ -19,13 +19,17 @@ import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { useDeleteProjectByIdMutation } from "@/lib/redux/projectApi";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const ProjectMenuBtn = (props: any) => {
-  const { projectId } = props;
+  const router = useRouter();
   const dispatch = useDispatch();
+  const { projectId, owner } = props;
+  const { data }: any = useSession();
   const ProjectMenuBtnRef = useRef(null);
   const [projectMenuOpen, setProjectMenuOpen] = useState(false);
-  const [deleteProject, { data, isLoading, isSuccess }] =
+  const [deleteProject, { isLoading, isSuccess }] =
     useDeleteProjectByIdMutation();
 
   const OpenProjectMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,7 +63,11 @@ const ProjectMenuBtn = (props: any) => {
   };
   const DeleteProject = (event: React.MouseEvent<HTMLButtonElement>) => {
     event?.stopPropagation();
-    deleteProject(projectId);
+    deleteProject({ projectId, userId: data?.user?.user_id });
+  };
+  const openProjectInNewTab = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event?.stopPropagation();
+    window.open(`/${projectId}/Thinkbeyond`)
   };
   return (
     <>
@@ -108,52 +116,30 @@ const ProjectMenuBtn = (props: any) => {
         }}
       >
         <MenuList sx={{ p: 0 }}>
-          <MenuItem
-            sx={{
-              borderRadius: 2,
-              "&:hover": {
-                backgroundColor: `#f6f5f4`,
-              },
-            }}
-            onClick={(e: any) => OpenProjectShare(e)}
-          >
-            <ListItemIcon sx={{ minWidth: "25px !important" }}>
-              <ShareOutlinedIcon sx={{ fontSize: 18 }} />
-            </ListItemIcon>
-            <ListItemText
+          {owner && (
+            <MenuItem
               sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 14,
+                borderRadius: 2,
+                "&:hover": {
+                  backgroundColor: `#f6f5f4`,
                 },
               }}
+              onClick={(e: any) => OpenProjectShare(e)}
             >
-              Share
-            </ListItemText>
-          </MenuItem>
-          <MenuItem
-            onClick={(e: any) => {
-              e?.preventDefault();
-            }}
-            sx={{
-              borderRadius: 2,
-              "&:hover": {
-                backgroundColor: `#f6f5f4`,
-              },
-            }}
-          >
-            <ListItemIcon sx={{ minWidth: "25px !important" }}>
-              <ContentCopyOutlinedIcon sx={{ fontSize: 18 }} />
-            </ListItemIcon>
-            <ListItemText
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 14,
-                },
-              }}
-            >
-              Copy Link
-            </ListItemText>
-          </MenuItem>
+              <ListItemIcon sx={{ minWidth: "25px !important" }}>
+                <ShareOutlinedIcon sx={{ fontSize: 18 }} />
+              </ListItemIcon>
+              <ListItemText
+                sx={{
+                  "& .MuiTypography-root": {
+                    fontSize: 14,
+                  },
+                }}
+              >
+                Share
+              </ListItemText>
+            </MenuItem>
+          )}
           <MenuItem
             sx={{
               borderRadius: 2,
@@ -178,7 +164,7 @@ const ProjectMenuBtn = (props: any) => {
           </MenuItem>
           <MenuItem
             onClick={(e: any) => {
-              e?.preventDefault();
+              openProjectInNewTab(e)
             }}
             sx={{
               borderRadius: 2,
@@ -200,7 +186,7 @@ const ProjectMenuBtn = (props: any) => {
               Open in new tab
             </ListItemText>
           </MenuItem>
-          <MenuItem
+          {owner && <MenuItem
             sx={{
               borderRadius: 2,
               "&:hover": {
@@ -225,7 +211,7 @@ const ProjectMenuBtn = (props: any) => {
             >
               Delete
             </ListItemText>
-          </MenuItem>
+          </MenuItem>}
         </MenuList>
       </Popover>
     </>

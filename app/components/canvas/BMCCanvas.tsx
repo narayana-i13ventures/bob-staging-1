@@ -9,8 +9,10 @@ import {
 } from "@mui/material";
 import { useLazyGetFuture1BMCCanvasQuery } from "@/lib/redux/BMCApi";
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const BMCCanvas = () => {
+  const { data }: any = useSession();
   const { projectId, futureId } = useParams();
   const [GetBMCCanvas, { data: BMCCanvas, isLoading, isError, isSuccess }] =
     useLazyGetFuture1BMCCanvasQuery();
@@ -18,19 +20,19 @@ const BMCCanvas = () => {
     futureId === "Future1"
       ? 1
       : futureId === "Future2"
-        ? 2
-        : futureId === "Future3"
-          ? 3
-          : 0;
+      ? 2
+      : futureId === "Future3"
+      ? 3
+      : 0;
   useEffect(() => {
-    GetBMCCanvas({ projectId, future });
-  }, [projectId, futureId, future]);
+    GetBMCCanvas({ projectId, future, userId: data?.user?.user_id });
+  }, [projectId, future, data?.user?.user_id]);
   const retry = () => {
-    GetBMCCanvas({ projectId, future });
+    GetBMCCanvas({ projectId, future, userId: data?.user?.user_id });
   };
   return (
     <>
-      {!isLoading && !isError && isSuccess && (
+      {!isLoading && !isError && (
         <Box
           sx={{
             gap: 2,
@@ -104,13 +106,17 @@ const BMCCanvas = () => {
               <Box sx={{ gridColumn: "span 12", gridRow: "span 3" }}>
                 <CanvasCard
                   color={"#B7E6CC"}
-                  card={BMCCanvas?.find((card: any) => card?.cardName === 'Customer Relationships')}
+                  card={BMCCanvas?.find(
+                    (card: any) => card?.cardName === "Customer Relationships"
+                  )}
                 />
               </Box>
               <Box sx={{ gridColumn: "span 12", gridRow: "span 3" }}>
                 <CanvasCard
                   color={"#ACE1E1"}
-                  card={BMCCanvas?.find((card: any) => card?.cardName === 'Channels')}
+                  card={BMCCanvas?.find(
+                    (card: any) => card?.cardName === "Channels"
+                  )}
                 />
               </Box>
             </Box>
@@ -118,24 +124,30 @@ const BMCCanvas = () => {
           <Box sx={{ gridColumn: "span 2", gridRow: "span 4" }}>
             <CanvasCard
               color={"#BACFF4"}
-              card={BMCCanvas?.find((card: any) => card?.cardName === 'Customer Segments')}
+              card={BMCCanvas?.find(
+                (card: any) => card?.cardName === "Customer Segments"
+              )}
             />
           </Box>
           <Box sx={{ gridColumn: "span 5", gridRow: "span 2" }}>
             <CanvasCard
               color={"#FFC2DB"}
-              card={BMCCanvas?.find((card: any) => card?.cardName === 'Cost Structure')}
+              card={BMCCanvas?.find(
+                (card: any) => card?.cardName === "Cost Structure"
+              )}
             />
           </Box>
           <Box sx={{ gridColumn: "span 5", gridRow: "span 2" }}>
             <CanvasCard
               color={"#E6CDF4"}
-              card={BMCCanvas?.find((card: any) => card?.cardName === 'Revenue Streams')}
+              card={BMCCanvas?.find(
+                (card: any) => card?.cardName === "Revenue Streams"
+              )}
             />
           </Box>
         </Box>
       )}
-      {isLoading && !isError && !isSuccess && (
+      {isLoading && !isError && (
         <Stack
           flexGrow={1}
           direction={"column"}
@@ -150,7 +162,7 @@ const BMCCanvas = () => {
           <CircularProgress />
         </Stack>
       )}
-      {!isLoading && isError && !isSuccess && (
+      {!isLoading && isError && (
         <Stack
           flexGrow={1}
           direction={"column"}

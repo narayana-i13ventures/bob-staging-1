@@ -16,16 +16,11 @@ import PeopleOutlineOutlinedIcon from "@mui/icons-material/PeopleOutlineOutlined
 import { useRouter } from "next/navigation";
 
 const DashboardSidebar = () => {
-  const theme = useTheme();
-  const router = useRouter();
-  const gotToThinkbeyond = () => {
-    router.push(`/55/Thinkbeyond`);
-  };
+
   return (
     <Box component={"div"} sx={{ width: "100%" }}>
       <MenuList sx={{ py: 0 }}>
         <MenuItem
-          onClick={gotToThinkbeyond}
           sx={{
             mb: 2,
             borderRadius: 2,
@@ -46,10 +41,10 @@ const DashboardSidebar = () => {
             <ViewInArOutlinedIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText sx={{ "& .MuiTypography-root": { fontSize: "14px" } }}>
-            My Projects
+            Projects
           </ListItemText>
         </MenuItem>
-        <MenuItem
+        {/* <MenuItem
           sx={{
             mb: 2,
             borderRadius: 2,
@@ -96,8 +91,9 @@ const DashboardSidebar = () => {
           <ListItemText sx={{ "& .MuiTypography-root": { fontSize: "14px" } }}>
             Favourites
           </ListItemText>
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem
+          disabled
           sx={{
             mb: 2,
             borderRadius: 2,

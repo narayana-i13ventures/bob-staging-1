@@ -1,38 +1,27 @@
 "use client";
+import React from "react";
 // import Bob from "@/app/components/Bob/Bob";
 import Header from "@/app/components/Shared/Header";
-import ShareModal from "@/app/components/Shared/ShareModal";
 import ThinkbeyondCanvas from "@/app/components/ThinkBeyond/ThinkbeyondCanvas";
-// import ThinkbeyondMindmap from "@/app/components/ThinkBeyond/ThinkbeyondMindmap";
-import ThinkbeyondNewModal from "@/app/components/ThinkBeyond/ThinkbeyondNewModal";
-import ThinkBeyondSettings from "@/app/components/ThinkBeyond/ThinkbeyondSettings";
-import { Stack, useTheme } from "@mui/material";
-import React from "react";
+import { Stack } from "@mui/material";
 
 const Thinkbeyond = () => {
-    const theme = useTheme();
-    return (
-        <>
-            <Stack
-                justifyContent={"flex-start"}
-                alignItems={"flex-start"}
-                direction={"column"}
-                sx={{
-                    minHeight: "100vh",
-                    maxHeight: "100vh",
-                }}
-            >
-                <Header />
-                <ThinkbeyondCanvas />
-                {/* <ThinkbeyondMindmap /> */}
-                {/* <Bob /> */}
-                <ThinkBeyondSettings />
-                <ShareModal />
-                {/* <ThinkbeyondModal /> */}
-                <ThinkbeyondNewModal />
-            </Stack>
-        </>
-    );
+  return (
+    <>
+      <Stack
+        justifyContent={"flex-start"}
+        alignItems={"flex-start"}
+        direction={"column"}
+        sx={{
+          minHeight: "100vh",
+          maxHeight: "100vh",
+        }}
+      >
+        <Header />
+        <ThinkbeyondCanvas />
+      </Stack>
+    </>
+  );
 };
 
 export default Thinkbeyond;

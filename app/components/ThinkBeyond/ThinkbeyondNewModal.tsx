@@ -20,6 +20,7 @@ import {
   selectedCardsSlice,
   selectedThinkbeyond,
 } from "@/lib/redux/slices/SelectedSlice";
+import moment from "moment";
 import Dialog from "@mui/material/Dialog";
 import MessageBox from "../Bob/MessageBox";
 import { useParams } from "next/navigation";
@@ -27,47 +28,112 @@ import SlideTransition from "../Utils/Slide";
 import CommentBox from "../canvas/CommentBox";
 import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import DialogContent from "@mui/material/DialogContent";
 import TuneSharpIcon from "@mui/icons-material/TuneSharp";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-const ThinkbeyondNewModal = () => {
+import { useSession } from "next-auth/react";
+import { useLazyGetChatQuery, useSaveChatMutation } from "@/lib/redux/ChatApi";
+import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
+const ThinkbeyondNewModal = (props: any) => {
+  const { ThinkbeyondCards } = props;
   const theme = useTheme();
   const dispatch = useDispatch();
+  const { data }: any = useSession();
   const { projectId } = useParams();
   const [activeBubble, setActiveBubble] = useState("bob");
   const selectedThinkbeyondCard = useSelector(selectedThinkbeyond);
   const { ThinkbeyondModalOpen, BobMessages, bobThinking }: any =
     useSelector(selectApp);
   const [bobSuggestion] = useBobSuggestionMutation();
+  const [
+    getProjectById,
+    {
+      data: project_data,
+      isLoading: project_data_loading,
+      isError: project_data_error,
+      isFetching: project_data_fetching,
+    },
+  ] = useLazyGetProjectByIdQuery();
   const [bobHelpUpdating, setBobHelpUpdating] = useState(false);
   const [nextThinkbeyondCard] = useNextThinknbeyondCardMutation();
   const [nextCardTransition, setNextCardTransition] = useState(false);
   const [updatedThinkbeyondCard] = useUpdateThinkbeyondCardMutation();
+  const [
+    getChat,
+    { data: chat, isLoading: chat_loading, isFetching: chat_fetching },
+  ] = useLazyGetChatQuery();
+  const [saveChat, { isLoading: save_chat_loading }] = useSaveChatMutation();
+
+  useEffect(() => {
+    if (
+      selectedThinkbeyondCard !== null &&
+      ThinkbeyondModalOpen &&
+      project_data?.project?.owner?.[0]?.user_id !== undefined
+      // && project_data?.project?.is_owner
+    ) {
+      getChat({
+        // userId: data?.user?.user_id,
+        userId: project_data?.project?.owner?.[0]?.user_id,
+        projectId,
+        future: 123,
+        canvas_type: 1,
+        cardNumber: 0,
+      });
+    }
+  }, [
+    projectId,
+    ThinkbeyondModalOpen,
+    // project_data?.project?.is_owner,
+    project_data?.project?.owner?.[0]?.user_id,
+  ]);
+
+  useEffect(() => {
+    if (selectedThinkbeyondCard !== null && ThinkbeyondModalOpen) {
+      getProjectById({
+        projectId: projectId,
+        userId: data?.user?.user_id,
+      });
+    }
+  }, [projectId, data?.user?.user_id, ThinkbeyondModalOpen]);
+
+  useEffect(() => {
+    if (!project_data?.project?.is_owner) {
+      setActiveBubble("bob");
+    } else {
+      setActiveBubble("bob");
+    }
+  }, [project_data?.project?.is_owner, ThinkbeyondModalOpen]);
 
   const closeThinkbeyondModal = () => {
-    setActiveBubble("bob");
     dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false));
-    dispatch(
-      appSlice.actions.setGlobalSnackBar({
-        open: true,
-        content: `Card Updating`,
-        clossable: false,
+    if (project_data?.project?.is_owner) {
+      setActiveBubble("bob");
+      dispatch(
+        appSlice.actions.setGlobalSnackBar({
+          open: true,
+          content: `Card Updating`,
+          clossable: false,
+        })
+      );
+      updatedThinkbeyondCard({
+        card: selectedThinkbeyondCard,
+        projectId,
+        userId: data?.user?.user_id,
       })
-    );
-    updatedThinkbeyondCard({ card: selectedThinkbeyondCard, projectId })
-      .unwrap()
-      .then((data: any) => {
-        dispatch(
-          appSlice.actions.setGlobalSnackBar({
-            open: true,
-            content: `Card Updated`,
-            clossable: false,
-          })
-        );
-      });
+        .unwrap()
+        .then((response: any) => {
+          dispatch(
+            appSlice.actions.setGlobalSnackBar({
+              open: true,
+              content: `Card Updated`,
+              clossable: false,
+            })
+          );
+        });
+    }
   };
 
   const handleInputChange = (
@@ -87,63 +153,40 @@ const ThinkbeyondNewModal = () => {
     const shouldSendRequest = selectedThinkbeyondCard?.cardInfo?.every(
       (info: any) => info?.text && info.text.trim() !== ""
     );
-    if (selectedThinkbeyondCard?.cardNumber !== 3 && selectedThinkbeyondCard?.cardNumber !== 6 && selectedThinkbeyondCard?.cardNumber !== 9) {
-      if (shouldSendRequest) {
-        setNextCardTransition(true);
-        updatedThinkbeyondCard({ card: selectedThinkbeyondCard, projectId })
-          .unwrap()
-          .then((data: any) => {
-            nextThinkbeyondCard({
-              projectId,
-              cardNumber: selectedThinkbeyondCard?.cardNumber,
-            })
-              .unwrap()
-              .then((data: any) => {
-                setNextCardTransition(false);
-              })
-              .catch(() => {
-                setNextCardTransition(false);
-                dispatch(
-                  appSlice.actions.setGlobalSnackBar({
-                    open: true,
-                    content: `Error Going to next Card`,
-                    clossable: true,
-                  })
-                );
-              });
-          })
-          .catch(() => {
-            setNextCardTransition(false);
-            dispatch(
-              appSlice.actions.setGlobalSnackBar({
-                open: true,
-                content: `Error Going to next Card`,
-                clossable: true,
-              })
-            );
-          });
-      } else {
-        dispatch(
-          appSlice.actions.setGlobalSnackBar({
-            open: true,
-            content: `Complete The Card Information to go to Next Card`,
-            clossable: true,
-          })
-        );
-      }
-    } else {
-      setNextCardTransition(true);
-      updatedThinkbeyondCard({ card: selectedThinkbeyondCard, projectId })
-        .unwrap()
-        .then((data: any) => {
-          dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false))
-          nextThinkbeyondCard({
+    if (project_data?.project?.is_owner) {
+      if (
+        selectedThinkbeyondCard?.cardNumber !== 3 &&
+        selectedThinkbeyondCard?.cardNumber !== 6 &&
+        selectedThinkbeyondCard?.cardNumber !== 9
+      ) {
+        if (shouldSendRequest) {
+          setNextCardTransition(true);
+          updatedThinkbeyondCard({
+            card: selectedThinkbeyondCard,
             projectId,
-            cardNumber: selectedThinkbeyondCard?.cardNumber,
+            userId: data?.user?.user_id,
           })
             .unwrap()
-            .then((data: any) => {
-              setNextCardTransition(false);
+            .then((newCard: any) => {
+              nextThinkbeyondCard({
+                projectId,
+                cardNumber: selectedThinkbeyondCard?.cardNumber,
+                userId: data?.user?.user_id,
+              })
+                .unwrap()
+                .then((data: any) => {
+                  setNextCardTransition(false);
+                })
+                .catch(() => {
+                  setNextCardTransition(false);
+                  dispatch(
+                    appSlice.actions.setGlobalSnackBar({
+                      open: true,
+                      content: `Error Going to next Card`,
+                      clossable: true,
+                    })
+                  );
+                });
             })
             .catch(() => {
               setNextCardTransition(false);
@@ -155,17 +198,161 @@ const ThinkbeyondNewModal = () => {
                 })
               );
             });
-        })
-        .catch(() => {
-          setNextCardTransition(false);
+        } else {
           dispatch(
             appSlice.actions.setGlobalSnackBar({
               open: true,
-              content: `Error Going to next Card`,
+              content: `Complete The Card Information to go to Next Card`,
               clossable: true,
             })
           );
-        });
+        }
+      } else {
+        setNextCardTransition(true);
+        updatedThinkbeyondCard({
+          card: selectedThinkbeyondCard,
+          projectId,
+          userId: data?.user?.user_id,
+        })
+          .unwrap()
+          .then((response: any) => {
+            if (
+              selectedThinkbeyondCard?.cardNumber === 3 &&
+              ThinkbeyondCards?.[0]?.future_1_mfs?.locked === true
+            ) {
+              setNextCardTransition(false);
+              dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false));
+              dispatch(
+                appSlice.actions.toggleThinkbeyondActivity({
+                  open: true,
+                  type: "future1_microframeworks",
+                })
+              );
+            } else {
+              nextThinkbeyondCard({
+                projectId,
+                cardNumber: selectedThinkbeyondCard?.cardNumber,
+                userId: data?.user?.user_id,
+              })
+                .unwrap()
+                .then((response: any) => {
+                  setNextCardTransition(false);
+                  dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false));
+                })
+                .catch(() => {
+                  setNextCardTransition(false);
+                  dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false));
+                  dispatch(
+                    appSlice.actions.setGlobalSnackBar({
+                      open: true,
+                      content: `Error Going to next Card`,
+                      clossable: true,
+                    })
+                  );
+                });
+            }
+            if (selectedThinkbeyondCard?.cardNumber === 6) {
+              dispatch(
+                appSlice.actions.toggleThinkbeyondActivity({
+                  open: true,
+                  type: "future2_microframeworks",
+                })
+              );
+            } else if (selectedThinkbeyondCard?.cardNumber === 9) {
+              dispatch(
+                appSlice.actions.toggleThinkbeyondActivity({
+                  open: true,
+                  type: "future2_microframeworks",
+                })
+              );
+            }
+          })
+          .catch(() => {
+            setNextCardTransition(false);
+            dispatch(
+              appSlice.actions.setGlobalSnackBar({
+                open: true,
+                content: `Error Going to next Card`,
+                clossable: true,
+              })
+            );
+          });
+      }
+    } else {
+      if (
+        selectedThinkbeyondCard?.cardNumber !== 3 &&
+        selectedThinkbeyondCard?.cardNumber !== 6 &&
+        selectedThinkbeyondCard?.cardNumber !== 9
+      ) {
+        for (const card of ThinkbeyondCards) {
+          for (const key in card) {
+            if (typeof card[key] === "object" && card[key] !== null) {
+              if (
+                card[key]["cardNumber"] ===
+                selectedThinkbeyondCard?.cardNumber + 1
+              ) {
+                if (card[key]["locked"] !== true) {
+                  setNextCardTransition(true);
+                  nextThinkbeyondCard({
+                    projectId,
+                    cardNumber: selectedThinkbeyondCard?.cardNumber,
+                    userId: data?.user?.user_id,
+                  })
+                    .unwrap()
+                    .then((response: any) => {
+                      setNextCardTransition(false);
+                    })
+                    .catch(() => {
+                      setNextCardTransition(false);
+                      dispatch(
+                        appSlice.actions.toggleThinkbeyondModalOpen(false)
+                      );
+                      dispatch(
+                        appSlice.actions.setGlobalSnackBar({
+                          open: true,
+                          content: `Error Going to next Card`,
+                          clossable: true,
+                        })
+                      );
+                    });
+                } else {
+                  dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false));
+                  dispatch(
+                    appSlice.actions.setGlobalSnackBar({
+                      open: true,
+                      content: `Next Card is Locked`,
+                      clossable: true,
+                    })
+                  );
+                }
+              }
+            }
+          }
+        }
+      } else {
+        setNextCardTransition(true);
+        nextThinkbeyondCard({
+          projectId,
+          cardNumber: selectedThinkbeyondCard?.cardNumber,
+          userId: data?.user?.user_id,
+        })
+          .unwrap()
+          .then((response: any) => {
+            setNextCardTransition(false);
+            dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false));
+          })
+          .catch(() => {
+            setNextCardTransition(false);
+            dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false));
+            dispatch(
+              appSlice.actions.setGlobalSnackBar({
+                open: true,
+                content: `Error Going to next Card`,
+                clossable: true,
+              })
+            );
+          });
+      }
     }
   };
 
@@ -188,10 +375,24 @@ const ThinkbeyondNewModal = () => {
 
   async function addMessage() {
     setBobHelpUpdating(true);
-    const data: any = {
+    const bobData: any = {
       projectId,
       cardNumber: selectedThinkbeyondCard?.cardNumber,
-      bobMessages: BobMessages,
+      bobMessages:
+        chat && chat.length > 0
+          ? chat.map((message: any) => ({
+              role: message?.role_text,
+              content: message?.chat_text,
+              time: message?.created_at,
+            }))
+          : [
+              {
+                content:
+                  "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
+                role: "assistant",
+              },
+            ],
+      userId: data?.user?.user_id,
     };
     const shouldSendRequest = selectedThinkbeyondCard?.cardInfo?.every(
       (info: any) => info?.text && info.text.trim() !== ""
@@ -208,16 +409,38 @@ const ThinkbeyondNewModal = () => {
     }
     dispatch(appSlice.actions.setBobMessages());
     dispatch(appSlice.actions.toggleBobThinking(true));
-    updatedThinkbeyondCard({ card: selectedThinkbeyondCard, projectId })
+    updatedThinkbeyondCard({
+      card: selectedThinkbeyondCard,
+      projectId,
+      userId: data?.user?.user_id,
+    })
       .unwrap()
       .then((newData: any) => {
-        setBobHelpUpdating(false);
-        bobSuggestion(data)
+        bobSuggestion(bobData)
           .unwrap()
-          .then((data: any) => {
-            dispatch(appSlice.actions.updateBobMessages(data?.message));
+          .then((response: any) => {
+            // dispatch(appSlice.actions.updateBobMessages(response?.message));
+            setBobHelpUpdating(false);
+            saveChat({
+              userId: data?.user?.user_id,
+              projectId,
+              future: 123,
+              canvas_type: 1,
+              cardNumber: 0,
+              chat: [
+                {
+                  role: "assistant",
+                  content: response?.message,
+                  time: moment(Date.now()).format(
+                    "ddd, DD MMM YYYY HH:mm:ss [GMT]"
+                  ),
+                },
+              ],
+              cacheUpdate: false,
+            });
           })
           .catch(() => {
+            setBobHelpUpdating(false);
             dispatch(appSlice.actions.toggleBobThinking(false));
             dispatch(appSlice.actions.removeBobMessages());
             dispatch(
@@ -229,6 +452,7 @@ const ThinkbeyondNewModal = () => {
             );
           })
           .finally(() => {
+            setBobHelpUpdating(false);
             dispatch(appSlice.actions.toggleBobThinking(false));
           });
       })
@@ -270,7 +494,7 @@ const ThinkbeyondNewModal = () => {
             alignItems: "center",
           }}
         >
-          {!nextCardTransition ? (
+          {!nextCardTransition || !project_data_loading ? (
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               {selectedThinkbeyondCard?.cardName}
             </Typography>
@@ -311,6 +535,7 @@ const ThinkbeyondNewModal = () => {
                         <TextField
                           id={`think-beyond-answer-${index}`}
                           placeholder={info?.placeholder}
+                          disabled={!project_data?.project?.is_owner}
                           multiline
                           fullWidth
                           value={info?.text}
@@ -325,7 +550,7 @@ const ThinkbeyondNewModal = () => {
                               mb:
                                 selectedThinkbeyondCard?.cardInfo?.length -
                                   1 ===
-                                  index
+                                index
                                   ? 0
                                   : 3,
                               fontSize: "13px",
@@ -366,27 +591,33 @@ const ThinkbeyondNewModal = () => {
                 height: "65vh",
               }}
             >
-              {activeBubble === "bob" ? (
-                <MessageBox
-                  header={false}
-                  height={1000}
-                  sendMessage={() => { }}
-                  messages={BobMessages}
-                  color={`#f6f5f4`}
-                />
-              ) : (
-                <CommentBox
-                  postComment={() => { }}
-                  comments={[
-                    {
-                      content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    similique libero fuga`,
-                      owner: false,
-                    },
-                  ]}
-                  color={`#f6f5f4`}
-                />
-              )}
+              <Box component={'div'} sx={{width:'90%',pr:4}}>
+                {activeBubble === "bob" && (
+                  <MessageBox
+                    header={false}
+                    height={1000}
+                    sendMessage={() => {}}
+                    messages={chat}
+                    textbox={false}
+                    color={`#f6f5f4`}
+                    loading={chat_fetching}
+                    saving={save_chat_loading}
+                  />
+                )}
+                {/* {activeBubble === "comment" && (
+                  <CommentBox
+                    postComment={() => {}}
+                    comments={[
+                      {
+                        content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
+                        similique libero fuga`,
+                        owner: false,
+                      },
+                    ]}
+                    color={`#f6f5f4`}
+                  />
+                )} */}
+              </Box>
               <Stack
                 spacing={2}
                 direction={"column"}
@@ -394,55 +625,64 @@ const ThinkbeyondNewModal = () => {
                 justifyContent={"flex-start"}
                 sx={{
                   flexGrow: 1,
+                  width:'10%',
                   pt: 1,
                 }}
               >
-                <IconButton
-                  onClick={() => setActiveBubble("bob")}
-                  sx={{
-                    p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                      }`,
-                    "&:hover": {
-                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                        }`,
-                    },
-                  }}
-                >
-                  <AutoAwesomeIcon
+                {
+                  <IconButton
+                    onClick={() => setActiveBubble("bob")}
                     sx={{
-                      color: `${activeBubble === "bob" ? "white" : ""}`,
-                      fontSize: "30px",
+                      p: 1.5,
+                      backgroundColor: `${theme.palette.primary.main}${
+                        activeBubble === "bob" ? "" : "30"
+                      }`,
+                      "&:hover": {
+                        backgroundColor: `${theme.palette.primary.main}${
+                          activeBubble === "bob" ? "" : "30"
+                        }`,
+                      },
                     }}
-                  />
-                </IconButton>
-                <IconButton
+                  >
+                    <AutoAwesomeIcon
+                      sx={{
+                        color: `${activeBubble === "bob" ? "white" : ""}`,
+                        fontSize: "20px",
+                      }}
+                    />
+                  </IconButton>
+                }
+                {/* <IconButton
                   onClick={() => setActiveBubble("comment")}
                   sx={{
                     p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
-                      }`,
+                    backgroundColor: `${theme.palette.primary.main}${
+                      activeBubble === "comment" ? "" : "30"
+                    }`,
                     "&:hover": {
-                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
-                        }`,
+                      backgroundColor: `${theme.palette.primary.main}${
+                        activeBubble === "comment" ? "" : "30"
+                      }`,
                     },
                   }}
                 >
                   <ChatBubbleOutlineOutlinedIcon
                     sx={{
                       color: `${activeBubble === "comment" ? "white" : ""}`,
-                      fontSize: "25px",
+                      fontSize: "20px",
                     }}
                   />
-                </IconButton>
-                <IconButton
+                </IconButton> */}
+                {/* <IconButton
                   sx={{
                     p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "settings" ? "" : "30"
-                      }`,
+                    backgroundColor: `${theme.palette.primary.main}${
+                      activeBubble === "settings" ? "" : "30"
+                    }`,
                     "&:hover": {
-                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "settings" ? "" : "30"
-                        }`,
+                      backgroundColor: `${theme.palette.primary.main}${
+                        activeBubble === "settings" ? "" : "30"
+                      }`,
                     },
                   }}
                 >
@@ -452,7 +692,7 @@ const ThinkbeyondNewModal = () => {
                       fontSize: "25px",
                     }}
                   />
-                </IconButton>
+                </IconButton> */}
               </Stack>
             </Stack>
           </Stack>
@@ -462,21 +702,27 @@ const ThinkbeyondNewModal = () => {
           <Stack
             direction={"row"}
             alignItems={"center"}
-            justifyContent={"space-between"}
+            justifyContent={
+              project_data?.project?.is_owner ? "space-between" : "flex-end"
+            }
             sx={{
               width: "100%",
             }}
           >
-            <Button
-              disabled={bobThinking || nextCardTransition || bobHelpUpdating}
-              onClick={handleAskBobHelp}
-              size="small"
-              variant="outlined"
-              color="primary"
-            >
-              {bobHelpUpdating && <CircularProgress size={15} sx={{ mr: 2 }} />}
-              Ask Bob's Help
-            </Button>
+            {project_data?.project?.is_owner && (
+              <Button
+                disabled={bobThinking || nextCardTransition || bobHelpUpdating}
+                onClick={handleAskBobHelp}
+                size="small"
+                variant="outlined"
+                color="primary"
+              >
+                {bobHelpUpdating && (
+                  <CircularProgress size={15} sx={{ mr: 2 }} />
+                )}
+                Ask Bob Tips
+              </Button>
+            )}
             <Stack component={"div"} direction={"row"} alignItems={"center"}>
               <Button
                 disabled={bobThinking || nextCardTransition || bobHelpUpdating}

@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
 const ProjectCard = (props: any) => {
   const { project } = props;
-  const { project_name, project_id } = project;
   const router = useRouter();
+  const { project_name, project_id, is_owner } = project;
   const gotToThinkbeyond = () => {
     router?.push(`/${project?.project_id}/Thinkbeyond`);
   };
@@ -25,7 +25,7 @@ const ProjectCard = (props: any) => {
           border: "1px solid #000",
         }}
       >
-        <ProjectMenuBtn projectId={project_id} />
+        <ProjectMenuBtn projectId={project_id} owner={is_owner} />
         <Paper
           onClick={gotToThinkbeyond}
           elevation={0}

@@ -1,10 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import {
   Avatar,
   Box,
+  Button,
   Container,
   Paper,
   Stack,
@@ -13,9 +14,45 @@ import {
 } from "@mui/material";
 import NotificationBtn from "./NotificationBtn/NotificationBtn";
 import UserProfileBtn from "./UserProfileBtn/UserProfileBtn";
+import { useParams, usePathname } from "next/navigation";
+import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
+import { useSession } from "next-auth/react";
+import { appSlice, useDispatch } from "@/lib/redux";
 
 const Header = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const pathName = usePathname();
+  const { data }: any = useSession();
+  const { projectId } = useParams();
+  const [
+    getProjectById,
+    {
+      data: project_data,
+      isLoading: project_data_loading,
+      isError: project_data_error,
+      isFetching: project_data_fetching,
+    },
+  ] = useLazyGetProjectByIdQuery();
+
+  useEffect(() => {
+    if (projectId) {
+      getProjectById({
+        projectId: projectId,
+        userId: data?.user?.user_id,
+      });
+    }
+  }, [projectId, data?.user?.user_id]);
+
+  const shareThinkbeyond = () => {
+    dispatch(
+      appSlice.actions.toggleShareModal({
+        open: true,
+        data: { projectId },
+        type: "thinkbeyond",
+      })
+    );
+  };
   return (
     <>
       <Container
@@ -36,26 +73,28 @@ const Header = () => {
             alignItems={"center"}
             spacing={1}
           >
-            <AutoAwesomeIcon
-              sx={{ fontSize: "25px", color: "black" }}
-            />
+            <AutoAwesomeIcon sx={{ fontSize: "25px", color: "black" }} />
             <Typography variant="h5" sx={{ fontWeight: 600 }}>
               Bob
             </Typography>
           </Stack>
         </Link>
-        <Box
+        <Stack
+          direction={"row"}
+          justifyContent={"flex-end"}
+          alignItems={"center"}
+          spacing={2}
           component={"div"}
-          sx={{
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-          }}
         >
-          {/* Scope - 2 */}
+          {pathName?.includes("Thinkbeyond") &&
+            project_data?.project?.is_owner && (
+              <Button onClick={shareThinkbeyond} variant="contained" size="small">
+                Share
+              </Button>
+            )}
           {/* <NotificationBtn /> */}
           <UserProfileBtn />
-        </Box>
+        </Stack>
       </Container>
     </>
   );

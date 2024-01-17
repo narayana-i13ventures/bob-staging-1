@@ -2,12 +2,18 @@ import { selectApp, useSelector } from "@/lib/redux";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material";
 // import { useSession } from "next-auth/react";
+import moment from "moment";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { useSession } from "next-auth/react";
 const Message = (props: any) => {
   const theme: any = useTheme();
-  const { user, message, header } = props;
+  const { data }: any = useSession();
+  const { message, header } = props;
   const { bobThinking } = useSelector(selectApp);
-  const bobTyping = bobThinking && user === "assistant" && message === "";
+  const bobTyping =
+    bobThinking &&
+    message?.role_text === "assistant" &&
+    message?.chat_text === "";
   return (
     <>
       <Stack
@@ -23,7 +29,7 @@ const Message = (props: any) => {
           sx={{ width: "100%" }}
           justifyContent={"flex-start"}
           alignItems={!bobTyping ? "items-start" : "center"}
-          direction={user === "user" ? "row-reverse" : "row"}
+          direction={message?.role_text === "user" ? "row-reverse" : "row"}
         >
           <Stack
             alignItems={"center"}
@@ -34,7 +40,7 @@ const Message = (props: any) => {
               borderRadius: "100%",
             }}
           >
-            {user === "assistant" ? (
+            {message?.role_text === "assistant" ? (
               <Avatar
                 sx={{
                   width: 35,
@@ -51,40 +57,39 @@ const Message = (props: any) => {
                 />
               </Avatar>
             ) : (
-              <Avatar
-                sx={{
-                  width: 35,
-                  height: 35,
-                  mt: 0.5,
-                  backgroundColor: theme.palette.primary.main,
-                }}
-              >
-                <AutoAwesomeIcon
-                  sx={{
-                    color: "white",
-                    fontSize: "25px",
+              <Box component={"div"}>
+                <img
+                  referrerPolicy="no-referrer"
+                  className="!bg-indigo-500"
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    borderRadius: "100%",
                   }}
+                  src={data?.user?.image}
                 />
-              </Avatar>
+              </Box>
             )}
           </Stack>
           <Stack
             direction={"column"}
             sx={{ maxWidth: "85%", mt: 0.5 }}
-            alignItems={user === "assistant" ? "items-start" : "items-end"}
+            alignItems={
+              message?.role_text === "assistant" ? "items-start" : "items-end"
+            }
           >
             <Box
               sx={{
                 p: 1,
                 borderRadius: 2,
-                mr: user === "user" ? 1 : 0,
-                ml: user === "user" ? 0 : 1,
+                mr: message?.role_text === "user" ? 1 : 0,
+                ml: message?.role_text === "user" ? 0 : 1,
                 backgroundColor: `${header ? `#f6f5f4` : "#fff"}`,
               }}
             >
               {!bobTyping ? (
                 <Typography variant="body1" sx={{ fontSize: "13px" }}>
-                  {message}
+                  {message?.chat_text}
                 </Typography>
               ) : (
                 <>
@@ -136,13 +141,13 @@ const Message = (props: any) => {
                 variant="caption"
                 sx={{
                   fontWeight: 500,
-                  textAlign: user === "user" ? "" : "text-right",
+                  textAlign: message?.role_text === "user" ? "" : "text-right",
                   mt: 1,
                   ml: 2,
                   color: "#7c7c7c",
                 }}
               >
-                10:35 AM
+                {moment(message?.created_at).format("h:mma")}
               </Typography>
             )}
           </Stack>

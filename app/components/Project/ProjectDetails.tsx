@@ -24,7 +24,9 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
+import { useSession } from "next-auth/react";
 const ProjectDetails = () => {
+  const { data }: any = useSession();
   const dispatch = useDispatch();
   const { projectDetailsOpen }: any = useSelector(selectApp);
   const [editProjectTitle, setEditProjectTitle] = useState({
@@ -60,9 +62,14 @@ const ProjectDetails = () => {
 
   useEffect(() => {
     if (projectDetailsOpen?.projectId !== "" && projectDetailsOpen?.open) {
-      getProjectById(projectDetailsOpen?.projectId, false);
+      getProjectById(
+        {
+          projectId: projectDetailsOpen?.projectId,
+          userId: data?.user?.user_id,
+        }
+      );
     }
-  }, [projectDetailsOpen?.projectId]);
+  }, [projectDetailsOpen?.projectId, data?.user?.user_id]);
 
   const closeProjectDetails = () => {
     dispatch(
@@ -73,22 +80,29 @@ const ProjectDetails = () => {
     );
   };
   const openProjectShare = () => {
-    dispatch(
-      appSlice.actions.toggleProjectDetails({ open: false, projectId: "" })
-    );
-    dispatch(
-      appSlice.actions.toggleShareModal({
-        open: true,
-        data: {
-          projectId: projectDetailsOpen?.projectId,
-        },
-        type: "project",
-      })
-    );
+    if (project_data?.project?.is_owner) {
+      dispatch(
+        appSlice.actions.toggleProjectDetails({ open: false, projectId: "" })
+      );
+      dispatch(
+        appSlice.actions.toggleShareModal({
+          open: true,
+          data: {
+            projectId: projectDetailsOpen?.projectId,
+          },
+          type: "project",
+        })
+      );
+    }
   };
   const retry = () => {
     if (projectDetailsOpen?.projectId !== "" && projectDetailsOpen?.open) {
-      getProjectById(projectDetailsOpen?.projectId, false);
+      getProjectById(
+        {
+          projectId: projectDetailsOpen?.projectId,
+          userId: data?.user?.user_id,
+        }
+      );
     }
   };
   return (
@@ -109,8 +123,8 @@ const ProjectDetails = () => {
             display: "flex",
             justifyContent:
               !fetch_project_loading &&
-              !fetch_project_error &&
-              !fetching_project
+                !fetch_project_error &&
+                !fetching_project
                 ? "space-between"
                 : "flex-end",
             alignItems: "center",

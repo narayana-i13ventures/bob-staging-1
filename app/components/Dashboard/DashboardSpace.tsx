@@ -4,6 +4,8 @@ import {
   Container,
   Divider,
   IconButton,
+  MenuItem,
+  Select,
   Stack,
   Tooltip,
 } from "@mui/material";
@@ -13,11 +15,16 @@ import Typography from "@mui/material/Typography";
 import ProjectsContainer from "./ProjectsContainer";
 import ProjectDetails from "../Project/ProjectDetails";
 import CreateProjectModal from "../Project/CreateProjectModal";
+import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 const DashboardSpace = () => {
-
+  const dispatch = useDispatch();
+  const { show_projects } = useSelector(selectApp);
+  const changeDashboardView = (e: any) => {
+    dispatch(appSlice.actions.toggleShowProjects(e?.target?.value));
+  };
   return (
     <Container
-      maxWidth={'xl'}
+      maxWidth={"xl"}
       component={"div"}
       sx={{
         flexGrow: 1,
@@ -28,9 +35,9 @@ const DashboardSpace = () => {
       }}
     >
       <Stack
-        direction={'column'}
-        justifyContent={'flex-start'}
-        alignItems={'flex-start'}
+        direction={"column"}
+        justifyContent={"flex-start"}
+        alignItems={"flex-start"}
         sx={{
           mt: 3,
           mr: 4,
@@ -68,15 +75,21 @@ const DashboardSpace = () => {
               fontWeight: 600,
             }}
           >
-            My Projects
+            {show_projects === "all"
+              ? "Projects"
+              : show_projects === "only_me"
+                ? "My Projects"
+                : show_projects === "shared"
+                  ? "Shared Projects"
+                  : ""}
           </Typography>
-          {/* <Stack
+          <Stack
             direction={"row"}
             justifyContent={"flex-end"}
             alignItems={"center"}
             component={"div"}
           >
-            <Tooltip title={"Grid View"} arrow>
+            {/* <Tooltip title={"Grid View"} arrow>
               <IconButton size="medium" sx={{ mr: 1 }}>
                 <GridViewOutlinedIcon fontSize="small" />
               </IconButton>
@@ -85,10 +98,29 @@ const DashboardSpace = () => {
               <IconButton size="medium">
                 <ListOutlinedIcon fontSize="small" />
               </IconButton>
-            </Tooltip>
-          </Stack> */}
+            </Tooltip> */}
+            <Select
+              size="small"
+              sx={{
+                fontSize: "14px",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderWidth: "1px !important",
+                },
+              }}
+              fullWidth
+              id={`dashboard-selector`}
+              onChange={(e: any) => {
+                changeDashboardView(e);
+              }}
+              value={show_projects}
+            >
+              <MenuItem sx={{fontSize:'14px'}} value="all">All</MenuItem>
+              <MenuItem sx={{fontSize:'14px'}} value="only_me">Only Me</MenuItem>
+              <MenuItem sx={{fontSize:'14px'}} value="shared">Shared</MenuItem>
+            </Select>
+          </Stack>
         </Stack>
-        <Divider sx={{ width: '100%', mb: 2, mt: 1 }} />
+        <Divider sx={{ width: "100%", mb: 2, mt: 1 }} />
         <ProjectsContainer />
       </Stack>
       <ProjectDetails />

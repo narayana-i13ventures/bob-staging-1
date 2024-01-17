@@ -4,6 +4,8 @@ import {
   FormControlLabel,
   FormGroup,
   Divider,
+  Typography,
+  Button,
 } from "@mui/material";
 
 const Settings = () => {
@@ -53,8 +55,10 @@ const Settings = () => {
   };
   return (
     <div>
-      <p className="font-semibold text-lg">Notification Settings</p>
-      <Divider className="!my-4" />
+      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+        Notification Settings
+      </Typography>
+      <Divider sx={{ my: 2 }} />
 
       {/* Email Notifications */}
       <FormGroup>
@@ -120,10 +124,10 @@ const Settings = () => {
       </FormGroup>
 
       {/* Project and Team Activity */}
-      <p className="font-semibold text-lg mt-4">
+      <Typography sx={{ fontWeight: 600, mt: 2 }}>
         Project & Team Activity Settings
-      </p>
-      <Divider className="!my-4" />
+      </Typography>
+      <Divider sx={{ my: 2 }} />
 
       <FormGroup>
         <FormControlLabel
@@ -180,8 +184,10 @@ const Settings = () => {
       </FormGroup>
 
       {/* Other Email Updates */}
-      <p className="font-semibold text-lg mt-4">Other Email Updates</p>
-      <Divider className="!my-4" />
+      <Typography sx={{ fontWeight: 600, mt: 2 }}>
+        Other Email Updates
+      </Typography>
+      <Divider sx={{ my: 2 }} />
 
       <FormGroup>
         <FormControlLabel
@@ -228,7 +234,7 @@ const Settings = () => {
       </FormGroup>
 
       {/* Unsubscribe Section */}
-      <Divider className="!my-4" />
+      <Divider sx={{ my: 4 }} />
       {/* <FormControlLabel
         control={
           <Switch
@@ -238,11 +244,18 @@ const Settings = () => {
         }
         label="Unsubscribe All"
       /> */}
-      <p className="text-red-500 hover:underline underline-offset-4 cursor-pointer font-semibold my-8">Unsubscribe All</p>
-      <p>
+      <Button
+        size="small"
+        variant="outlined"
+        color="error"
+        onClick={handleUnsubscribeAllChange}
+      >
+        Unsubscribe All
+      </Button>
+      <Typography variant="caption" sx={{ pb: 5, pt: 3, display: "block" }}>
         Please note: you'll still receive important administrative emails, such
         as password resets.
-      </p>
+      </Typography>
     </div>
   );
 };

@@ -14,9 +14,9 @@ import {
 } from "@mui/material";
 import { appSlice, useDispatch } from "@/lib/redux";
 import { useParams, useRouter } from "next/navigation";
-
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 const MicroframeworkCard = (props: any) => {
-  const { route, name } = props;
+  const { route, name, locked } = props;
   const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -26,7 +26,7 @@ const MicroframeworkCard = (props: any) => {
     dispatch(
       appSlice.actions.toggleShareModal({
         open: true,
-        data: { },
+        data: {},
         type: "microframeworks",
       })
     );
@@ -47,7 +47,7 @@ const MicroframeworkCard = (props: any) => {
     }
   };
 
-  const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
+  const HtmlTooltip: any = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {
@@ -81,6 +81,7 @@ const MicroframeworkCard = (props: any) => {
         elevation={0}
         sx={{
           flexGrow: 1,
+          opacity: locked ? 0.38 : 1,
           width: '100%',
           backgroundSize: "40%",
           backgroundPosition: "50% 50%",
@@ -94,10 +95,12 @@ const MicroframeworkCard = (props: any) => {
         justifyContent={"space-between"}
         sx={{ py: 2, px: 3, width: "100%" }}
       >
-        <Tooltip title={name} placement="top" arrow>
+        {/* <Tooltip title={name} placement="top" arrow> */}
+        <Stack sx={{ opacity: locked ? 0.38 : 1 }} direction={'row'} alignItems={'center'} justifyContent={'flex-start'}>
+          {locked && <LockOutlinedIcon />}
           <Typography
             sx={{
-              pr: 2,
+              px: 2,
               fontSize: "15px",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -107,8 +110,9 @@ const MicroframeworkCard = (props: any) => {
           >
             {name}
           </Typography>
-        </Tooltip>
-        <HtmlTooltip
+        </Stack>
+        {/* </Tooltip> */}
+        {/* <HtmlTooltip
           arrow
           title={
             <Stack
@@ -319,7 +323,7 @@ const MicroframeworkCard = (props: any) => {
           }
         >
           <InfoOutlinedIcon fontSize="small" />
-        </HtmlTooltip>
+        </HtmlTooltip> */}
       </Stack>
     </Stack>
   );

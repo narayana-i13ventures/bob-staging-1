@@ -1,9 +1,16 @@
 "use client";
-import { Avatar, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 const SignInPage = () => {
   const [email, setEmail] = useState("test2@example.com");
   const [password, setPassword] = useState("123123");
@@ -100,7 +107,21 @@ const SignInPage = () => {
           placeholder="Enter your Password"
         />
         <Button onClick={login} disableElevation variant="contained" fullWidth>
-          SignIn
+          Sign In
+        </Button>
+        <Divider sx={{ my: 2, width: "100%" }} />
+        <Button
+          onClick={() => signIn("google", { redirect: false })}
+          disableElevation
+          variant="outlined"
+          fullWidth
+        >
+          <img
+            style={{width:'20px',marginRight:'10px'}}
+            src="/images/google.png"
+            alt="google-logo"
+          />
+          Sign In with Google
         </Button>
       </Stack>
     </Stack>

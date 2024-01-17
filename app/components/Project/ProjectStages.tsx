@@ -15,10 +15,12 @@ import {
     useTheme,
 } from "@mui/material";
 import { useCreateProjectMutation } from "@/lib/redux/projectApi";
+import { useSession } from "next-auth/react";
 
 const ProjectStages = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
+    const { data }: any = useSession();
     const { company, companyStage } = useSelector(selectApp);
     const [inputError, setInputError] = useState("");
     const [
@@ -275,10 +277,6 @@ const ProjectStages = () => {
         },
     ];
 
-    // if (create_project_error) {
-    //     dispatch(appSlice.actions.to)
-    // }
-
     const answerInput = document.getElementById("answer");
 
     useEffect(() => {
@@ -294,9 +292,8 @@ const ProjectStages = () => {
                 setInputError(companyStageData.error);
                 return;
             }
-
             if (companyStage === 9) {
-                createProject(company)
+                createProject({ projectData: company, userId: data?.user?.user_id })
                     .unwrap()
                     .then((data: any) => {
                         setInputError("");
@@ -434,9 +431,6 @@ const ProjectStages = () => {
                                     >
                                         {stages[companyStage]?.message}
                                     </Typography>
-                                    <Button variant="contained" sx={{ mb: 3 }}>
-                                        Let's get Started
-                                    </Button>
                                 </Box>
                             </>
                         )}

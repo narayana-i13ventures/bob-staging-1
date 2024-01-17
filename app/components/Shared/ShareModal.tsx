@@ -3,15 +3,13 @@ import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import {
   Box,
-  Breadcrumbs,
   Button,
-  Checkbox,
+  IconButton,
   CircularProgress,
   DialogActions,
   Divider,
   FormControl,
   FormControlLabel,
-  IconButton,
   MenuItem,
   Select,
   Stack,
@@ -22,68 +20,26 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import SlideTransition from "../Utils/Slide";
 import SharedUserCard from "./SharedUserCard";
-import UserSearch from "../Project/UserSearch";
+import UserSearch from "./UserSearch";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import {
+  useLazyGetAllCanvasQuery,
   useLazyGetProjectByIdQuery,
   useLazyGetSharedUsersProjectQuery,
 } from "@/lib/redux/projectApi";
-
+import { useSession } from "next-auth/react";
+import { useLazyGetThinkbeyondSharedUsersQuery } from "@/lib/redux/ThinkbeyondApi";
 const ShareModal = (props: any) => {
   const dispatch = useDispatch();
-  const { ShareOpen } = useSelector(selectApp);
-  const [thinkbeyondChecked, setThinkbeyondChecked] = useState([false]);
-  const [canvasChecked, setCanvasChecked] = React.useState([false, false]);
+  const { data }: any = useSession();
+  const { ShareOpen }: any = useSelector(selectApp);
+
   const [status, setStatus] = useState({
     loading: false,
     error: false,
     success: true,
   });
   const [sharedUsers, setSharedUsers] = useState<any>([]);
-
-  const checkProject = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setThinkbeyondChecked([event.target.checked]);
-    setCanvasChecked([event.target.checked, event.target.checked]);
-  };
-
-  const checkThinkbeyond = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCanvasChecked([event.target.checked, event.target.checked]);
-  };
-
-  const BMCChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCanvasChecked([event.target.checked, canvasChecked[1]]);
-  };
-
-  const CVPChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCanvasChecked([canvasChecked[0], event.target.checked]);
-  };
-
-  const canvasChildren = (
-    <Box sx={{ display: "flex", flexDirection: "column", ml: 6 }}>
-      <FormControlLabel
-        label="Business Model Canvas"
-        control={<Checkbox checked={canvasChecked[0]} onChange={BMCChecked} />}
-      />
-      <FormControlLabel
-        label="Value Proposition Canvas"
-        control={<Checkbox checked={canvasChecked[1]} onChange={CVPChecked} />}
-      />
-    </Box>
-  );
-  const ThinkbeyondChildren = (
-    <Box sx={{ display: "flex", flexDirection: "column", ml: 3 }}>
-      <FormControlLabel
-        label="Thinkbeyond Canvas"
-        control={
-          <Checkbox
-            indeterminate={canvasChecked[0] !== canvasChecked[1]}
-            checked={canvasChecked[0] && canvasChecked[1]}
-            onChange={checkThinkbeyond}
-          />
-        }
-      />
-    </Box>
-  );
 
   const [
     getShareUsersProject,
@@ -95,6 +51,17 @@ const ShareModal = (props: any) => {
       isSuccess: shared_users_success,
     },
   ] = useLazyGetSharedUsersProjectQuery();
+
+  // const [
+  //   getThinkbeyondSharedUsers,
+  //   {
+  //     data: thinkbeyond_shared_users,
+  //     isLoading: thinkbeyond_loading_shared_users,
+  //     isFetching: thinkbeyond_fetching_shared_users,
+  //     isError: thinkbeyond_error_shared_users,
+  //     isSuccess: thinkbeyond_shared_users_success,
+  //   },
+  // ] = useLazyGetThinkbeyondSharedUsersQuery();
 
   const [
     getProjectById,
@@ -108,44 +75,102 @@ const ShareModal = (props: any) => {
   ] = useLazyGetProjectByIdQuery();
 
   useEffect(() => {
-    if (ShareOpen?.data !== "") {
-      if (ShareOpen?.type === "project") {
-        getShareUsersProject(ShareOpen?.data?.projectId);
-      }
-      getProjectById(ShareOpen?.data?.projectId);
+    if (ShareOpen?.data !== "" && ShareOpen?.open) {
+      getShareUsersProject({
+        projectId: ShareOpen?.data?.projectId,
+        userId: data?.user?.user_id,
+      });
+      // if (ShareOpen?.type === "project") {
+      // }
+      // if (ShareOpen?.type === "thinkbeyond") {
+      //   getThinkbeyondSharedUsers({
+      //     projectId: ShareOpen?.data?.projectId,
+      //     userId: data?.user?.user_id,
+      //   });
+      // }
+      getProjectById({
+        projectId: ShareOpen?.data?.projectId,
+        userId: data?.user?.user_id,
+      });
     }
-  }, [ShareOpen]);
+  }, [ShareOpen?.data?.projectId, data?.user?.user_id, ShareOpen?.open]);
 
   useEffect(() => {
     if (ShareOpen?.data !== "") {
-      if (ShareOpen?.type === "project") {
-        setStatus({
-          loading: fetching_shared_users,
-          error: error_shared_users,
-          success: shared_users_success,
-        });
-      }
+      setSharedUsers(shared_users);
+      // if (ShareOpen?.type === "project") {
+      // }
+      // if (ShareOpen?.type === "thinkbeyond") {
+      //   setSharedUsers(thinkbeyond_shared_users);
+      // }
+    }
+  }, [
+    shared_users,
+    loading_shared_users,
+    fetching_shared_users,
+    error_shared_users,
+    shared_users_success,
+    // thinkbeyond_shared_users,
+    // thinkbeyond_loading_shared_users,
+    // thinkbeyond_fetching_shared_users,
+    // thinkbeyond_error_shared_users,
+    // thinkbeyond_shared_users_success,
+  ]);
+
+  useEffect(() => {
+    if (ShareOpen?.data !== "") {
+      setStatus({
+        loading: fetching_shared_users,
+        error: error_shared_users,
+        success: shared_users_success,
+      });
+      // if (ShareOpen?.type === "project") {
+      // }
+      // if (ShareOpen?.type === "thinkbeyond") {
+      //   setStatus({
+      //     loading: thinkbeyond_fetching_shared_users,
+      //     error: thinkbeyond_error_shared_users,
+      //     success: thinkbeyond_shared_users_success,
+      //   });
+      // }
     }
   }, [
     loading_shared_users,
     fetching_shared_users,
     error_shared_users,
     shared_users_success,
+    // thinkbeyond_fetching_shared_users,
+    // thinkbeyond_error_shared_users,
+    // thinkbeyond_shared_users_success,
   ]);
 
-  useEffect(() => {
-    if (ShareOpen?.data !== "") {
-      if (ShareOpen?.type === "project") {
-        setSharedUsers(shared_users);
-      }
-    }
-  }, [shared_users]);
-
   const retry = () => {
-    if (ShareOpen?.type === "project" && ShareOpen?.data?.projectId !== "") {
-      getShareUsersProject(ShareOpen?.data?.projectId);
-      getProjectById(ShareOpen?.data?.projectId);
+    if (
+      // ShareOpen?.type === "project" &&
+      ShareOpen?.data?.projectId !== ""
+    ) {
+      getShareUsersProject({
+        projectId: ShareOpen?.data?.projectId,
+        userId: data?.user?.user_id,
+      });
+      getProjectById({
+        projectId: ShareOpen?.data?.projectId,
+        userId: data?.user?.user_id,
+      });
     }
+    // if (
+    //   ShareOpen?.type === "thinkbeyond" &&
+    //   ShareOpen?.data?.projectId !== ""
+    // ) {
+    //   getThinkbeyondSharedUsers({
+    //     projectId: ShareOpen?.data?.projectId,
+    //     userId: data?.user?.user_id,
+    //   });
+    //   getProjectById({
+    //     projectId: ShareOpen?.data?.projectId,
+    //     userId: data?.user?.user_id,
+    //   });
+    // }
   };
   const closeProjectShareModal = () => {
     dispatch(
@@ -170,11 +195,11 @@ const ShareModal = (props: any) => {
             display: "flex",
             justifyContent:
               !error_project_data &&
-              !fetching_project_data &&
-              !status?.loading &&
-              !status?.error &&
-              status?.success &&
-              project_data_success
+                !fetching_project_data &&
+                !status?.loading &&
+                !status?.error &&
+                status?.success &&
+                project_data_success
                 ? "space-between"
                 : "flex-end",
             alignItems: "center",
@@ -192,42 +217,23 @@ const ShareModal = (props: any) => {
         </DialogTitle>
         <Divider />
         <DialogContent sx={{ p: 2 }}>
-          {!error_project_data &&
-            !fetching_project_data &&
-            !status?.loading &&
+          {!status?.loading &&
             !status?.error &&
             status?.success &&
+            !error_project_data &&
+            !fetching_project_data &&
             project_data_success && (
               <>
-                <UserSearch shared_users={sharedUsers || []} />
-                <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                  Share
-                </Typography>
-                <Divider sx={{ my: 1 }} />
-                <Box component={"div"} sx={{ mb: 2 }}>
-                  <FormControlLabel
-                    label="Uber for Helocopter"
-                    control={
-                      <Checkbox
-                        checked={
-                          canvasChecked[0] &&
-                          canvasChecked[1] &&
-                          thinkbeyondChecked[0]
-                        }
-                        indeterminate={
-                          thinkbeyondChecked[0] !==
-                          (canvasChecked[0] && canvasChecked[1])
-                        }
-                        onChange={checkProject}
-                      />
-                    }
-                  />
-                  {ThinkbeyondChildren}
-                  {canvasChildren}
-                </Box>
+                <UserSearch
+                  shared_users={sharedUsers || []}
+                  type={ShareOpen?.type}
+                  project_data={project_data}
+                  metadata={ShareOpen?.data}
+                />
+
                 {sharedUsers?.length > 0 && (
                   <>
-                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    <Typography variant="body1" sx={{ fontWeight: 600, mt: 2 }}>
                       People With Access
                     </Typography>
                     <Divider sx={{ my: 1 }} />
@@ -244,11 +250,12 @@ const ShareModal = (props: any) => {
                       {sharedUsers?.map((user: any) => {
                         return (
                           <SharedUserCard
-                            project_id={ShareOpen?.data?.projectId}
                             key={user?.user_id}
                             deleteUser={true}
                             editRole={false}
                             user={user}
+                            type={ShareOpen?.type}
+                            metadata={ShareOpen?.data}
                           />
                         );
                       })}
@@ -269,8 +276,8 @@ const ShareModal = (props: any) => {
                     <Select
                       size="small"
                       id={`global_user_role_${props?.projectId}`}
-                      value={"editor"}
-                      onChange={() => {}}
+                      value={"Commenter"}
+                      onChange={() => { }}
                       sx={{
                         p: 0,
                         width: "85px",
@@ -283,7 +290,7 @@ const ShareModal = (props: any) => {
                         },
                       }}
                     >
-                      <MenuItem value={"editor"}>Editor</MenuItem>
+                      <MenuItem value={"Commenter"}>Commenter</MenuItem>
                       <MenuItem value={"viewer"}>Viewer</MenuItem>
                     </Select>
                   </FormControl>
@@ -307,9 +314,7 @@ const ShareModal = (props: any) => {
             )}
           {(error_project_data || status?.error) &&
             !fetching_project_data &&
-            !status?.loading &&
-            !status?.success &&
-            !project_data_success && (
+            !status?.loading && (
               <Stack
                 direction={"column"}
                 alignItems={"center"}

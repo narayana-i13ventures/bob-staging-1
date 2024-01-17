@@ -44,7 +44,7 @@ const CommentBox = (props: any) => {
             sx={{
                 pt: 2,
                 mr: 2,
-                width: "330px",
+                width: "100%",
                 height: "100%",
                 borderRadius: 2,
                 backgroundColor: `${color || "#fff"}`,
