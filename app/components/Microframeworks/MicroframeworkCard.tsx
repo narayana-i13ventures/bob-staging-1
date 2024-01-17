@@ -32,18 +32,20 @@ const MicroframeworkCard = (props: any) => {
     );
   };
   const goToCanvas = () => {
-    switch (name) {
-      case "Business Model Canvas":
-        // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=BMC`);
-        router?.push(`/${projectId}/${futureId}/Microframeworks/BMC`);
-        break;
-      case "Value Proposition Canvas":
-        router?.push(`/${projectId}/${futureId}/Microframeworks/CVP`);
-        // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=CVP`);
-        break;
+    if (!locked) {
+      switch (name) {
+        case "Business Model Canvas":
+          // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=BMC`);
+          router?.push(`/${projectId}/${futureId}/Microframeworks/BMC`);
+          break;
+        case "Value Proposition Canvas":
+          router?.push(`/${projectId}/${futureId}/Microframeworks/CVP`);
+          // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=CVP`);
+          break;
 
-      default:
-        break;
+        default:
+          break;
+      }
     }
   };
 
@@ -69,11 +71,11 @@ const MicroframeworkCard = (props: any) => {
       sx={{
         boxShadow: 1,
         borderRadius: 2,
-        cursor: "pointer",
+        cursor: !locked ? "pointer" : "auto",
         border: "1px solid #000",
         maxWidth: "270px",
-        height: '250px',
-        overflow: 'hidden'
+        height: "250px",
+        overflow: "hidden",
       }}
     >
       <Paper
@@ -82,7 +84,7 @@ const MicroframeworkCard = (props: any) => {
         sx={{
           flexGrow: 1,
           opacity: locked ? 0.38 : 1,
-          width: '100%',
+          width: "100%",
           backgroundSize: "40%",
           backgroundPosition: "50% 50%",
           backgroundRepeat: "no-repeat",
@@ -96,7 +98,12 @@ const MicroframeworkCard = (props: any) => {
         sx={{ py: 2, px: 3, width: "100%" }}
       >
         {/* <Tooltip title={name} placement="top" arrow> */}
-        <Stack sx={{ opacity: locked ? 0.38 : 1 }} direction={'row'} alignItems={'center'} justifyContent={'flex-start'}>
+        <Stack
+          sx={{ opacity: locked ? 0.38 : 1 }}
+          direction={"row"}
+          alignItems={"center"}
+          justifyContent={"flex-start"}
+        >
           {locked && <LockOutlinedIcon />}
           <Typography
             sx={{
