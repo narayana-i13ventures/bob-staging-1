@@ -111,13 +111,13 @@ const SignInPage = () => {
         </Button>
         <Divider sx={{ my: 2, width: "100%" }} />
         <Button
-          onClick={() => signIn("google",{callbackUrl:'/Dashboard'})}
+          onClick={() => signIn("google", { callbackUrl: '/Dashboard' })}
           disableElevation
           variant="outlined"
           fullWidth
         >
           <img
-            style={{width:'20px',marginRight:'10px'}}
+            style={{ width: '20px', marginRight: '10px' }}
             src="/images/google.png"
             alt="google-logo"
           />
