@@ -62,90 +62,90 @@ export const options: NextAuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    // signIn: "/SignIn",
+    signIn: "/SignIn",
     // error: '/AuthError'
   },
   secret: process.env.NEXTAUTH_SECRET as string,
-  // callbacks: {
-  //   async signIn({ user, account, profile, email, credentials }: any) {
-  //     console.log("checkpoint 1");
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }: any) {
+      console.log("checkpoint 1");
 
-  //     if (user) {
-  //       try {
-  //         const response = await fetch(
-  //           `${process.env.API_URL}/v1/users/getuser?email=${user.email}`
-  //         );
-  //         if (response.ok) {
-  //           console.log("checkpoint 2");
-  //           const userData = await response.json();
-  //           console.log(userData);
+      if (user) {
+        try {
+          const response = await fetch(
+            `${process.env.API_URL}/v1/users/getuser?email=${user.email}`
+          );
+          if (response.ok) {
+            console.log("checkpoint 2");
+            const userData = await response.json();
+            console.log(userData);
 
-  //           if (userData?.user?.[0]?.length === 0) {
-  //             console.log("checkpoint 3");
-  //             try {
-  //               const create_user_response = await fetch(
-  //                 `${process.env.API_URL}/v1/users/createuser`,
-  //                 {
-  //                   method: "POST",
-  //                   headers: {
-  //                     "Content-Type": "application/json",
-  //                   },
-  //                   body: JSON.stringify({
-  //                     firstname: user?.name?.split(" ")?.[0] || user?.name,
-  //                     lastname: user?.name?.split(" ")?.[1] || "",
-  //                     preferred_name: user?.name,
-  //                     email: user?.email,
-  //                     image: user?.image,
-  //                   }),
-  //                 }
-  //               );
+            if (userData?.user?.[0]?.length === 0) {
+              console.log("checkpoint 3");
+              try {
+                const create_user_response = await fetch(
+                  `${process.env.API_URL}/v1/users/createuser`,
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      firstname: user?.name?.split(" ")?.[0] || user?.name,
+                      lastname: user?.name?.split(" ")?.[1] || "",
+                      preferred_name: user?.name,
+                      email: user?.email,
+                      image: user?.image,
+                    }),
+                  }
+                );
 
-  //               if (create_user_response?.ok) {
-  //                 console.log("checkpoint 4");
-  //                 const data: any = await create_user_response?.json();
-  //                 user.user_id = data?.user?.user_id;
-  //                 user.is_new = true;
-  //                 return true;
-  //               } else {
-  //                 console.log("checkpoint 5");
-  //                 return false;
-  //               }
-  //             } catch (error) {
-  //               console.log("checkpoint 6");
-  //               return false;
-  //             }
-  //           } else {
-  //             console.log("checkpoint 7");
-  //             user.is_new = false;
-  //             user.user_id = userData?.user?.[0]?.[0]?.user_id;
-  //             return true;
-  //           }
-  //         } else {
-  //           console.log("checkpoint 8");
-  //           console.error(
-  //             `Failed to fetch user data. Status: ${response.status}`
-  //           );
-  //           return false;
-  //         }
-  //       } catch (error) {
-  //         console.log("checkpoint 8");
-  //         return false;
-  //       }
-  //     } else {
-  //       return false;
-  //     }
-  //   },
-  //   async jwt({ token, user, account, profile, isNewUser }: any) {
-  //     if (account) {
-  //       token.is_new = user?.is_new;
-  //       token.user_id = user?.user_id;
-  //     }
-  //     return token;
-  //   },
-  //   async session({ session, user, token }: any) {
-  //     session.user.is_new = token?.is_new;
-  //     session.user.user_id = token?.user_id;
-  //     return session;
-  //   },
-  // },
+                if (create_user_response?.ok) {
+                  console.log("checkpoint 4");
+                  const data: any = await create_user_response?.json();
+                  user.user_id = data?.user?.user_id;
+                  user.is_new = true;
+                  return true;
+                } else {
+                  console.log("checkpoint 5");
+                  return false;
+                }
+              } catch (error) {
+                console.log("checkpoint 6");
+                return false;
+              }
+            } else {
+              console.log("checkpoint 7");
+              user.is_new = false;
+              user.user_id = userData?.user?.[0]?.[0]?.user_id;
+              return true;
+            }
+          } else {
+            console.log("checkpoint 8");
+            console.error(
+              `Failed to fetch user data. Status: ${response.status}`
+            );
+            return false;
+          }
+        } catch (error) {
+          console.log("checkpoint 8");
+          return false;
+        }
+      } else {
+        return false;
+      }
+    },
+    async jwt({ token, user, account, profile, isNewUser }: any) {
+      if (account) {
+        token.is_new = user?.is_new;
+        token.user_id = user?.user_id;
+      }
+      return token;
+    },
+    async session({ session, user, token }: any) {
+      session.user.is_new = token?.is_new;
+      session.user.user_id = token?.user_id;
+      return session;
+    },
+  },
 };
