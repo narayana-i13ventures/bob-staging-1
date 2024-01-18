@@ -116,9 +116,9 @@ const ThinkbeyondActivityModal = () => {
               appSlice.actions.toggleBobPrefill({
                 loading: false,
                 error: false,
-                projectId: '',
-                futureId: '',
-                userId: '',
+                projectId: "",
+                futureId: "",
+                userId: "",
               })
             );
           })
@@ -198,7 +198,7 @@ const ThinkbeyondActivityModal = () => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <Divider />
+        {/* <Divider /> */}
         <DialogContent sx={{ p: 2 }}>
           <Stack
             direction={"row"}
@@ -207,7 +207,7 @@ const ThinkbeyondActivityModal = () => {
             spacing={1}
             sx={{
               width: "100%",
-              mb: 2,
+              mb: 5,
             }}
           >
             <AutoAwesomeIcon sx={{ fontSize: "25px", color: "black" }} />
@@ -215,7 +215,7 @@ const ThinkbeyondActivityModal = () => {
               Bob
             </Typography>
           </Stack>
-          <Stack
+          {/* <Stack
             direction={"row"}
             justifyContent={"flex-start"}
             alignItems={"flex-start"}
@@ -268,9 +268,14 @@ const ThinkbeyondActivityModal = () => {
                 Bob is Building your Micro Frameworks
               </Typography>
             )}
-          </Stack>
+          </Stack> */}
+          <Typography>
+            Thank you {data?.user?.name} for your inputs. It's time to relax
+            while bob works on your project. You will receive an email when Bob
+            completes your canvas.
+          </Typography>
         </DialogContent>
-        <Divider />
+        {/* <Divider />
         <DialogActions
           sx={{
             p: 2,
@@ -289,7 +294,7 @@ const ThinkbeyondActivityModal = () => {
               ? "Future 1 Micro Frameworks"
               : ""}
           </Button>
-          {/* <Button
+          <Button
             disabled={nextCardTransition}
             variant="contained"
             onClick={goToNextFuture}
@@ -298,8 +303,8 @@ const ThinkbeyondActivityModal = () => {
             {ThinkbeyondActivity?.type === "future1_microframeworks"
               ? "Future 3"
               : ""}
-          </Button> */}
-        </DialogActions>
+          </Button>
+        </DialogActions> */}
       </Dialog>
     </>
   );

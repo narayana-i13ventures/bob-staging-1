@@ -14,6 +14,7 @@ import {
 import {
   useBobSuggestionMutation,
   useNextThinknbeyondCardMutation,
+  usePrefillFuture3Mutation,
   useUpdateThinkbeyondCardMutation,
 } from "@/lib/redux/ThinkbeyondApi";
 import {
@@ -37,6 +38,7 @@ import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutline
 import { useSession } from "next-auth/react";
 import { useLazyGetChatQuery, useSaveChatMutation } from "@/lib/redux/ChatApi";
 import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
+import { usePrefillFutuer1BMCMutation } from "@/lib/redux/BMCApi";
 const ThinkbeyondNewModal = (props: any) => {
   const { ThinkbeyondCards } = props;
   const theme = useTheme();
@@ -66,6 +68,26 @@ const ThinkbeyondNewModal = (props: any) => {
     { data: chat, isLoading: chat_loading, isFetching: chat_fetching },
   ] = useLazyGetChatQuery();
   const [saveChat, { isLoading: save_chat_loading }] = useSaveChatMutation();
+
+
+  const [
+    prefillFuture3Thinkbeyond,
+    {
+      isSuccess: prefillFuture3ThinkbeyondSuccess,
+      isLoading: prefillFuture3ThinkbeyondLoading,
+      isError: prefillFuture3ThinkbeyondError,
+    },
+  ] = usePrefillFuture3Mutation();
+
+  const [
+    prefillFuture1BMC,
+    {
+      isSuccess: prefillFuture1BMCSuccess,
+      isLoading: prefillFuture1BMCLoading,
+      isError: prefillFuture1ErrorError,
+    },
+  ] = usePrefillFutuer1BMCMutation();
+
 
   useEffect(() => {
     if (
@@ -217,8 +239,9 @@ const ThinkbeyondNewModal = (props: any) => {
           .unwrap()
           .then((response: any) => {
             if (
-              selectedThinkbeyondCard?.cardNumber === 3 &&
-              ThinkbeyondCards?.[0]?.future_1_mfs?.locked === true
+              selectedThinkbeyondCard?.cardNumber === 3 
+              // &&
+              // ThinkbeyondCards?.[0]?.future_1_mfs?.locked === true
             ) {
               setNextCardTransition(false);
               dispatch(appSlice.actions.toggleThinkbeyondModalOpen(false));
@@ -228,6 +251,11 @@ const ThinkbeyondNewModal = (props: any) => {
                   type: "future1_microframeworks",
                 })
               );
+              prefillFuture1BMC({
+                userId: data?.user?.user_id,
+                projectId,
+              })
+              prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId })
             } else {
               nextThinkbeyondCard({
                 projectId,
