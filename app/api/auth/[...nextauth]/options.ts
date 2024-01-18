@@ -147,9 +147,5 @@ export const options: NextAuthOptions = {
       session.user.user_id = token?.user_id;
       return session;
     },
-    async redirect({ url, baseUrl }: any) {
-      const data = await getServerSession();
-      return baseUrl;
-    },
   },
 };
