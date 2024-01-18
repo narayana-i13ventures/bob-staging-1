@@ -68,77 +68,78 @@ export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
     async signIn({ user, account, profile, email, credentials }: any) {
-      if (user) {
-        try {
-          const response = await fetch(
-            `${process.env.API_URL}/v1/users/getuser?email=${user.email}`
-          );
-          if (response.ok) {
-            const userData = await response.json();
-            console.log(userData);
+      // if (user) {
+      //   try {
+      //     const response = await fetch(
+      //       `${process.env.API_URL}/v1/users/getuser?email=${user.email}`
+      //     );
+      //     if (response.ok) {
+      //       const userData = await response.json();
+      //       console.log(userData);
 
-            if (userData?.user?.[0]?.length === 0) {
-              try {
-                const create_user_response = await fetch(
-                  `${process.env.API_URL}/v1/users/createuser`,
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      firstname: user?.name?.split(" ")?.[0] || user?.name,
-                      lastname: user?.name?.split(" ")?.[1] || "",
-                      preferred_name: user?.name,
-                      email: user?.email,
-                      image: user?.image,
-                    }),
-                  }
-                );
+      //       if (userData?.user?.[0]?.length === 0) {
+      //         try {
+      //           const create_user_response = await fetch(
+      //             `${process.env.API_URL}/v1/users/createuser`,
+      //             {
+      //               method: "POST",
+      //               headers: {
+      //                 "Content-Type": "application/json",
+      //               },
+      //               body: JSON.stringify({
+      //                 firstname: user?.name?.split(" ")?.[0] || user?.name,
+      //                 lastname: user?.name?.split(" ")?.[1] || "",
+      //                 preferred_name: user?.name,
+      //                 email: user?.email,
+      //                 image: user?.image,
+      //               }),
+      //             }
+      //           );
 
-                if (create_user_response?.ok) {
-                  const data: any = await create_user_response?.json();
-                  user.user_id = data?.user?.user_id;
-                  user.is_new = true;
-                  return true;
-                } else {
-                  return false;
-                }
-              } catch (error) {
-                return false;
-              }
-            } else {
-              user.is_new = false;
-              user.user_id = userData?.user?.[0]?.[0]?.user_id;
-              return true;
-            }
-          } else {
-            console.error(
-              `Failed to fetch user data. Status: ${response.status}`
-            );
-            return false;
-          }
-        } catch (error) {
-          return false;
-        }
-      } else {
-        return false;
-      }
+      //           if (create_user_response?.ok) {
+      //             const data: any = await create_user_response?.json();
+      //             user.user_id = data?.user?.user_id;
+      //             user.is_new = true;
+      //             return true;
+      //           } else {
+      //             return false;
+      //           }
+      //         } catch (error) {
+      //           return false;
+      //         }
+      //       } else {
+      //         user.is_new = false;
+      //         user.user_id = userData?.user?.[0]?.[0]?.user_id;
+      //         return true;
+      //       }
+      //     } else {
+      //       console.error(
+      //         `Failed to fetch user data. Status: ${response.status}`
+      //       );
+      //       return false;
+      //     }
+      //   } catch (error) {
+      //     return false;
+      //   }
+      // } else {
+      //   return false;
+      // }
+      return true
     },
     async jwt({ token, user, account, profile, isNewUser }: any) {
-      if (account) {
-        token.is_new = user?.is_new;
-        token.user_id = user?.user_id;
-      }
+      // if (account) {
+      //   token.is_new = user?.is_new;
+      //   token.user_id = user?.user_id;
+      // }
       return token;
     },
     async session({ session, user, token }: any) {
-      session.user.is_new = token?.is_new;
-      session.user.user_id = token?.user_id;
+      // session.user.is_new = token?.is_new;
+      // session.user.user_id = token?.user_id;
       return session;
     },
     async redirect({ url, baseUrl }: any) {
-      const data = await getServerSession();
+      // const data = await getServerSession();
       return baseUrl;
     },
   },
