@@ -119,7 +119,6 @@ export const options: NextAuthOptions = {
               console.log("checkpoint 7");
               user.is_new = false;
               user.user_id = userData?.user?.[0]?.[0]?.user_id;
-              redirect('/Dashboard')
               return true;
             }
           } else {
