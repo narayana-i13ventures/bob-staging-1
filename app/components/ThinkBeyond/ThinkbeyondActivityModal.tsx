@@ -234,9 +234,9 @@ const ThinkbeyondActivityModal = () => {
                       {ThinkbeyondActivity?.type === "future1_microframeworks"
                         ? "Future 1"
                         : ""}{" "}
-                      and Future 1 OKRs, Now it's time for you to decide. You
-                      can continue with Future 1 Microframeworks or Go to Future
-                      3 by prefilling using Bob.
+                      and {ThinkbeyondActivity?.type === "future1_microframeworks"
+                        ? "Future 1"
+                        : ""}{" "}OKRs, click on Continue to Micro Frameworks
                     </Typography>
                   )}
                 {status?.loading && !status?.error && (
@@ -265,7 +265,7 @@ const ThinkbeyondActivityModal = () => {
                   textAlign: "center",
                 }}
               >
-                Bob is Building your Microframeworks
+                Bob is Building your Micro Frameworks
               </Typography>
             )}
           </Stack>
@@ -275,7 +275,7 @@ const ThinkbeyondActivityModal = () => {
           sx={{
             p: 2,
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             alignItems: "center",
           }}
         >
@@ -284,12 +284,12 @@ const ThinkbeyondActivityModal = () => {
             variant="outlined"
             onClick={goToMicroframeworks}
           >
-            Go To{" "}
+            Continue To{" "}
             {ThinkbeyondActivity?.type === "future1_microframeworks"
-              ? "Future 1 Microframeworks"
+              ? "Future 1 Micro Frameworks"
               : ""}
           </Button>
-          <Button
+          {/* <Button
             disabled={nextCardTransition}
             variant="contained"
             onClick={goToNextFuture}
@@ -298,7 +298,7 @@ const ThinkbeyondActivityModal = () => {
             {ThinkbeyondActivity?.type === "future1_microframeworks"
               ? "Future 3"
               : ""}
-          </Button>
+          </Button> */}
         </DialogActions>
       </Dialog>
     </>

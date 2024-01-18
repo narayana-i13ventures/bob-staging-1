@@ -494,7 +494,7 @@ const ThinkbeyondNewModal = (props: any) => {
             alignItems: "center",
           }}
         >
-          {!nextCardTransition || !project_data_loading ? (
+          {!nextCardTransition ? (
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               {selectedThinkbeyondCard?.cardName}
             </Typography>
@@ -534,7 +534,7 @@ const ThinkbeyondNewModal = (props: any) => {
                         </Typography>
                         <TextField
                           id={`think-beyond-answer-${index}`}
-                          placeholder={info?.placeholder}
+                          placeholder={"Enter your text here"}
                           disabled={!project_data?.project?.is_owner}
                           multiline
                           fullWidth

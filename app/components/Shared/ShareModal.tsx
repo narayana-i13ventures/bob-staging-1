@@ -280,7 +280,6 @@ const ShareModal = (props: any) => {
                       onChange={() => { }}
                       sx={{
                         p: 0,
-                        width: "85px",
                         "& .MuiSelect-select": {
                           p: 1,
                           fontSize: 12,
@@ -291,7 +290,6 @@ const ShareModal = (props: any) => {
                       }}
                     >
                       <MenuItem value={"Commenter"}>Commenter</MenuItem>
-                      <MenuItem value={"viewer"}>Viewer</MenuItem>
                     </Select>
                   </FormControl>
                 </Box>

@@ -130,7 +130,7 @@ const Microframeworks = () => {
                           fontWeight: 600,
                         }}
                       >
-                        Bob is Building your Microframeworks
+                        Bob is Building your Micro Frameworks
                       </Typography>
                       <CircularProgress />
                     </Stack>
