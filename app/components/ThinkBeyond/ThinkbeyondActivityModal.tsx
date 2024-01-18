@@ -198,6 +198,7 @@ const ThinkbeyondActivityModal = () => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
+        
         {/* <Divider /> */}
         <DialogContent sx={{ p: 2 }}>
           <Stack
