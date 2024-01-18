@@ -16,11 +16,47 @@ export const commentSlice = createApi({
       }),
     }),
     createComment: builder.mutation({
-      query: () => ({
-        url: ``,
+      query: ({
+        userId,
+        projectId,
+        future,
+        canvas_type,
+        cardNumber,
+        content,
+      }) => ({
+        url: `/v1/comment/newcomment`,
         method: "POST",
-        body: JSON.stringify({}),
+        body: JSON.stringify({
+          level: 0,
+          future: future,
+          user_id: userId,
+          comment: content,
+          project_id: projectId,
+          canvas_type: canvas_type,
+          card_number: cardNumber,
+        }),
       }),
+      async onQueryStarted(data, { dispatch, queryFulfilled }) {
+        try {
+          const response: any = await queryFulfilled;
+          const patchResult = dispatch(
+            commentSlice.util.updateQueryData(
+              "getAllComments",
+              {
+                userId: data?.userId,
+                projectId: data?.projectId,
+                future: data?.future,
+                canvas_type: data?.canvas_type,
+                cardNumber: data?.cardNumber,
+              },
+              (draft: any) => {
+                draft?.push(response?.data);
+                return draft;
+              }
+            )
+          );
+        } catch (error) {}
+      },
     }),
     likeComment: builder.mutation({
       query: () => ({
@@ -29,13 +65,28 @@ export const commentSlice = createApi({
         body: JSON.stringify({}),
       }),
     }),
-    dislikeComment : builder.mutation({
-        query:() => ({
-            url:``,
-            method:'POST',
-            body:JSON.stringify({})
-        })
-    })
+    dislikeComment: builder.mutation({
+      query: () => ({
+        url: ``,
+        method: "POST",
+        body: JSON.stringify({}),
+      }),
+    }),
+    parkComment: builder.mutation({
+      query: () => ({
+        url: ``,
+        method: "POST",
+        body: JSON.stringify({}),
+      }),
+    }),
+    incorporateComment: builder.mutation({
+      query: () => ({
+        url: ``,
+        method: "POST",
+        body: JSON.stringify({}),
+      }),
+    }),
   }),
 });
-export const {} = commentSlice;
+export const { useLazyGetAllCommentsQuery, useCreateCommentMutation } =
+  commentSlice;

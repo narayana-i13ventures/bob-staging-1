@@ -33,10 +33,10 @@ const CanvasCard = (props: any) => {
     futureId === "Future1"
       ? 1
       : futureId === "Future2"
-      ? 2
-      : futureId === "Future3"
-      ? 3
-      : 0;
+        ? 2
+        : futureId === "Future3"
+          ? 3
+          : 0;
   const [cardStatus, setCardStatus] = useState({
     loading: false,
     error: false,
@@ -106,10 +106,17 @@ const CanvasCard = (props: any) => {
         }
       } else if (selectedCard === null || selectedCard === undefined) {
         const updatedCard = { ...card, selected: true };
-        updateFuture1BMCCard({
-          card: updatedCard,
+        // updateFuture1BMCCard({
+        //   card: updatedCard,
+        //   projectId,
+        //   future,
+        //   userId: data?.user?.user_id,
+        // });
+        selectFuture1BMCCard({
           projectId,
           future,
+          current_card_number: 0,
+          next_card_number: card?.cardNumber,
           userId: data?.user?.user_id,
         });
       }
@@ -201,8 +208,8 @@ const CanvasCard = (props: any) => {
                     card?.surety < "80"
                       ? "red"
                       : card?.surety < "95"
-                      ? "orange"
-                      : "green",
+                        ? "orange"
+                        : "green",
                 }}
               />
             </Tooltip>

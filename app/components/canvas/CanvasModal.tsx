@@ -43,6 +43,10 @@ import {
   useSaveChatMutation,
 } from "@/lib/redux/ChatApi";
 import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
+import {
+  useCreateCommentMutation,
+  useLazyGetAllCommentsQuery,
+} from "@/lib/redux/CommentApi";
 const CanvasModal = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -70,14 +74,32 @@ const CanvasModal = () => {
 
   const { canvasModalOpen, bobThinking, bobGenerating }: any =
     useSelector(selectApp);
+
+  const [
+    postComment,
+    {
+      isLoading: comment_loading,
+      isSuccess: comment_success,
+      isError: comment_error,
+    },
+  ] = useCreateCommentMutation();
+  const [
+    getComments,
+    {
+      data: comments,
+      isLoading: get_comments_loading,
+      isError: get_comments_error,
+    },
+  ] = useLazyGetAllCommentsQuery();
+
   const currentFuture =
     futureId === "Future1"
       ? 1
       : futureId === "Future2"
-      ? 2
-      : futureId === "Future3"
-      ? 3
-      : 0;
+        ? 2
+        : futureId === "Future3"
+          ? 3
+          : 0;
   useEffect(() => {
     if (selectedCard !== null && canvasModalOpen) {
       getProjectById({
@@ -91,6 +113,7 @@ const CanvasModal = () => {
     canvasModalOpen,
     selectedCard?.cardNumber,
   ]);
+
   const [cardStatus, setCardStatus] = useState({
     loading: false,
     error: false,
@@ -106,6 +129,13 @@ const CanvasModal = () => {
     ) {
       getChat({
         userId: project_data?.project?.owner?.[0]?.user_id,
+        projectId,
+        future: currentFuture,
+        canvas_type: 2,
+        cardNumber: selectedCard?.cardNumber,
+      });
+      getComments({
+        userId: data?.user?.user_id,
         projectId,
         future: currentFuture,
         canvas_type: 2,
@@ -276,6 +306,24 @@ const CanvasModal = () => {
               ),
             });
           });
+      }
+    }
+  };
+  const postUserComment = (content: any) => {
+    if (selectedCard !== undefined) {
+      if (content === "") {
+        return;
+      }
+
+      if (pathName.includes("/Future1/Microframeworks/BMC")) {
+        postComment({
+          userId: data?.user?.user_id,
+          projectId: projectId,
+          future: currentFuture,
+          cardNumber: selectedCard?.cardNumber,
+          canvas_type: 2,
+          content,
+        });
       }
     }
   };
@@ -734,7 +782,7 @@ const CanvasModal = () => {
                   height: "65vh",
                 }}
               >
-                <Box component={'div'} sx={{width:'90%',pr:4}}>
+                <Box component={"div"} sx={{ width: "90%", pr: 4 }}>
                   {activeBubble === "bob" ? (
                     <MessageBox
                       header={false}
@@ -746,21 +794,11 @@ const CanvasModal = () => {
                       loading={chat_fetching}
                       saving={save_chat_loading}
                     />
-                  ) : (<></>
+                  ) : (
+                    <></>
                     // <CommentBox
-                    //   postComment={() => {}}
-                    //   comments={[
-                    //     {
-                    //       content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    //   similique libero fuga`,
-                    //       owner: false,
-                    //     },
-                    //     {
-                    //       content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                    //   similique libero fuga`,
-                    //       owner: false,
-                    //     },
-                    //   ]}
+                    //   postComment={postUserComment}
+                    //   comments={comments}
                     //   color={`#f6f5f4`}
                     // />
                   )}
@@ -771,7 +809,7 @@ const CanvasModal = () => {
                   alignItems={"flex-end"}
                   justifyContent={"flex-start"}
                   sx={{
-                    width:'10%',
+                    width: "10%",
                     pt: 1,
                   }}
                 >
@@ -779,13 +817,11 @@ const CanvasModal = () => {
                     onClick={() => setActiveBubble("bob")}
                     sx={{
                       p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "bob" ? "" : "30"
-                      }`,
-                      "&:hover": {
-                        backgroundColor: `${theme.palette.primary.main}${
-                          activeBubble === "bob" ? "" : "30"
+                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
                         }`,
+                      "&:hover": {
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
+                          }`,
                       },
                     }}
                   >
@@ -800,13 +836,11 @@ const CanvasModal = () => {
                     onClick={() => setActiveBubble("comment")}
                     sx={{
                       p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "comment" ? "" : "30"
-                      }`,
-                      "&:hover": {
-                        backgroundColor: `${theme.palette.primary.main}${
-                          activeBubble === "comment" ? "" : "30"
+                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
                         }`,
+                      "&:hover": {
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
+                          }`,
                       },
                     }}
                   >

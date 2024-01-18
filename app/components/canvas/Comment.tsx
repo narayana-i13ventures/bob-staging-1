@@ -7,6 +7,7 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
+import moment from "moment";
 import { useTheme } from "@mui/material";
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
@@ -76,13 +77,13 @@ const Comment = (props: any) => {
                                 Narayana Lvsaln
                             </Typography>
                             <Typography variant="caption" sx={{ fontWeight: 500 }}>
-                                27 December, 2023 10:35 AM{" "}
+                            {moment(comment?.created_at).format("DD MMMM, YYYY h:mm A")}
                             </Typography>
                         </Stack>
                     </Stack>
                     <Stack direction={"column"} sx={{ mt: 1 }}>
                         <Typography variant="body1" sx={{ fontSize: "13px" }}>
-                            {comment?.content}
+                            {comment?.comment_text}
                         </Typography>
                         <Divider sx={{ width: "100%", my: 1 }} />
                         <Stack
@@ -109,7 +110,7 @@ const Comment = (props: any) => {
                                         "&:hover": { textDecoration: "underline" },
                                     }}
                                 >
-                                    +3 Others
+                                    {comment?.num_likes} Likes
                                 </Typography>
                             </Stack>
                             <Stack
@@ -129,7 +130,7 @@ const Comment = (props: any) => {
                                         "&:hover": { textDecoration: "underline" },
                                     }}
                                 >
-                                    +3 Others
+                                    {comment?.num_dislikes} Dislikes
                                 </Typography>
                             </Stack>
                         </Stack>

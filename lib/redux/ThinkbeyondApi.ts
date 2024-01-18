@@ -203,21 +203,13 @@ export const thinkbeyondSlice = createApi({
                   for (const key in card) {
                     if (typeof card[key] === "object" && card[key] !== null) {
                       if (
-                        card[key].cardNumber ===
-                        (Object.entries(result?.data)?.[0] as any)["cardNumber"]
+                        card[key].cardNumber === result?.data?.[0]?.cardNumber
                       ) {
-                        card[key] = {
-                          ...Object.entries(result?.data)[0],
-                          locked: false,
-                        };
+                        card[key] = result?.data?.[0];
                       } else if (
-                        card[key].cardNumber ===
-                        (Object.entries(result?.data)?.[1] as any)["cardNumber"]
+                        card[key].cardNumber === result?.data?.[1]?.cardNumber
                       ) {
-                        card[key] = {
-                          ...Object.entries(result?.data)[1],
-                          locked: false,
-                        };
+                        card[key] = result?.data?.[1];
                       }
                     }
                   }
