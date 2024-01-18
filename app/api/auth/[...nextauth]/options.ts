@@ -1,6 +1,7 @@
 import { NextAuthOptions, getServerSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { redirect } from "next/navigation";
 const users = [
   {
     id: "42",
@@ -118,6 +119,7 @@ export const options: NextAuthOptions = {
               console.log("checkpoint 7");
               user.is_new = false;
               user.user_id = userData?.user?.[0]?.[0]?.user_id;
+              redirect('/Dashboard')
               return true;
             }
           } else {
@@ -128,10 +130,11 @@ export const options: NextAuthOptions = {
             return false;
           }
         } catch (error) {
-          console.log("checkpoint 8");
+          console.log("checkpoint 9");
           return false;
         }
       } else {
+        console.log("checkpoint 10");
         return false;
       }
     },
