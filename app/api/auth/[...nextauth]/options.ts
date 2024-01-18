@@ -126,15 +126,15 @@ export const options: NextAuthOptions = {
             console.error(
               `Failed to fetch user data. Status: ${response.status}`
             );
-            return true;
+            return false;
           }
         } catch (error) {
           console.log("checkpoint 9");
-          return true;
+          return false;
         }
       } else {
         console.log("checkpoint 10");
-        return true;
+        return false;
       }
       // return true;
     },
