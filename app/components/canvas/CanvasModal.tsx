@@ -795,12 +795,14 @@ const CanvasModal = () => {
                       saving={save_chat_loading}
                     />
                   ) : (
-                    <></>
-                    // <CommentBox
-                    //   postComment={postUserComment}
-                    //   comments={comments}
-                    //   color={`#f6f5f4`}
-                    // />
+                    // <></>
+                    <CommentBox
+                      postComment={postUserComment}
+                      comments={comments}
+                      color={`#f6f5f4`}
+                      loading={chat_fetching}
+                      saving={save_chat_loading}
+                    />
                   )}
                 </Box>
                 <Stack
@@ -832,7 +834,7 @@ const CanvasModal = () => {
                       }}
                     />
                   </IconButton>
-                  {/* <IconButton
+                  <IconButton
                     onClick={() => setActiveBubble("comment")}
                     sx={{
                       p: 1.5,
@@ -850,7 +852,7 @@ const CanvasModal = () => {
                         fontSize: "20px",
                       }}
                     />
-                  </IconButton> */}
+                  </IconButton>
                   {/* <IconButton
                     sx={{
                       p: 1.5,
