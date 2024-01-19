@@ -22,7 +22,7 @@ const CanvasSettingsBtn = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const CanvasSettingsRef = useRef(null);
-    const { canvasSettings } = useSelector(selectApp);
+    const { canvasSettings }:any = useSelector(selectApp);
     const openCanvasSettings = () => {
         dispatch(
             appSlice.actions.toggleCanvasSettings(Boolean(CanvasSettingsRef?.current))

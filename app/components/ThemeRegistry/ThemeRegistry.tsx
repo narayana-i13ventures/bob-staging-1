@@ -18,7 +18,7 @@ export default function ThemeRegistry({
 }) {
   const router = useRouter();
   const session: any = useSession();
-  const { mode } = useSelector(selectApp);
+  const { mode }:any = useSelector(selectApp);
   const theme = createTheme(
     generateThemeOptions({
       mode: mode,

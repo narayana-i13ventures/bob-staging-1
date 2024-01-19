@@ -28,7 +28,7 @@ import { useSession } from "next-auth/react";
 const ProjectDetails = () => {
   const { data }: any = useSession();
   const dispatch = useDispatch();
-  const { projectDetailsOpen }: any = useSelector(selectApp);
+  const { projectDetailsOpen }:any = useSelector(selectApp);
   const [editProjectTitle, setEditProjectTitle] = useState({
     focus: true,
     edit: false,

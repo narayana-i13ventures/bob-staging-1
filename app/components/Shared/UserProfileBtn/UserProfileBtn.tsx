@@ -20,7 +20,7 @@ const UserProfileBtn = () => {
   const { data }: any = useSession();
   const dispatch = useDispatch();
   const UserProfileMenuRef: any = useRef(null);
-  const { userMenu } = useSelector(selectApp);
+  const { userMenu }:any = useSelector(selectApp);
 
   const handleUserProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
     dispatch(appSlice.actions.toggleUserMenu(true));

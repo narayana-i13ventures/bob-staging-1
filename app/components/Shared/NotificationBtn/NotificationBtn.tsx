@@ -16,7 +16,7 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 const NotificationBtn = () => {
   const dispatch = useDispatch();
   const NotificationRef = useRef(null);
-  const { NotificationMenu } = useSelector(selectApp);
+  const { NotificationMenu }:any = useSelector(selectApp);
   const handleOpenNotificationMenu = () => {
     dispatch(
       appSlice.actions.toggleNotificationMenu(Boolean(NotificationRef?.current))

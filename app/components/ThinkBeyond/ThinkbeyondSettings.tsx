@@ -12,7 +12,7 @@ const ThinkBeyondSettings = () => {
   const dispatch = useDispatch();
   const { projectId } = useParams();
   const [ResetThinkBeyond] = useResetThinkBeyondMutation();
-  const { ThinkbeyondSettings } = useSelector(selectApp);
+  const { ThinkbeyondSettings }:any = useSelector(selectApp);
 
   const handleThinkBeyondReset = () => {
     dispatch(appSlice.actions.toggleThinkbeyondSettings(false));
