@@ -115,7 +115,7 @@ const CanvasCard = (props: any) => {
         selectFuture1BMCCard({
           projectId,
           future,
-          current_card_number: 0,
+          current_card_number: 7,
           next_card_number: card?.cardNumber,
           userId: data?.user?.user_id,
         });
