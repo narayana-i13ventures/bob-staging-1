@@ -96,9 +96,9 @@ const CommentBox = (props: any) => {
                 <Stack sx={{ px: 2, width: "100%" }}>
                     <TextField
                         fullWidth
-                        disabled={bobThinking}
+                        disabled={saving || loading}
                         id="comment-input"
-                        placeholder="Enter Your Message"
+                        placeholder="Enter Your Comment"
                         value={comment}
                         size="small"
                         multiline

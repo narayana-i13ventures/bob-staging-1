@@ -29,7 +29,7 @@ const UserSearch = (props: any) => {
   const dispatch = useDispatch();
   const { data }: any = useSession();
   const [value, setValue] = useState([...fixedOptions]);
-  const { ShareOpen } = useSelector(selectApp);
+  const { ShareOpen }:any = useSelector(selectApp);
   const { shared_users, type, metadata, project_data } = props;
   const {
     data: AllUsers,

@@ -8,9 +8,11 @@ import DialogContent from "@mui/material/DialogContent";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import {
   Button,
+  CircularProgress,
   DialogActions,
   Divider,
   IconButton,
+  LinearProgress,
   Stack,
   Typography,
 } from "@mui/material";
@@ -19,7 +21,6 @@ import { useSession } from "next-auth/react";
 import {
   useNextThinknbeyondCardMutation,
   usePrefillFuture3Mutation,
-  useUpdateThinkbeyondCardMutation,
 } from "@/lib/redux/ThinkbeyondApi";
 import { useParams } from "next/navigation";
 import { selectedThinkbeyond } from "@/lib/redux/slices/SelectedSlice";
@@ -29,8 +30,6 @@ const ThinkbeyondActivityModal = () => {
   const { data }: any = useSession();
   const { projectId } = useParams();
   const { ThinkbeyondActivity }: any = useSelector(selectApp);
-  const selectedThinkbeyondCard = useSelector(selectedThinkbeyond);
-  const [nextCardTransition, setNextCardTransition] = useState(false);
   const [status, setStatus] = useState({
     loading: false,
     error: false,
@@ -59,112 +58,87 @@ const ThinkbeyondActivityModal = () => {
     {
       isSuccess: prefillFuture1BMCSuccess,
       isLoading: prefillFuture1BMCLoading,
-      isError: prefillFuture1ErrorError,
+      isError: prefillFuture1Error,
     },
   ] = usePrefillFutuer1BMCMutation();
 
   useEffect(() => {
     setStatus({
-      loading: prefillFuture3ThinkbeyondLoading,
-      error: prefillFuture3ThinkbeyondError,
-      success: prefillFuture3ThinkbeyondSuccess,
+      loading: prefillFuture3ThinkbeyondLoading || prefillFuture1BMCLoading,
+      error: prefillFuture3ThinkbeyondError || prefillFuture1Error,
+      success: prefillFuture3ThinkbeyondSuccess && prefillFuture1BMCSuccess,
     });
   }, [
     prefillFuture3ThinkbeyondSuccess,
     prefillFuture3ThinkbeyondLoading,
     prefillFuture3ThinkbeyondError,
+    prefillFuture1BMCSuccess,
+    prefillFuture1BMCLoading,
+    prefillFuture1Error,
   ]);
 
   const closeThinkbeyondActivity = () => {
-    dispatch(
-      appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
-    );
+    // dispatch(
+    //   appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
+    // );
   };
 
-  const goToMicroframeworks = () => {
-    setNextCardTransition(true);
-    nextThinkbeyondCard({
-      projectId,
-      cardNumber: selectedThinkbeyondCard?.cardNumber,
-      userId: data?.user?.user_id,
-    })
-      .unwrap()
-      .then((response: any) => {
-        setNextCardTransition(false);
-        dispatch(
-          appSlice.actions.toggleBobPrefill({
-            loading: true,
-            error: false,
-            projectId,
-            futureId:
-              ThinkbeyondActivity?.type === "future1_microframeworks"
-                ? "Future1"
-                : "",
-            userId: data?.user?.user_id,
-          })
-        );
-        dispatch(
-          appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
-        );
-        prefillFuture1BMC({
-          userId: data?.user?.user_id,
-          projectId,
-        })
-          .unwrap()
-          .then((response: any) => {
-            dispatch(
-              appSlice.actions.toggleBobPrefill({
-                loading: false,
-                error: false,
-                projectId: "",
-                futureId: "",
-                userId: "",
-              })
-            );
-          })
-          .catch((error: any) => {
-            dispatch(
-              appSlice.actions.toggleBobPrefill({
-                loading: false,
-                error: true,
-                projectId,
-                futureId:
-                  ThinkbeyondActivity?.type === "future1_microframeworks"
-                    ? "Future1"
-                    : "",
-                userId: data?.user?.user_id,
-              })
-            );
-          });
-      })
-      .catch(() => {
-        setNextCardTransition(false);
-        dispatch(
-          appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
-        );
-        dispatch(
-          appSlice.actions.setGlobalSnackBar({
-            open: true,
-            content: `Error Going to next Card`,
-            clossable: true,
-          })
-        );
-      });
-  };
+  useEffect(() => {
+    if (prefillFuture3ThinkbeyondSuccess && prefillFuture1BMCSuccess) {
+      dispatch(
+        appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
+      );
+    }
+  }, [prefillFuture3ThinkbeyondSuccess, prefillFuture1BMCSuccess]);
 
-  const goToNextFuture = () => {
-    prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId })
-      .unwrap()
-      .then((response: any) => {
-        dispatch(
-          appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
-        );
-      })
-      .catch((error: any) => {
-        dispatch(
-          appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
-        );
+  useEffect(() => {
+    if (
+      ThinkbeyondActivity?.open &&
+      ThinkbeyondActivity?.type === "future1_microframeworks"
+    ) {
+      prefillFuture1BMC({
+        userId: data?.user?.user_id,
+        projectId,
       });
+      prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
+    }
+  }, [
+    projectId,
+    data?.user?.user_id,
+    ThinkbeyondActivity?.open,
+    ThinkbeyondActivity?.type,
+  ]);
+
+  const retryPrefillBMC = () => {
+    if (
+      ThinkbeyondActivity?.open &&
+      ThinkbeyondActivity?.type === "future1_microframeworks"
+    ) {
+      prefillFuture1BMC({
+        userId: data?.user?.user_id,
+        projectId,
+      });
+    }
+  };
+  const retryThinkbeyondFuture = () => {
+    if (
+      ThinkbeyondActivity?.open &&
+      ThinkbeyondActivity?.type === "future1_microframeworks"
+    ) {
+      prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
+    }
+  };
+  const fullRetry = () => {
+    if (
+      ThinkbeyondActivity?.open &&
+      ThinkbeyondActivity?.type === "future1_microframeworks"
+    ) {
+      prefillFuture1BMC({
+        userId: data?.user?.user_id,
+        projectId,
+      });
+      prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
+    }
   };
   return (
     <>
@@ -185,7 +159,7 @@ const ThinkbeyondActivityModal = () => {
           },
         }}
       >
-        <DialogTitle
+        {/* <DialogTitle
           component={"div"}
           sx={{
             p: 2,
@@ -197,10 +171,18 @@ const ThinkbeyondActivityModal = () => {
           <IconButton size="small" onClick={closeThinkbeyondActivity}>
             <CloseIcon />
           </IconButton>
-        </DialogTitle>
-        
+        </DialogTitle> */}
+
         {/* <Divider /> */}
-        <DialogContent sx={{ p: 2 }}>
+        <DialogContent
+          sx={{
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Stack
             direction={"row"}
             justifyContent={"center"}
@@ -208,7 +190,8 @@ const ThinkbeyondActivityModal = () => {
             spacing={1}
             sx={{
               width: "100%",
-              mb: 5,
+              mb: status?.loading ? 2 : 5,
+              mt: 3,
             }}
           >
             <AutoAwesomeIcon sx={{ fontSize: "25px", color: "black" }} />
@@ -216,65 +199,50 @@ const ThinkbeyondActivityModal = () => {
               Bob
             </Typography>
           </Stack>
-          {/* <Stack
-            direction={"row"}
-            justifyContent={"flex-start"}
-            alignItems={"flex-start"}
-            sx={{ width: "100%" }}
-          >
-            {!nextCardTransition ? (
-              <>
-                {ThinkbeyondActivity?.type === "future1_microframeworks" &&
-                  !status?.loading &&
-                  !status?.error && (
-                    <Typography
-                      variant="body1"
-                      sx={{ fontSize: "15px", lineHeight: 1.5 }}
-                    >
-                      Congratulations..! {data?.user?.name} you have completed{" "}
-                      {ThinkbeyondActivity?.type === "future1_microframeworks"
-                        ? "Future 1"
-                        : ""}{" "}
-                      and {ThinkbeyondActivity?.type === "future1_microframeworks"
-                        ? "Future 1"
-                        : ""}{" "}OKRs, click on Continue to Micro Frameworks
-                    </Typography>
-                  )}
-                {status?.loading && !status?.error && (
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontSize: "15px",
-                      lineHeight: 1.5,
-                      my: 2,
-                      width: "100%",
-                      textAlign: "center",
-                    }}
-                  >
-                    Bob is prefilling Future 3
-                  </Typography>
-                )}
-              </>
-            ) : (
-              <Typography
-                variant="body1"
-                sx={{
-                  fontSize: "15px",
-                  lineHeight: 1.5,
-                  my: 2,
-                  width: "100%",
-                  textAlign: "center",
-                }}
-              >
-                Bob is Building your Micro Frameworks
-              </Typography>
-            )}
-          </Stack> */}
-          <Typography>
+          <CircularProgress size={18} sx={{ mb: 5 }} />
+          <Typography variant="body1">
             Thank you {data?.user?.name} for your inputs. It's time to relax
             while bob works on your project. You will receive an email when Bob
-            completes your canvas.
+            completes your canvas. Please do not close this tab while bob is
+            working on your project.
           </Typography>
+          <Stack
+            direction={"row"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            sx={{ mt: 5 }}
+          >
+            {prefillFuture1Error &&
+              !prefillFuture3ThinkbeyondError &&
+              !status?.loading && (
+                <Button
+                  onClick={retryPrefillBMC}
+                  size="small"
+                  variant="contained"
+                >
+                  Retry
+                </Button>
+              )}
+
+            {!prefillFuture1Error &&
+              prefillFuture3ThinkbeyondError &&
+              !status?.loading && (
+                <Button
+                  onClick={retryThinkbeyondFuture}
+                  size="small"
+                  variant="contained"
+                >
+                  Retry
+                </Button>
+              )}
+            {prefillFuture1Error &&
+              prefillFuture3ThinkbeyondError &&
+              !status?.loading && (
+                <Button onClick={fullRetry} size="small" variant="contained">
+                  Retry
+                </Button>
+              )}
+          </Stack>
         </DialogContent>
         {/* <Divider />
         <DialogActions

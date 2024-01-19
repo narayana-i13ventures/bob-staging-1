@@ -16,7 +16,7 @@ import { appSlice, useDispatch } from "@/lib/redux";
 import { useParams, useRouter } from "next/navigation";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 const MicroframeworkCard = (props: any) => {
-  const { route, name, locked } = props;
+  const { canvas } = props;
   const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -32,20 +32,21 @@ const MicroframeworkCard = (props: any) => {
     );
   };
   const goToCanvas = () => {
-    if (!locked) {
-      switch (name) {
-        case "Business Model Canvas":
-          // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=BMC`);
-          router?.push(`/${projectId}/${futureId}/Microframeworks/BMC`);
-          break;
-        case "Value Proposition Canvas":
-          router?.push(`/${projectId}/${futureId}/Microframeworks/CVP`);
-          // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=CVP`);
-          break;
+    if (!canvas?.locked) {
+      router?.push(`/${projectId}/${futureId}/Microframeworks/${canvas?.route}`);
+      // switch (canvas?.name) {
+      //   case "Business Model Canvas":
+      //     // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=BMC`);
+      //     router?.push(`/${projectId}/${futureId}/Microframeworks/BMC`);
+      //     break;
+      //   case "Value Proposition Canvas":
+      //     router?.push(`/${projectId}/${futureId}/Microframeworks/CVP`);
+      //     // router?.push(`/${projectId}/${futureId}/Microframeworks?canvas=CVP`);
+      //     break;
 
-        default:
-          break;
-      }
+      //   default:
+      //     break;
+      // }
     }
   };
 
@@ -71,7 +72,7 @@ const MicroframeworkCard = (props: any) => {
       sx={{
         boxShadow: 1,
         borderRadius: 2,
-        cursor: !locked ? "pointer" : "auto",
+        cursor: !canvas?.locked ? "pointer" : "auto",
         border: "1px solid #000",
         maxWidth: "270px",
         height: "250px",
@@ -83,7 +84,7 @@ const MicroframeworkCard = (props: any) => {
         elevation={0}
         sx={{
           flexGrow: 1,
-          opacity: locked ? 0.38 : 1,
+          opacity: canvas?.locked ? 0.38 : 1,
           width: "100%",
           backgroundSize: "40%",
           backgroundPosition: "50% 50%",
@@ -99,12 +100,12 @@ const MicroframeworkCard = (props: any) => {
       >
         {/* <Tooltip title={name} placement="top" arrow> */}
         <Stack
-          sx={{ opacity: locked ? 0.38 : 1 }}
+          sx={{ opacity: canvas?.locked ? 0.38 : 1 }}
           direction={"row"}
           alignItems={"center"}
           justifyContent={"flex-start"}
         >
-          {locked && <LockOutlinedIcon />}
+          {canvas?.locked && <LockOutlinedIcon />}
           <Typography
             sx={{
               px: 2,
@@ -115,7 +116,7 @@ const MicroframeworkCard = (props: any) => {
             }}
             variant="body1"
           >
-            {name}
+            {canvas?.name}
           </Typography>
         </Stack>
         {/* </Tooltip> */}

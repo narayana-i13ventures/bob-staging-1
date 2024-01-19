@@ -20,13 +20,14 @@ import {
 } from "@/lib/redux/BMCApi";
 import { useSession } from "next-auth/react";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 const CanvasCard = (props: any) => {
   const { card }: any = props;
   const pathName = usePathname();
   const dispatch = useDispatch();
   const { data }: any = useSession();
   const { projectId, futureId } = useParams();
-  const { bobThinking } = useSelector(selectApp);
+  // const { bobThinking } = useSelector(selectApp);
   const Future1BMCCard = useSelector(selectedFuture1BMCCard);
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const future =
@@ -76,7 +77,7 @@ const CanvasCard = (props: any) => {
   ] = useSelectFuture1BMCCardMutation();
 
   const selectCard = () => {
-    if (!card?.locked) {
+    if (card?.locked) {
       if (selectedCard && selectedCard.cardNumber !== card.cardNumber) {
         if (pathName.includes("/Future1/Microframeworks/BMC")) {
           const updatedSelectedCard = { ...selectedCard, selected: false };
@@ -104,7 +105,8 @@ const CanvasCard = (props: any) => {
           //         });
           //     });
         }
-      } else if (selectedCard === null || selectedCard === undefined) {
+      } 
+      else if (selectedCard === null || selectedCard === undefined) {
         const updatedCard = { ...card, selected: true };
         // updateFuture1BMCCard({
         //   card: updatedCard,
@@ -115,7 +117,7 @@ const CanvasCard = (props: any) => {
         selectFuture1BMCCard({
           projectId,
           future,
-          current_card_number: 0,
+          current_card_number: 7,
           next_card_number: card?.cardNumber,
           userId: data?.user?.user_id,
         });
@@ -153,10 +155,11 @@ const CanvasCard = (props: any) => {
           height: "100%",
           borderRadius: 2,
           // backgroundColor: props?.color,
+          opacity: card?.locked ? 0.38 : 1,
           backgroundColor: !card?.selected ? "#f6f5f4" : "#fff",
           border: "1px solid #000",
           overflow: "hidden",
-          cursor: "pointer",
+          cursor: card?.locked ? "auto" : "pointer",
           boxShadow: !card?.selected ? 2 : 0,
         }}
       >
@@ -170,7 +173,7 @@ const CanvasCard = (props: any) => {
           }}
         >
           <Typography variant="body1">{card?.cardName}</Typography>
-          <Stack
+          {!card?.locked && <Stack
             direction={"row"}
             justifyContent={"flex-end"}
             alignItems={"center"}
@@ -186,21 +189,6 @@ const CanvasCard = (props: any) => {
               arrow
               placement="bottom"
             >
-              {/* <Paper
-                                component={"div"}
-                                sx={{
-                                    width: "12px",
-                                    height: "12px",
-                                    opacity: 0.7,
-                                    borderRadius: "100%",
-                                    backgroundColor:
-                                        card?.surety < "80"
-                                            ? "red"
-                                            : card?.surety < "95"
-                                                ? "orange"
-                                                : "green",
-                                }}
-                            ></Paper> */}
               <TipsAndUpdatesIcon
                 sx={{
                   fontSize: "20px",
@@ -213,7 +201,7 @@ const CanvasCard = (props: any) => {
                 }}
               />
             </Tooltip>
-          </Stack>
+          </Stack>}
         </Stack>
         <Divider sx={{ width: "100%", my: 1 }} />
         <Stack
@@ -227,53 +215,68 @@ const CanvasCard = (props: any) => {
             maxHeight: "calc(100% - 37px)",
           }}
         >
-          {!cardStatus?.loading &&
-            !cardStatus?.error &&
-            !card?.loadingKeyPoints && (
-              <>
-                {card?.keyPoints !== "" && card?.keyPoints !== null ? (
-                  <ul style={{ margin: "0px", padding: "0px 0px 0px 20px" }}>
-                    {card?.keyPoints
-                      ?.split("--")
-                      .filter((keypoint: any) => keypoint !== "")
-                      .map((keypoint: any, index: number) => (
-                        <li key={index}>
-                          <Typography
-                            variant="body1"
-                            sx={{ fontSize: "14px", mb: 1 }}
-                          >
-                            {keypoint}
-                          </Typography>
-                        </li>
-                      ))}
-                  </ul>
-                ) : (
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      my: 5,
-                      width: "100%",
-                      fontSize: "16PX",
-                      textAlign: "center",
-                    }}
-                  >
-                    No Information Available
-                  </Typography>
+          {!card?.locked ? (
+            <>
+              {!cardStatus?.loading &&
+                !cardStatus?.error &&
+                !card?.loadingKeyPoints && (
+                  <>
+                    {card?.keyPoints !== "" && card?.keyPoints !== null ? (
+                      <ul
+                        style={{ margin: "0px", padding: "0px 0px 0px 20px" }}
+                      >
+                        {card?.keyPoints
+                          ?.split("--")
+                          .filter((keypoint: any) => keypoint !== "")
+                          .map((keypoint: any, index: number) => (
+                            <li key={index}>
+                              <Typography
+                                variant="body1"
+                                sx={{ fontSize: "14px", mb: 1 }}
+                              >
+                                {keypoint}
+                              </Typography>
+                            </li>
+                          ))}
+                      </ul>
+                    ) : (
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          my: 5,
+                          width: "100%",
+                          fontSize: "16PX",
+                          textAlign: "center",
+                        }}
+                      >
+                        No Information Available
+                      </Typography>
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          {(cardStatus?.loading || card?.loadingKeyPoints) &&
-            !cardStatus?.error && (
-              <Stack
-                direction={"column"}
-                flexGrow={1}
-                justifyContent={"center"}
-                alignItems={"center"}
-                sx={{ width: "100%" }}
-              >
-                <CircularProgress />
-              </Stack>
-            )}
+              {(cardStatus?.loading || card?.loadingKeyPoints) &&
+                !cardStatus?.error && (
+                  <Stack
+                    direction={"column"}
+                    flexGrow={1}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    sx={{ width: "100%" }}
+                  >
+                    <CircularProgress />
+                  </Stack>
+                )}
+            </>
+          ) : (
+            <Stack
+              direction={"row"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              sx={{ width: "100%", mt: 6 }}
+            >
+              <LockOutlinedIcon sx={{ fontSize: "90px" }} />
+            </Stack>
+          )}
         </Stack>
       </Stack>
     </>
