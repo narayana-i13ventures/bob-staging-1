@@ -109,11 +109,11 @@ export const options: NextAuthOptions = {
                   return true;
                 } else {
                   console.log("checkpoint 5");
-                  return true;
+                  return false;
                 }
               } catch (error) {
                 console.log("checkpoint 6");
-                return true;
+                return false;
               }
             } else {
               console.log("checkpoint 7");
@@ -126,17 +126,17 @@ export const options: NextAuthOptions = {
             console.error(
               `Failed to fetch user data. Status: ${response.status}`
             );
-            return true;
+            return false;
           }
         } catch (error) {
           console.log("checkpoint 9");
-          return true;
+          return false;
         }
       } else {
         console.log("checkpoint 10");
-        return true;
+        return false;
       }
-      return true;
+      // return true;
     },
     async jwt({ token, user, account, profile, isNewUser }: any) {
       if (account) {
