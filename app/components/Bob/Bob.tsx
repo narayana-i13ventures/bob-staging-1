@@ -13,7 +13,7 @@ const Bob = () => {
         BobOpen,
         BobMessages,
         ThinkbeyondModalOpen,
-    } = useSelector(selectApp);
+    }:any = useSelector(selectApp);
 
     useEffect(() => {
         controls.start(BobOpen ? "open" : "closed");
