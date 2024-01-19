@@ -9,7 +9,7 @@ const Message = (props: any) => {
   const theme: any = useTheme();
   const { data }: any = useSession();
   const { message, header } = props;
-  const { bobThinking } = useSelector(selectApp);
+  const { bobThinking }:any = useSelector(selectApp);
   const bobTyping =
     bobThinking &&
     message?.role_text === "assistant" &&

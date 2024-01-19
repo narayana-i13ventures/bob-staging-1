@@ -18,7 +18,7 @@ import { SettingsInputComponentTwoTone } from "@mui/icons-material";
 const ProfileMenu = () => {
     const theme: any = useTheme();
     const dispatch = useDispatch();
-    const { activeProfileTab } = useSelector(selectApp);
+    const { activeProfileTab }:any = useSelector(selectApp);
 
     const handleProfileMenuChange = (menuItem: any) => {
         dispatch(appSlice.actions.toggleActiveProfileTab(menuItem));

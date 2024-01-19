@@ -17,7 +17,7 @@ import { useParams, usePathname } from "next/navigation";
 
 const MessageBox = (props: any) => {
   const dispatch = useDispatch();
-  const { bobThinking } = useSelector(selectApp);
+  const { bobThinking }:any = useSelector(selectApp);
   const [message, setMessage] = useState<any>("");
   const textFieldRef = useRef<HTMLInputElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);

@@ -16,7 +16,7 @@ import { selectApp, useSelector } from "@/lib/redux";
 
 const ProjectsContainer = () => {
   const { data }: any = useSession();
-  const { show_projects } = useSelector(selectApp);
+  const { show_projects }:any = useSelector(selectApp);
   const {
     data: projects,
     isSuccess: fetch_projects_success,

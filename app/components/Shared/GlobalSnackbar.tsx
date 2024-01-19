@@ -6,7 +6,7 @@ import { appSlice, selectApp, useDispatch, useSelector } from '@/lib/redux';
 
 const GlobalSnackbar = () => {
     const dispatch = useDispatch();
-    const { globalSnackBar } = useSelector(selectApp);
+    const { globalSnackBar }:any = useSelector(selectApp);
     const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             dispatch(appSlice.actions.setGlobalSnackBar({ open: false, content: '' }));

@@ -11,7 +11,7 @@ import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 
 const CreateProjectModal = () => {
     const dispatch = useDispatch();
-    const { newProjectOpen }: any = useSelector(selectApp);
+    const { newProjectOpen }:any= useSelector(selectApp);
 
     const closeCreateNewProject = () => {
         dispatch(appSlice.actions.toggleNewProjectOpen(false));

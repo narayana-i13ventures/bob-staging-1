@@ -18,7 +18,7 @@ import CreateProjectModal from "../Project/CreateProjectModal";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 const DashboardSpace = () => {
   const dispatch = useDispatch();
-  const { show_projects } = useSelector(selectApp);
+  const { show_projects }:any = useSelector(selectApp);
   const changeDashboardView = (e: any) => {
     dispatch(appSlice.actions.toggleShowProjects(e?.target?.value));
   };

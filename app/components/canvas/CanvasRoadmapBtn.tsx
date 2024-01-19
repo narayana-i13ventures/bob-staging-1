@@ -23,7 +23,7 @@ const CanvasRoadmapBtn = (props: any) => {
   const dispatch = useDispatch();
   const CanvasSettingsRef = useRef(null);
   const { projectId, futureId } = useParams();
-  const { canvasRoadmap } = useSelector(selectApp);
+  const { canvasRoadmap }:any = useSelector(selectApp);
 
   const openCanvasSettings = () => {
     dispatch(

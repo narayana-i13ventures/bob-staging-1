@@ -32,7 +32,7 @@ import { useLazyGetThinkbeyondSharedUsersQuery } from "@/lib/redux/ThinkbeyondAp
 const ShareModal = (props: any) => {
   const dispatch = useDispatch();
   const { data }: any = useSession();
-  const { ShareOpen }: any = useSelector(selectApp);
+  const { ShareOpen }:any = useSelector(selectApp);
 
   const [status, setStatus] = useState({
     loading: false,

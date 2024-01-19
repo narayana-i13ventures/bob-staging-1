@@ -21,7 +21,7 @@ const ProjectStages = () => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const { data }: any = useSession();
-    const { company, companyStage } = useSelector(selectApp);
+    const { company, companyStage }:any = useSelector(selectApp);
     const [inputError, setInputError] = useState("");
     const [
         createProject,

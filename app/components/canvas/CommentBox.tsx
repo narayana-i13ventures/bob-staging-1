@@ -5,7 +5,7 @@ import Comment from "./Comment";
 import { selectApp, useSelector } from "@/lib/redux";
 
 const CommentBox = (props: any) => {
-    const { bobThinking } = useSelector(selectApp);
+    const { bobThinking }:any = useSelector(selectApp);
     const [comment, setComment] = useState<any>("");
     const textFieldRef = useRef<HTMLInputElement | null>(null);
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);

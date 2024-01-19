@@ -29,7 +29,7 @@ const ThinkbeyondActivityModal = () => {
   const dispatch = useDispatch();
   const { data }: any = useSession();
   const { projectId } = useParams();
-  const { ThinkbeyondActivity }: any = useSelector(selectApp);
+  const { ThinkbeyondActivity }:any= useSelector(selectApp);
   const [status, setStatus] = useState({
     loading: false,
     error: false,

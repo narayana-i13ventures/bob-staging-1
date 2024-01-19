@@ -9,7 +9,7 @@ import Subscriptions from "./Subscriptions";
 import { Box } from "@mui/material";
 
 const ProfileScreenContainer = () => {
-    const { activeProfileTab } = useSelector(selectApp);
+    const { activeProfileTab }:any = useSelector(selectApp);
     const profileScreen = () => {
         switch (activeProfileTab) {
             case "profile":

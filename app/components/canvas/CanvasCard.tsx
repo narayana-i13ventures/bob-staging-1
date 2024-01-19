@@ -27,7 +27,7 @@ const CanvasCard = (props: any) => {
   const dispatch = useDispatch();
   const { data }: any = useSession();
   const { projectId, futureId } = useParams();
-  // const { bobThinking } = useSelector(selectApp);
+  // const { bobThinking }:any = useSelector(selectApp);
   const Future1BMCCard = useSelector(selectedFuture1BMCCard);
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const future =
