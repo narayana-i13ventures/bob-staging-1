@@ -5,6 +5,7 @@ import ShareModal from "@/app/components/Shared/ShareModal";
 import Canvas from "@/app/components/canvas/Canvas";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import { usePrefillFutuer1BMCMutation } from "@/lib/redux/BMCApi";
+import { useLazyGetAllCanvasQuery } from "@/lib/redux/projectApi";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Button,
@@ -18,52 +19,33 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 const Microframeworks = () => {
   const theme = useTheme();
-  const { projectId, futureId } = useParams();
   const { data }: any = useSession();
-  const dispatch = useDispatch();
-  const { bobPrefill } = useSelector(selectApp);
-  const [prefillFuture1BMC] = usePrefillFutuer1BMCMutation();
-  const retry = () => {
-    dispatch(
-      appSlice.actions.toggleBobPrefill({
-        loading: true,
-        error: false,
-        projectId,
-        futureId: futureId,
-        userId: data?.user?.user_id,
-      })
-    );
-    prefillFuture1BMC({
+  const { projectId, futureId } = useParams();
+
+  const [
+    getAllCanvas,
+    {
+      data: canvas_data,
+      isLoading: canvas_data_loading,
+      isError: canvas_data_error,
+    },
+  ] = useLazyGetAllCanvasQuery();
+  useEffect(() => {
+    getAllCanvas({
       userId: data?.user?.user_id,
-      projectId,
-    })
-      .unwrap()
-      .then((response: any) => {
-        dispatch(
-          appSlice.actions.toggleBobPrefill({
-            loading: false,
-            error: false,
-            projectId,
-            futureId: futureId,
-            userId: data?.user?.user_id,
-          })
-        );
-      })
-      .catch((error: any) => {
-        dispatch(
-          appSlice.actions.toggleBobPrefill({
-            loading: false,
-            error: true,
-            projectId,
-            futureId: futureId,
-            userId: data?.user?.user_id,
-          })
-        );
-      });
+      projectId: projectId,
+    });
+  }, [projectId, data?.user?.user_id]);
+
+  const retry = () => {
+    getAllCanvas({
+      userId: data?.user?.user_id,
+      projectId: projectId,
+    });
   };
   return (
     <>
@@ -95,7 +77,9 @@ const Microframeworks = () => {
               justifyContent={"flex-start"}
               alignItems={"center"}
             >
-              <Link href={`/${projectId}/Thinkbeyond`}><ArrowBackIcon /></Link>
+              <Link href={`/${projectId}/Thinkbeyond`}>
+                <ArrowBackIcon />
+              </Link>
               <Typography
                 variant="h6"
                 sx={{
@@ -107,121 +91,48 @@ const Microframeworks = () => {
               </Typography>
             </Stack>
             <Divider sx={{ width: "100%", mb: 2, mt: 1 }} />
-            {bobPrefill?.loading && !bobPrefill?.error && (
-              <>
-                {projectId === bobPrefill?.projectId &&
-                  data?.user?.user_id === bobPrefill?.userId &&
-                  futureId === futureId ? (
-                  <>
-                    <Stack
-                      direction={"column"}
-                      alignItems={"center"}
-                      justifyContent={"center"}
-                      spacing={4}
-                      sx={{ pt: 4 }}
-                    >
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          lineHeight: 1.5,
-                          mb: 3,
-                          width: "100%",
-                          textAlign: "center",
-                          fontWeight: 600,
-                        }}
-                      >
-                        Bob is Building your Micro Frameworks
-                      </Typography>
-                      <CircularProgress />
-                    </Stack>
-                  </>
-                ) : (
-                  <>
-                    <Stack
-                      direction={"row"}
-                      alignItems={"flex-start"}
-                      justifyContent={"flex-start"}
-                      spacing={4}
-                      sx={{ py: 1 }}
-                    >
-                      <MicroframeworkCard
-                        route={"BMC"}
-                        name={"Business Model Canvas"}
-                        locked={false}
-                      />
-                      <MicroframeworkCard
-                        route={"CVP"}
-                        name={"Value Proposition Canvas"}
-                        locked={true}
-                      />
-                    </Stack>
-                  </>
-                )}
-              </>
-            )}
-            {!bobPrefill?.loading && bobPrefill?.error && (
-              <>
-                {projectId === bobPrefill?.projectId &&
-                  data?.user?.user_id === bobPrefill?.userId &&
-                  futureId === futureId ? (
-                  <>
-                    <Stack
-                      direction={"column"}
-                      alignItems={"center"}
-                      justifyContent={"center"}
-                      sx={{ width: "100%" }}
-                    >
-                      <Typography
-                        variant="body1"
-                        sx={{ fontSize: "14px", mb: 4 }}
-                      >
-                        Something went wrong..! Try again
-                      </Typography>
-                      <Button variant="contained" onClick={retry}>
-                        Retry
-                      </Button>
-                    </Stack>
-                  </>
-                ) : (
-                  <>
-                    <Stack
-                      direction={"row"}
-                      alignItems={"flex-start"}
-                      justifyContent={"flex-start"}
-                      spacing={4}
-                      sx={{ py: 1 }}
-                    >
-                      <MicroframeworkCard
-                        route={"BMC"}
-                        name={"Business Model Canvas"}
-                      />
-                      <MicroframeworkCard
-                        route={"CVP"}
-                        name={"Value Proposition Canvas"}
-                      />
-                    </Stack>
-                  </>
-                )}
-              </>
-            )}
-            {!bobPrefill?.loading && !bobPrefill?.error && (
+            {!canvas_data_loading && !canvas_data_error && (
               <Stack
                 direction={"row"}
-                alignItems={"flex-start"}
                 justifyContent={"flex-start"}
-                spacing={4}
-                sx={{ py: 1 }}
+                alignItems={"center"}
+                sx={{ width: "100%" }}
+                spacing={3}
               >
-                <MicroframeworkCard
-                  route={"BMC"}
-                  name={"Business Model Canvas"}
-                  locked={false}
-                />
-                <MicroframeworkCard
-                  route={"CVP"}
-                  name={"Value Proposition Canvas"}
-                  locked={true}
-                />
+                {canvas_data?.frameworks?.[0]?.canvases
+                  ?.filter(
+                    (canvas: any) =>
+                      canvas.canvas_type === 2 || canvas.canvas_type === 3
+                  )
+                  ?.map((canvas: any, index: any) => {
+                    return <MicroframeworkCard key={index} canvas={canvas} />;
+                  })}
+              </Stack>
+            )}
+            {canvas_data_loading && !canvas_data_error && (
+              <Stack
+                direction={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                spacing={4}
+                sx={{ pt: 4 }}
+              >
+                <CircularProgress />
+              </Stack>
+            )}
+            {!canvas_data_loading && canvas_data_error && (
+              <Stack
+                direction={"column"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                sx={{ width: "100%" }}
+              >
+                <Typography variant="body1" sx={{ fontSize: "14px", mb: 4 }}>
+                  Something went wrong..! Try again
+                </Typography>
+                <Button variant="contained" onClick={retry}>
+                  Retry
+                </Button>
               </Stack>
             )}
           </Container>

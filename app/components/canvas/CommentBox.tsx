@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import SendIcon from "@mui/icons-material/Send";
-import { TextField, InputAdornment, Paper, Stack } from "@mui/material";
+import { TextField, InputAdornment, Paper, Stack, Box, CircularProgress } from "@mui/material";
 import Comment from "./Comment";
 import { selectApp, useSelector } from "@/lib/redux";
 
@@ -9,7 +9,7 @@ const CommentBox = (props: any) => {
     const [comment, setComment] = useState<any>("");
     const textFieldRef = useRef<HTMLInputElement | null>(null);
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-    const { comments, postComment, color } = props;
+    const { comments, postComment, color, loading, saving } = props;
 
     const handlePostComment = () => {
         if (comment.trim() !== "") {
@@ -68,20 +68,37 @@ const CommentBox = (props: any) => {
                     }}
                     ref={messagesContainerRef}
                 >
-                    {comments
-                        ?.slice()
-                        .reverse()
-                        .filter((comment: any) => comment.role !== "system")
-                        .map((comment: any, index: number) => {
-                            return <Comment key={index} comment={comment} />;
-                        })}
+                    {!loading ? (
+                        <>
+                            {comments
+                                ?.slice()
+                                .reverse()
+                                .filter((comment: any) => comment.role !== "system")
+                                .map((comment: any, index: number) => {
+                                    return <Comment key={index} comment={comment} />;
+                                })}
+                        </>
+                    ) : (
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                my: 4,
+                            }}
+                        >
+                            <CircularProgress />
+                        </Box>
+                    )}
+
                 </Stack>
                 <Stack sx={{ px: 2, width: "100%" }}>
                     <TextField
                         fullWidth
-                        disabled={bobThinking}
+                        disabled={saving || loading}
                         id="comment-input"
-                        placeholder="Enter Your Message"
+                        placeholder="Enter Your Comment"
                         value={comment}
                         size="small"
                         multiline
@@ -102,14 +119,20 @@ const CommentBox = (props: any) => {
                                     borderWidth: "1px !important",
                                 },
                             },
-                            endAdornment: (
-                                <InputAdornment
-                                    position="end"
-                                    className="cursor-pointer"
-                                    onClick={handlePostComment}
-                                >
-                                    <SendIcon sx={{ fontSize: 20 }} />
-                                </InputAdornment>
+                            endAdornment: !saving ? (
+                                <>
+                                    <InputAdornment
+                                        position="end"
+                                        sx={{ cursor: "pointer" }}
+                                        onClick={handlePostComment}
+                                    >
+                                        <SendIcon sx={{ fontSize: 20 }} />
+                                    </InputAdornment>
+                                </>
+                            ) : (
+                                <>
+                                    <CircularProgress size={15} />
+                                </>
                             ),
                         }}
                     />

@@ -88,6 +88,7 @@ const CanvasModal = () => {
     {
       data: comments,
       isLoading: get_comments_loading,
+      isFetching: get_comments_fetching,
       isError: get_comments_error,
     },
   ] = useLazyGetAllCommentsQuery();
@@ -213,7 +214,11 @@ const CanvasModal = () => {
       setSelectedCard(null);
     };
   }, [pathName, Future1BMCCard]);
-
+  useEffect(() => {
+    if (!project_data?.project?.is_owner) {
+      setActiveBubble("comment");
+    }
+  }, [project_data?.project?.is_owner]);
   const closeCanvasModal = () => {
     dispatch(appSlice.actions.toggleCanvasModalOpen(false));
     setActiveBubble("bob");
@@ -470,6 +475,7 @@ const CanvasModal = () => {
                           return {
                             ...chat,
                             chat_text: chat?.chat_text + suggestion,
+                            temp: true,
                           };
                         } else {
                           return chat;
@@ -555,6 +561,9 @@ const CanvasModal = () => {
                 .then((response: any) => {
                   fullKeypoints = "";
                   dispatch(appSlice.actions.toggleBobGenerating(false));
+                })
+                .catch((error: any) => {
+                  dispatch(appSlice.actions.toggleBobGenerating(false));
                 });
             }
             if (!next && !keypoints) {
@@ -591,7 +600,7 @@ const CanvasModal = () => {
                       },
                       (draft: any) => {
                         return draft?.filter(
-                          (chat: any, index: any) => index !== draft.length - 1
+                          (chat: any, index: any) => chat?.temp !== true
                         );
                       }
                     )
@@ -783,24 +792,28 @@ const CanvasModal = () => {
                 }}
               >
                 <Box component={"div"} sx={{ width: "90%", pr: 4 }}>
-                  {activeBubble === "bob" ? (
-                    <MessageBox
-                      header={false}
-                      height={1000}
-                      sendMessage={userMessage}
-                      messages={CardChat}
+                  {activeBubble === "bob" &&
+                    project_data?.project?.is_owner && (
+                      <MessageBox
+                        header={false}
+                        height={1000}
+                        sendMessage={userMessage}
+                        messages={CardChat}
+                        color={`#f6f5f4`}
+                        textbox={project_data?.project?.is_owner}
+                        loading={chat_fetching}
+                        saving={save_chat_loading}
+                      />
+                    )}
+                  {activeBubble === "comment" && (
+                    // <></>
+                    <CommentBox
+                      postComment={postUserComment}
+                      comments={comments}
                       color={`#f6f5f4`}
-                      textbox={project_data?.project?.is_owner}
-                      loading={chat_fetching}
-                      saving={save_chat_loading}
+                      loading={get_comments_fetching}
+                      saving={comment_loading}
                     />
-                  ) : (
-                    <></>
-                    // <CommentBox
-                    //   postComment={postUserComment}
-                    //   comments={comments}
-                    //   color={`#f6f5f4`}
-                    // />
                   )}
                 </Box>
                 <Stack
@@ -813,26 +826,28 @@ const CanvasModal = () => {
                     pt: 1,
                   }}
                 >
-                  <IconButton
-                    onClick={() => setActiveBubble("bob")}
-                    sx={{
-                      p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                        }`,
-                      "&:hover": {
+                  {project_data?.project?.is_owner && (
+                    <IconButton
+                      onClick={() => setActiveBubble("bob")}
+                      sx={{
+                        p: 1.5,
                         backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
                           }`,
-                      },
-                    }}
-                  >
-                    <AutoAwesomeIcon
-                      sx={{
-                        color: `${activeBubble === "bob" ? "white" : ""}`,
-                        fontSize: "20px",
+                        "&:hover": {
+                          backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
+                            }`,
+                        },
                       }}
-                    />
-                  </IconButton>
-                  {/* <IconButton
+                    >
+                      <AutoAwesomeIcon
+                        sx={{
+                          color: `${activeBubble === "bob" ? "white" : ""}`,
+                          fontSize: "20px",
+                        }}
+                      />
+                    </IconButton>
+                  )}
+                  <IconButton
                     onClick={() => setActiveBubble("comment")}
                     sx={{
                       p: 1.5,
@@ -850,7 +865,7 @@ const CanvasModal = () => {
                         fontSize: "20px",
                       }}
                     />
-                  </IconButton> */}
+                  </IconButton>
                   {/* <IconButton
                     sx={{
                       p: 1.5,
