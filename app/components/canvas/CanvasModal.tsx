@@ -218,7 +218,7 @@ const CanvasModal = () => {
     if (!project_data?.project?.is_owner && canvasModalOpen) {
       setActiveBubble("comment");
     }
-  }, [project_data?.project?.is_owner, canvasModalOpen, project_data_fetching]);
+  }, [project_data?.project?.is_owner, canvasModalOpen]);
   const closeCanvasModal = () => {
     setActiveBubble("bob");
     dispatch(appSlice.actions.toggleCanvasModalOpen(false));
