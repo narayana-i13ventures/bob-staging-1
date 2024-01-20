@@ -96,6 +96,7 @@ const ThinkbeyondNewModal = (props: any) => {
       setActiveBubble("comment");
     }
   }, [project_data?.project?.is_owner]);
+  
   useEffect(() => {
     if (
       selectedThinkbeyondCard !== null &&
@@ -428,17 +429,17 @@ const ThinkbeyondNewModal = (props: any) => {
       bobMessages:
         chat && chat.length > 0
           ? chat.map((message: any) => ({
-              role: message?.role_text,
-              content: message?.chat_text,
-              time: message?.created_at,
-            }))
+            role: message?.role_text,
+            content: message?.chat_text,
+            time: message?.created_at,
+          }))
           : [
-              {
-                content:
-                  "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-                role: "assistant",
-              },
-            ],
+            {
+              content:
+                "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
+              role: "assistant",
+            },
+          ],
       userId: data?.user?.user_id,
     };
     const shouldSendRequest = selectedThinkbeyondCard?.cardInfo?.every(
@@ -597,7 +598,7 @@ const ThinkbeyondNewModal = (props: any) => {
                               mb:
                                 selectedThinkbeyondCard?.cardInfo?.length -
                                   1 ===
-                                index
+                                  index
                                   ? 0
                                   : 3,
                               fontSize: "13px",
@@ -643,7 +644,7 @@ const ThinkbeyondNewModal = (props: any) => {
                   <MessageBox
                     header={false}
                     height={1000}
-                    sendMessage={() => {}}
+                    sendMessage={() => { }}
                     messages={chat}
                     textbox={false}
                     color={`#f6f5f4`}
@@ -677,13 +678,11 @@ const ThinkbeyondNewModal = (props: any) => {
                     onClick={() => setActiveBubble("bob")}
                     sx={{
                       p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "bob" ? "" : "30"
-                      }`,
-                      "&:hover": {
-                        backgroundColor: `${theme.palette.primary.main}${
-                          activeBubble === "bob" ? "" : "30"
+                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
                         }`,
+                      "&:hover": {
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
+                          }`,
                       },
                     }}
                   >
@@ -699,13 +698,11 @@ const ThinkbeyondNewModal = (props: any) => {
                   onClick={() => setActiveBubble("comment")}
                   sx={{
                     p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${
-                      activeBubble === "comment" ? "" : "30"
-                    }`,
-                    "&:hover": {
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "comment" ? "" : "30"
+                    backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
                       }`,
+                    "&:hover": {
+                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
+                        }`,
                     },
                   }}
                 >
