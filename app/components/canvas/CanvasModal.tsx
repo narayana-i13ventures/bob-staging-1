@@ -97,10 +97,10 @@ const CanvasModal = () => {
     futureId === "Future1"
       ? 1
       : futureId === "Future2"
-        ? 2
-        : futureId === "Future3"
-          ? 3
-          : 0;
+      ? 2
+      : futureId === "Future3"
+      ? 3
+      : 0;
   useEffect(() => {
     if (selectedCard !== null && canvasModalOpen) {
       getProjectById({
@@ -218,7 +218,7 @@ const CanvasModal = () => {
     if (!project_data?.project?.is_owner) {
       setActiveBubble("comment");
     }
-  }, [project_data?.project?.is_owner]);
+  }, [project_data?.project?.is_owner, canvasModalOpen]);
   const closeCanvasModal = () => {
     setActiveBubble("bob");
     dispatch(appSlice.actions.toggleCanvasModalOpen(false));
@@ -831,11 +831,13 @@ const CanvasModal = () => {
                       onClick={() => setActiveBubble("bob")}
                       sx={{
                         p: 1.5,
-                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                          }`,
+                        backgroundColor: `${theme.palette.primary.main}${
+                          activeBubble === "bob" ? "" : "30"
+                        }`,
                         "&:hover": {
-                          backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                            }`,
+                          backgroundColor: `${theme.palette.primary.main}${
+                            activeBubble === "bob" ? "" : "30"
+                          }`,
                         },
                       }}
                     >
@@ -851,11 +853,13 @@ const CanvasModal = () => {
                     onClick={() => setActiveBubble("comment")}
                     sx={{
                       p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
-                        }`,
+                      backgroundColor: `${theme.palette.primary.main}${
+                        activeBubble === "comment" ? "" : "30"
+                      }`,
                       "&:hover": {
-                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
-                          }`,
+                        backgroundColor: `${theme.palette.primary.main}${
+                          activeBubble === "comment" ? "" : "30"
+                        }`,
                       },
                     }}
                   >
