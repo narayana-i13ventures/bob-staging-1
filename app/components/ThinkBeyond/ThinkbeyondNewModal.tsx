@@ -90,6 +90,12 @@ const ThinkbeyondNewModal = (props: any) => {
       isError: get_comments_error,
     },
   ] = useLazyGetAllCommentsQuery();
+
+  useEffect(() => {
+    if (!project_data?.project?.is_owner) {
+      setActiveBubble("comment");
+    }
+  }, [project_data?.project?.is_owner]);
   useEffect(() => {
     if (
       selectedThinkbeyondCard !== null &&
