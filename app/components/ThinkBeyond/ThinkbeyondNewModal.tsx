@@ -39,6 +39,10 @@ import { useSession } from "next-auth/react";
 import { useLazyGetChatQuery, useSaveChatMutation } from "@/lib/redux/ChatApi";
 import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
 import { usePrefillFutuer1BMCMutation } from "@/lib/redux/BMCApi";
+import {
+  useCreateCommentMutation,
+  useLazyGetAllCommentsQuery,
+} from "@/lib/redux/CommentApi";
 const ThinkbeyondNewModal = (props: any) => {
   const { ThinkbeyondCards } = props;
   const theme = useTheme();
@@ -69,6 +73,23 @@ const ThinkbeyondNewModal = (props: any) => {
   ] = useLazyGetChatQuery();
   const [saveChat, { isLoading: save_chat_loading }] = useSaveChatMutation();
 
+  const [
+    postComment,
+    {
+      isLoading: comment_loading,
+      isSuccess: comment_success,
+      isError: comment_error,
+    },
+  ] = useCreateCommentMutation();
+  const [
+    getComments,
+    {
+      data: comments,
+      isLoading: get_comments_loading,
+      isFetching: get_comments_fetching,
+      isError: get_comments_error,
+    },
+  ] = useLazyGetAllCommentsQuery();
   useEffect(() => {
     if (
       selectedThinkbeyondCard !== null &&
@@ -79,6 +100,13 @@ const ThinkbeyondNewModal = (props: any) => {
       getChat({
         // userId: data?.user?.user_id,
         userId: project_data?.project?.owner?.[0]?.user_id,
+        projectId,
+        future: 123,
+        canvas_type: 1,
+        cardNumber: 0,
+      });
+      getComments({
+        userId: data?.user?.user_id,
         projectId,
         future: 123,
         canvas_type: 1,
@@ -150,7 +178,18 @@ const ThinkbeyondNewModal = (props: any) => {
       })
     );
   };
-
+  const postUserComment = (content: any) => {
+    if (selectedThinkbeyondCard !== undefined) {
+      postComment({
+        userId: data?.user?.user_id,
+        projectId: projectId,
+        future: 123,
+        cardNumber: 0,
+        canvas_type: 1,
+        content,
+      });
+    }
+  };
   const nextCard = () => {
     const shouldSendRequest = selectedThinkbeyondCard?.cardInfo?.every(
       (info: any) => info?.text && info.text.trim() !== ""
@@ -219,8 +258,7 @@ const ThinkbeyondNewModal = (props: any) => {
           .unwrap()
           .then((response: any) => {
             if (
-              selectedThinkbeyondCard?.cardNumber === 3
-              &&
+              selectedThinkbeyondCard?.cardNumber === 3 &&
               ThinkbeyondCards?.[0]?.future_1_mfs?.locked === true
             ) {
               setNextCardTransition(false);
@@ -384,17 +422,17 @@ const ThinkbeyondNewModal = (props: any) => {
       bobMessages:
         chat && chat.length > 0
           ? chat.map((message: any) => ({
-            role: message?.role_text,
-            content: message?.chat_text,
-            time: message?.created_at,
-          }))
+              role: message?.role_text,
+              content: message?.chat_text,
+              time: message?.created_at,
+            }))
           : [
-            {
-              content:
-                "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-              role: "assistant",
-            },
-          ],
+              {
+                content:
+                  "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
+                role: "assistant",
+              },
+            ],
       userId: data?.user?.user_id,
     };
     const shouldSendRequest = selectedThinkbeyondCard?.cardInfo?.every(
@@ -553,7 +591,7 @@ const ThinkbeyondNewModal = (props: any) => {
                               mb:
                                 selectedThinkbeyondCard?.cardInfo?.length -
                                   1 ===
-                                  index
+                                index
                                   ? 0
                                   : 3,
                               fontSize: "13px",
@@ -594,12 +632,12 @@ const ThinkbeyondNewModal = (props: any) => {
                 height: "65vh",
               }}
             >
-              <Box component={'div'} sx={{ width: '90%', pr: 4 }}>
-                {activeBubble === "bob" && (
+              <Box component={"div"} sx={{ width: "90%", pr: 4 }}>
+                {activeBubble === "bob" && project_data?.project?.is_owner && (
                   <MessageBox
                     header={false}
                     height={1000}
-                    sendMessage={() => { }}
+                    sendMessage={() => {}}
                     messages={chat}
                     textbox={false}
                     color={`#f6f5f4`}
@@ -607,19 +645,15 @@ const ThinkbeyondNewModal = (props: any) => {
                     saving={save_chat_loading}
                   />
                 )}
-                {/* {activeBubble === "comment" && (
+                {activeBubble === "comment" && (
                   <CommentBox
-                    postComment={() => {}}
-                    comments={[
-                      {
-                        content: `Lorem ipsum dolor sit amet consectetur, adipisicing elit. Illo
-                        similique libero fuga`,
-                        owner: false,
-                      },
-                    ]}
+                    postComment={postUserComment}
+                    comments={comments}
                     color={`#f6f5f4`}
+                    loading={get_comments_fetching}
+                    saving={comment_loading}
                   />
-                )} */}
+                )}
               </Box>
               <Stack
                 spacing={2}
@@ -628,20 +662,22 @@ const ThinkbeyondNewModal = (props: any) => {
                 justifyContent={"flex-start"}
                 sx={{
                   flexGrow: 1,
-                  width: '10%',
+                  width: "10%",
                   pt: 1,
                 }}
               >
-                {
+                {project_data?.project?.is_owner && (
                   <IconButton
                     onClick={() => setActiveBubble("bob")}
                     sx={{
                       p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                        }`,
+                      backgroundColor: `${theme.palette.primary.main}${
+                        activeBubble === "bob" ? "" : "30"
+                      }`,
                       "&:hover": {
-                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                          }`,
+                        backgroundColor: `${theme.palette.primary.main}${
+                          activeBubble === "bob" ? "" : "30"
+                        }`,
                       },
                     }}
                   >
@@ -652,8 +688,8 @@ const ThinkbeyondNewModal = (props: any) => {
                       }}
                     />
                   </IconButton>
-                }
-                {/* <IconButton
+                )}
+                <IconButton
                   onClick={() => setActiveBubble("comment")}
                   sx={{
                     p: 1.5,
@@ -673,7 +709,7 @@ const ThinkbeyondNewModal = (props: any) => {
                       fontSize: "20px",
                     }}
                   />
-                </IconButton> */}
+                </IconButton>
                 {/* <IconButton
                   sx={{
                     p: 1.5,

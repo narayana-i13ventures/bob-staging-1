@@ -34,10 +34,10 @@ const CanvasCard = (props: any) => {
     futureId === "Future1"
       ? 1
       : futureId === "Future2"
-        ? 2
-        : futureId === "Future3"
-          ? 3
-          : 0;
+      ? 2
+      : futureId === "Future3"
+      ? 3
+      : 0;
   const [cardStatus, setCardStatus] = useState({
     loading: false,
     error: false,
@@ -77,7 +77,7 @@ const CanvasCard = (props: any) => {
   ] = useSelectFuture1BMCCardMutation();
 
   const selectCard = () => {
-    if (card?.locked) {
+    if (!card?.locked) {
       if (selectedCard && selectedCard.cardNumber !== card.cardNumber) {
         if (pathName.includes("/Future1/Microframeworks/BMC")) {
           const updatedSelectedCard = { ...selectedCard, selected: false };
@@ -88,32 +88,9 @@ const CanvasCard = (props: any) => {
             next_card_number: card?.cardNumber,
             userId: data?.user?.user_id,
           });
-          // updateFuture1BMCCard({
-          //     card: updatedSelectedCard,
-          //     projectId,
-          //     future,
-          //     userId: data?.user?.user_id,
-          // })
-          //     .unwrap()
-          //     .then((response: any) => {
-          //         const updatedCard = { ...card, selected: true };
-          //         updateFuture1BMCCard({
-          //             card: updatedCard,
-          //             projectId,
-          //             future,
-          //             userId: data?.user?.user_id,
-          //         });
-          //     });
         }
-      } 
-      else if (selectedCard === null || selectedCard === undefined) {
+      } else if (selectedCard === null || selectedCard === undefined) {
         const updatedCard = { ...card, selected: true };
-        // updateFuture1BMCCard({
-        //   card: updatedCard,
-        //   projectId,
-        //   future,
-        //   userId: data?.user?.user_id,
-        // });
         selectFuture1BMCCard({
           projectId,
           future,
@@ -173,35 +150,37 @@ const CanvasCard = (props: any) => {
           }}
         >
           <Typography variant="body1">{card?.cardName}</Typography>
-          {!card?.locked && <Stack
-            direction={"row"}
-            justifyContent={"flex-end"}
-            alignItems={"center"}
-            spacing={2}
-          >
-            {card?.selected && (
-              <IconButton size="small" onClick={openCanvasModal}>
-                <SettingsOverscanOutlinedIcon fontSize="small" />
-              </IconButton>
-            )}
-            <Tooltip
-              title={`Surety : ${card?.surety}%`}
-              arrow
-              placement="bottom"
+          {!card?.locked && (
+            <Stack
+              direction={"row"}
+              justifyContent={"flex-end"}
+              alignItems={"center"}
+              spacing={2}
             >
-              <TipsAndUpdatesIcon
-                sx={{
-                  fontSize: "20px",
-                  color:
-                    card?.surety < "80"
-                      ? "red"
-                      : card?.surety < "95"
+              {card?.selected && (
+                <IconButton size="small" onClick={openCanvasModal}>
+                  <SettingsOverscanOutlinedIcon fontSize="small" />
+                </IconButton>
+              )}
+              <Tooltip
+                title={`Surety : ${card?.surety}%`}
+                arrow
+                placement="bottom"
+              >
+                <TipsAndUpdatesIcon
+                  sx={{
+                    fontSize: "20px",
+                    color:
+                      card?.surety < "80"
+                        ? "red"
+                        : card?.surety < "95"
                         ? "orange"
                         : "green",
-                }}
-              />
-            </Tooltip>
-          </Stack>}
+                  }}
+                />
+              </Tooltip>
+            </Stack>
+          )}
         </Stack>
         <Divider sx={{ width: "100%", my: 1 }} />
         <Stack

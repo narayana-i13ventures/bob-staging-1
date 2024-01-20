@@ -129,8 +129,6 @@ export const commentSlice = createApi({
       async onQueryStarted(data, { dispatch, queryFulfilled }) {
         try {
           const response: any = await queryFulfilled;
-          console.log(data?.cardNumber);
-
           const patchResult = dispatch(
             commentSlice.util.updateQueryData(
               "getAllComments",

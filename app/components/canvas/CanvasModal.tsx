@@ -220,8 +220,8 @@ const CanvasModal = () => {
     }
   }, [project_data?.project?.is_owner]);
   const closeCanvasModal = () => {
-    dispatch(appSlice.actions.toggleCanvasModalOpen(false));
     setActiveBubble("bob");
+    dispatch(appSlice.actions.toggleCanvasModalOpen(false));
   };
 
   const getFutureData = () => {

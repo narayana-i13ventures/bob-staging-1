@@ -116,7 +116,7 @@ const CommentMenu = (props: any) => {
       ? 2
       : futureId === "Future3"
       ? 3
-      : 0;
+      : 123;
   const incorporateComment = async () => {
     const responseCard = { ...selectedCard };
     responseCard.keyPoints = "";
@@ -258,7 +258,11 @@ const CommentMenu = (props: any) => {
       userId: data?.user?.user_id,
       projectId: projectId,
       future: currentFuture,
-      canvas_type: pathName?.includes("BMC") ? 2 : 0,
+      canvas_type: pathName?.includes("BMC")
+        ? 2
+        : pathName?.includes("CVP")
+        ? 3
+        : 1,
       cardNumber: selectedCard?.cardNumber,
       comment_id: comment?.comment_id,
       level: 0,
@@ -270,8 +274,14 @@ const CommentMenu = (props: any) => {
       userId: data?.user?.user_id,
       projectId: projectId,
       future: currentFuture,
-      canvas_type: pathName?.includes("BMC") ? 2 : 0,
-      cardNumber: selectedCard?.cardNumber,
+      canvas_type: pathName?.includes("BMC")
+        ? 2
+        : pathName?.includes("CVP")
+        ? 3
+        : 1,
+      cardNumber: pathName?.includes("Thinkbeyond")
+        ? 0
+        : selectedCard?.cardNumber,
       comment_id: comment?.comment_id,
       level: 0,
     });
