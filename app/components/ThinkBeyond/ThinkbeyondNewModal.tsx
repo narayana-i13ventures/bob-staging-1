@@ -92,10 +92,10 @@ const ThinkbeyondNewModal = (props: any) => {
   ] = useLazyGetAllCommentsQuery();
 
   useEffect(() => {
-    if (!project_data?.project?.is_owner) {
+    if (!project_data?.project?.is_owner && ThinkbeyondModalOpen) {
       setActiveBubble("comment");
     }
-  }, [project_data?.project?.is_owner, ThinkbeyondModalOpen]);
+  }, [project_data?.project?.is_owner, ThinkbeyondModalOpen, project_data_fetching]);
 
   useEffect(() => {
     if (
@@ -429,17 +429,17 @@ const ThinkbeyondNewModal = (props: any) => {
       bobMessages:
         chat && chat.length > 0
           ? chat.map((message: any) => ({
-              role: message?.role_text,
-              content: message?.chat_text,
-              time: message?.created_at,
-            }))
+            role: message?.role_text,
+            content: message?.chat_text,
+            time: message?.created_at,
+          }))
           : [
-              {
-                content:
-                  "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
-                role: "assistant",
-              },
-            ],
+            {
+              content:
+                "Hi, I'm Bob! 👋 Start working on your ThinkBeyond Canvas and I'll gradually give you advice and suggestions!",
+              role: "assistant",
+            },
+          ],
       userId: data?.user?.user_id,
     };
     const shouldSendRequest = selectedThinkbeyondCard?.cardInfo?.every(
@@ -598,7 +598,7 @@ const ThinkbeyondNewModal = (props: any) => {
                               mb:
                                 selectedThinkbeyondCard?.cardInfo?.length -
                                   1 ===
-                                index
+                                  index
                                   ? 0
                                   : 3,
                               fontSize: "13px",
@@ -629,95 +629,93 @@ const ThinkbeyondNewModal = (props: any) => {
                 <CircularProgress />
               </Stack>
             )}
-            <Stack
-              direction={"row"}
-              justifyContent={"flex-start"}
-              alignItems={"flext-start"}
-              sx={{
-                pl: 2,
-                width: "50%",
-                height: "65vh",
-              }}
-            >
-              <Box component={"div"} sx={{ width: "90%", pr: 4 }}>
-                {activeBubble === "bob" && project_data?.project?.is_owner && (
-                  <MessageBox
-                    header={false}
-                    height={1000}
-                    sendMessage={() => {}}
-                    messages={chat}
-                    textbox={false}
-                    color={`#f6f5f4`}
-                    loading={chat_fetching}
-                    saving={save_chat_loading}
-                  />
-                )}
-                {activeBubble === "comment" && (
-                  <CommentBox
-                    postComment={postUserComment}
-                    comments={comments}
-                    color={`#f6f5f4`}
-                    loading={get_comments_fetching}
-                    saving={comment_loading}
-                  />
-                )}
-              </Box>
+            {!project_data_fetching ? (
               <Stack
-                spacing={2}
-                direction={"column"}
-                alignItems={"center"}
+                direction={"row"}
                 justifyContent={"flex-start"}
+                alignItems={"flext-start"}
                 sx={{
-                  flexGrow: 1,
-                  width: "10%",
-                  pt: 1,
+                  pl: 2,
+                  width: "50%",
+                  height: "65vh",
                 }}
               >
-                {project_data?.project?.is_owner && (
+                <Box component={"div"} sx={{ width: "90%", pr: 4 }}>
+                  {activeBubble === "bob" &&
+                    project_data?.project?.is_owner && (
+                      <MessageBox
+                        header={false}
+                        height={1000}
+                        sendMessage={() => { }}
+                        messages={chat}
+                        textbox={false}
+                        color={`#f6f5f4`}
+                        loading={chat_fetching}
+                        saving={save_chat_loading}
+                      />
+                    )}
+                  {activeBubble === "comment" && (
+                    <CommentBox
+                      postComment={postUserComment}
+                      comments={comments}
+                      color={`#f6f5f4`}
+                      loading={get_comments_fetching}
+                      saving={comment_loading}
+                    />
+                  )}
+                </Box>
+                <Stack
+                  spacing={2}
+                  direction={"column"}
+                  alignItems={"center"}
+                  justifyContent={"flex-start"}
+                  sx={{
+                    flexGrow: 1,
+                    width: "10%",
+                    pt: 1,
+                  }}
+                >
+                  {project_data?.project?.is_owner && (
+                    <IconButton
+                      onClick={() => setActiveBubble("bob")}
+                      sx={{
+                        p: 1.5,
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
+                          }`,
+                        "&:hover": {
+                          backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
+                            }`,
+                        },
+                      }}
+                    >
+                      <AutoAwesomeIcon
+                        sx={{
+                          color: `${activeBubble === "bob" ? "white" : ""}`,
+                          fontSize: "20px",
+                        }}
+                      />
+                    </IconButton>
+                  )}
                   <IconButton
-                    onClick={() => setActiveBubble("bob")}
+                    onClick={() => setActiveBubble("comment")}
                     sx={{
                       p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "bob" ? "" : "30"
-                      }`,
-                      "&:hover": {
-                        backgroundColor: `${theme.palette.primary.main}${
-                          activeBubble === "bob" ? "" : "30"
+                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
                         }`,
+                      "&:hover": {
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
+                          }`,
                       },
                     }}
                   >
-                    <AutoAwesomeIcon
+                    <ChatBubbleOutlineOutlinedIcon
                       sx={{
-                        color: `${activeBubble === "bob" ? "white" : ""}`,
+                        color: `${activeBubble === "comment" ? "white" : ""}`,
                         fontSize: "20px",
                       }}
                     />
                   </IconButton>
-                )}
-                <IconButton
-                  onClick={() => setActiveBubble("comment")}
-                  sx={{
-                    p: 1.5,
-                    backgroundColor: `${theme.palette.primary.main}${
-                      activeBubble === "comment" ? "" : "30"
-                    }`,
-                    "&:hover": {
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "comment" ? "" : "30"
-                      }`,
-                    },
-                  }}
-                >
-                  <ChatBubbleOutlineOutlinedIcon
-                    sx={{
-                      color: `${activeBubble === "comment" ? "white" : ""}`,
-                      fontSize: "20px",
-                    }}
-                  />
-                </IconButton>
-                {/* <IconButton
+                  {/* <IconButton
                   sx={{
                     p: 1.5,
                     backgroundColor: `${theme.palette.primary.main}${
@@ -737,8 +735,22 @@ const ThinkbeyondNewModal = (props: any) => {
                     }}
                   />
                 </IconButton> */}
+                </Stack>
               </Stack>
-            </Stack>
+            ) : (
+              <Stack
+                direction={"row"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                sx={{
+                  pl: 2,
+                  width: "50%",
+                  height: "65vh",
+                }}
+              >
+                <CircularProgress />
+              </Stack>
+            )}
           </Stack>
         </DialogContent>
         <Divider />
