@@ -217,9 +217,6 @@ const CanvasModal = () => {
   useEffect(() => {
     if (!project_data?.project?.is_owner && canvasModalOpen) {
       setActiveBubble("comment");
-    } else {
-      setActiveBubble("bob");
-
     }
   }, [project_data?.project?.is_owner, canvasModalOpen, project_data_fetching]);
   const closeCanvasModal = () => {
