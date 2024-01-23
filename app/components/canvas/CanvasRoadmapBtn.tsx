@@ -1,12 +1,19 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import GrowTransition from "../Utils/Grow";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { TreeView } from "@mui/x-tree-view/TreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  MenuList,
   Popover,
   Stack,
   Typography,
@@ -17,33 +24,42 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 const CanvasRoadmapBtn = (props: any) => {
-  const { canvasName } = props;
+  const { canvasName, canvas, loading } = props;
+  const pathName = usePathname();
   const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
   const CanvasSettingsRef = useRef(null);
   const { projectId, futureId } = useParams();
-  const { canvasRoadmap }:any = useSelector(selectApp);
+  const { canvasRoadmap }: any = useSelector(selectApp);
+  const [expanded, setExpanded] = React.useState<any>({
+    future1: false,
+    future2: false,
+    future3: false,
+  });
 
   const openCanvasSettings = () => {
     dispatch(
       appSlice.actions.toggleCanvasRoadmap(Boolean(CanvasSettingsRef?.current))
     );
   };
-
-  const NavigateRoadmap = (event: React.SyntheticEvent, nodeIds: any) => {
-    if (nodeIds === "4") {
-      router.push("BMC");
-      dispatch(appSlice.actions.toggleCanvasRoadmap(false));
-    } else if (nodeIds === "1") {
-      router.push(`/${projectId}/Thinkbeyond`);
-      dispatch(appSlice.actions.toggleCanvasRoadmap(false));
-    } else if (nodeIds === "3") {
-      router.push(`/${projectId}/${futureId}/Microframeworks`);
-      dispatch(appSlice.actions.toggleCanvasRoadmap(false));
+  useEffect(() => {
+    if (futureId === "Future1") {
+      setExpanded({ future1: true, future2: false, future3: false });
     }
-  };
-
+  }, [futureId]);
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      if (panel === "future1") {
+        setExpanded({ future1: isExpanded, future2: false, future3: false });
+      }
+      if (panel === "future2") {
+        setExpanded({ future1: false, future2: isExpanded, future3: false });
+      }
+      if (panel === "future3") {
+        setExpanded({ future1: false, future2: false, future3: isExpanded });
+      }
+    };
   return (
     <>
       <IconButton
@@ -78,402 +94,278 @@ const CanvasRoadmapBtn = (props: any) => {
             mt: 1,
             p: 1,
             zIndex: 100,
-            width: "320px",
+            width: "auto",
             borderRadius: 2,
             overflowY: "hidden",
             backgroundColor: "#fff",
           },
         }}
       >
-        <TreeView
-          expanded={["1", "2", "3"]}
-          selected={canvasName === "BMC" ? "4" : ""}
-          onNodeSelect={NavigateRoadmap}
-          aria-label="file system navigator"
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
+        <Accordion
+          disableGutters
+          elevation={0}
+          sx={{
+            backgroundColor: "#ffffff",
+          }}
+          expanded={true}
         >
-          <TreeItem
+          <AccordionSummary
             sx={{
-              my: 0.5,
-              "& .MuiTreeItem-label": {
-                fontSize: "13px !important",
+              width: "auto",
+              minHeight: "auto",
+              flexDirection: "row-reverse",
+              "& .MuiAccordionSummary-content": {
+                my: "5px",
               },
-              "& .MuiTreeItem-content": {
-                py: 1,
-                borderRadius: 2,
+              "& .MuiAccordionSummary-expandIconWrapper": {
+                transform: "rotate(-90deg)",
               },
-              "& .Mui-selected": {
-                backgroundColor: `#f6f5f4`,
+              "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+                transform: "rotate(0deg)",
               },
             }}
-            nodeId="1"
-            label="Think Beyond"
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1bh-content"
+            id="panel1bh-header"
           >
-            <TreeItem
-              sx={{
-                my: 0.5,
-                "& .MuiTreeItem-label": {
-                  fontSize: "13px !important",
-                },
-                "& .MuiTreeItem-content": {
-                  py: 1,
-                  borderRadius: 2,
-                },
-                "& .Mui-selected": {
-                  backgroundColor: `#f6f5f4`,
-                },
-              }}
-              nodeId="2"
-              label="Future 1"
+            <Typography
+              variant="body1"
+              sx={{ fontSize: "14px", ml: 1, py: 0.5 }}
             >
-              <TreeItem
+              Thinkbeyond
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails sx={{ p: 0 }}>
+            <Accordion
+              disableGutters
+              elevation={0}
+              sx={{
+                ml: 3,
+                border: "0px",
+                backgroundColor: "#ffffff",
+              }}
+              expanded={expanded?.future1 === true}
+              onChange={handleChange("future1")}
+            >
+              <AccordionSummary
                 sx={{
-                  my: 0.5,
-                  "& .MuiTreeItem-label": {
-                    fontSize: "13px",
+                  width: "auto",
+                  minHeight: "auto",
+                  flexDirection: "row-reverse",
+                  "& .MuiAccordionSummary-content": {
+                    my: "5px",
                   },
-                  "& .MuiTreeItem-content": {
-                    py: 1,
-                    borderRadius: 2,
+                  "& .MuiAccordionSummary-expandIconWrapper": {
+                    transform: "rotate(-90deg)",
                   },
-                  "& .Mui-selected": {
-                    backgroundColor: `#f6f5f4`,
+                  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+                    transform: "rotate(0deg)",
                   },
                 }}
-                nodeId="3"
-                label="Micro Frameworks"
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1bh-content"
+                id="panel1bh-header"
               >
-                <TreeItem
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "13px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="4"
-                  label="Business Model Canvas"
-                />
-                <TreeItem
-                  disabled
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "14px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="5"
-                  label={
-                    <Stack
-                      direction={"row"}
-                      justifyContent={"flex-start"}
-                      alignItems={"center"}
-                    >
-                      <LockOutlinedIcon fontSize="small" />
-                      <Typography sx={{ fontSize: "13px", ml: 2 }}>
-                        Value Proposition Canvas
-                      </Typography>
-                    </Stack>
-                  }
-                />
-              </TreeItem>
-            </TreeItem>
-            <TreeItem
-              disabled
-              sx={{
-                my: 0.5,
-                "& .MuiTreeItem-label": {
-                  fontSize: "13px !important",
-                },
-                "& .MuiTreeItem-content": {
-                  py: 1,
-                  borderRadius: 2,
-                },
-                "& .Mui-selected": {
-                  backgroundColor: `#f6f5f4`,
-                },
-              }}
-              nodeId="8"
-              label={
-                <Stack
-                  direction={"row"}
-                  justifyContent={"flex-start"}
-                  alignItems={"center"}
+                <Typography
+                  variant="body1"
+                  sx={{ fontSize: "14px", ml: 1, py: 0.5 }}
                 >
-                  <LockOutlinedIcon fontSize="small" />
-                  <Typography sx={{ fontSize: "13px", ml: 2 }}>
-                    Future 2
-                  </Typography>
-                </Stack>
-              }
-            >
-              <TreeItem
-                sx={{
-                  my: 0.5,
-                  "& .MuiTreeItem-label": {
-                    fontSize: "13px",
-                  },
-                  "& .MuiTreeItem-content": {
-                    py: 1,
-                    borderRadius: 2,
-                  },
-                  "& .Mui-selected": {
-                    backgroundColor: `#f6f5f4`,
-                  },
-                }}
-                nodeId="9"
-                label="Micro Frameworks"
-              >
-                <TreeItem
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "13px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="10"
-                  label="Business Model Canvas"
-                />
-                <TreeItem
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "14px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="11"
-                  label="Value Proposition Canvas"
-                />
-                <TreeItem
-                  disabled
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "14px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="12"
-                  label={
-                    <Stack
-                      direction={"row"}
-                      justifyContent={"flex-start"}
-                      alignItems={"center"}
-                    >
-                      <LockOutlinedIcon fontSize="small" />
-                      <Typography sx={{ fontSize: "13px", ml: 2 }}>
-                        Empathy Canvas
-                      </Typography>
-                    </Stack>
-                  }
-                />
-                <TreeItem
-                  disabled
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "14px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="13"
-                  label={
-                    <Stack
-                      direction={"row"}
-                      justifyContent={"flex-start"}
-                      alignItems={"center"}
-                    >
-                      <LockOutlinedIcon fontSize="small" />
-                      <Typography sx={{ fontSize: "13px", ml: 2 }}>
-                        Persona Canvas
-                      </Typography>
-                    </Stack>
-                  }
-                />
-              </TreeItem>
-            </TreeItem>
-            <TreeItem
-              disabled
+                  Future 1
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ ml: 3, minWidth: "auto", width: "auto" }}>
+                <MenuList sx={{ p: 0, minWidth: "auto", width: "auto" }}>
+                  {canvas?.future_1
+                    ?.filter(
+                      (canvas: any) =>
+                        canvas.canvas_type === 2 || canvas.canvas_type === 3
+                    )
+                    .map((CanvasCard: any, index: any) => {
+                      return (
+                        <MenuItem
+                          sx={{
+                            borderRadius: 2,
+                          }}
+                          selected={pathName.includes(CanvasCard?.route)}
+                          key={index}
+                          disabled={CanvasCard?.locked}
+                        >
+                          <ListItemText
+                            sx={{
+                              "& .MuiTypography-root": {
+                                ml: 1,
+                                py: 0.5,
+                                fontSize: "14px",
+                                display: "flex",
+                                justifyContent: "flex-start",
+                                alignItems: "center",
+                              },
+                            }}
+                          >
+                            {CanvasCard?.locked && (
+                              <LockOutlinedIcon
+                                fontSize="small"
+                                sx={{ mr: 2 }}
+                              />
+                            )}
+                            {CanvasCard?.name}
+                          </ListItemText>
+                        </MenuItem>
+                      );
+                    })}
+                </MenuList>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              disableGutters
+              elevation={0}
               sx={{
-                my: 0.5,
-                "& .MuiTreeItem-label": {
-                  fontSize: "13px !important",
-                },
-                "& .MuiTreeItem-content": {
-                  py: 1,
-                  borderRadius: 2,
-                },
-                "& .Mui-selected": {
-                  backgroundColor: `#f6f5f4`,
-                },
+                ml: 3,
+                border: "0px",
+                backgroundColor: "#ffffff",
               }}
-              nodeId="14"
-              label={
-                <Stack
-                  direction={"row"}
-                  justifyContent={"flex-start"}
-                  alignItems={"center"}
-                >
-                  <LockOutlinedIcon fontSize="small" />
-                  <Typography sx={{ fontSize: "13px", ml: 2 }}>
-                    Future 3
-                  </Typography>
-                </Stack>
-              }
+              expanded={expanded?.future2 === true}
+              onChange={handleChange("future2")}
             >
-              <TreeItem
+              <AccordionSummary
                 sx={{
-                  my: 0.5,
-                  "& .MuiTreeItem-label": {
-                    fontSize: "13px",
+                  width: "auto",
+                  minHeight: "auto",
+                  flexDirection: "row-reverse",
+                  "& .MuiAccordionSummary-content": {
+                    my: "5px",
                   },
-                  "& .MuiTreeItem-content": {
-                    py: 1,
-                    borderRadius: 2,
+                  "& .MuiAccordionSummary-expandIconWrapper": {
+                    transform: "rotate(-90deg)",
                   },
-                  "& .Mui-selected": {
-                    backgroundColor: `#f6f5f4`,
+                  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+                    transform: "rotate(0deg)",
                   },
                 }}
-                nodeId="15"
-                label="Micro Frameworks"
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1bh-content"
+                id="panel1bh-header"
               >
-                <TreeItem
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "13px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="16"
-                  label="Business Model Canvas"
-                />
-                <TreeItem
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "14px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="17"
-                  label="Value Proposition Canvas"
-                />
-                <TreeItem
-                  disabled
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "14px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="18"
-                  label={
-                    <Stack
-                      direction={"row"}
-                      justifyContent={"flex-start"}
-                      alignItems={"center"}
-                    >
-                      <LockOutlinedIcon fontSize="small" />
-                      <Typography sx={{ fontSize: "13px", ml: 2 }}>
-                        Empathy Canvas
-                      </Typography>
-                    </Stack>
-                  }
-                />
-                <TreeItem
-                  disabled
-                  sx={{
-                    my: 0.5,
-                    "& .MuiTreeItem-label": {
-                      fontSize: "14px",
-                    },
-                    "& .MuiTreeItem-content": {
-                      py: 1,
-                      borderRadius: 2,
-                    },
-                    "& .Mui-selected": {
-                      backgroundColor: `#f6f5f4`,
-                    },
-                  }}
-                  nodeId="19"
-                  label={
-                    <Stack
-                      direction={"row"}
-                      justifyContent={"flex-start"}
-                      alignItems={"center"}
-                    >
-                      <LockOutlinedIcon fontSize="small" />
-                      <Typography sx={{ fontSize: "13px", ml: 2 }}>
-                        Persona Canvas
-                      </Typography>
-                    </Stack>
-                  }
-                />
-              </TreeItem>
-            </TreeItem>
-          </TreeItem>
-        </TreeView>
+                <Typography
+                  variant="body1"
+                  sx={{ fontSize: "14px", ml: 1, py: 0.5 }}
+                >
+                  Future 2
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ ml: 3, minWidth: "auto", width: "auto" }}>
+                <MenuList sx={{ p: 0, minWidth: "auto", width: "auto" }}>
+                  {canvas?.future_2
+                    ?.filter(
+                      (canvas: any) =>
+                        canvas.canvas_type === 2 || canvas.canvas_type === 3
+                    )
+                    .map((CanvasCard: any, index: any) => {
+                      return (
+                        <MenuItem key={index} disabled={CanvasCard?.locked}>
+                          <ListItemText
+                            sx={{
+                              "& .MuiTypography-root": {
+                                ml: 1,
+                                py: 0.5,
+                                fontSize: "14px",
+                                borderRadius: 2,
+                                display: "flex",
+                                justifyContent: "flex-start",
+                                alignItems: "center",
+                              },
+                            }}
+                          >
+                            {CanvasCard?.locked && (
+                              <LockOutlinedIcon
+                                fontSize="small"
+                                sx={{ mr: 2 }}
+                              />
+                            )}
+                            {CanvasCard?.name}
+                          </ListItemText>
+                        </MenuItem>
+                      );
+                    })}
+                </MenuList>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion
+              disableGutters
+              elevation={0}
+              sx={{
+                ml: 3,
+                border: "0px",
+                backgroundColor: "#ffffff",
+              }}
+              expanded={expanded?.future3 === true}
+              onChange={handleChange("future3")}
+            >
+              <AccordionSummary
+                sx={{
+                  width: "auto",
+                  minHeight: "auto",
+                  flexDirection: "row-reverse",
+                  "& .MuiAccordionSummary-content": {
+                    my: "5px",
+                  },
+                  "& .MuiAccordionSummary-expandIconWrapper": {
+                    transform: "rotate(-90deg)",
+                  },
+                  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+                    transform: "rotate(0deg)",
+                  },
+                }}
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1bh-content"
+                id="panel1bh-header"
+              >
+                <Typography
+                  variant="body1"
+                  sx={{ fontSize: "14px", ml: 1, py: 0.5 }}
+                >
+                  Future 3
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ ml: 3, minWidth: "auto", width: "auto" }}>
+                <MenuList sx={{ p: 0, minWidth: "auto", width: "auto" }}>
+                  {canvas?.future_3
+                    ?.filter(
+                      (canvas: any) =>
+                        canvas.canvas_type === 2 || canvas.canvas_type === 3
+                    )
+                    .map((CanvasCard: any, index: any) => {
+                      return (
+                        <MenuItem key={index} disabled={CanvasCard?.locked}>
+                          <ListItemText
+                            sx={{
+                              "& .MuiTypography-root": {
+                                ml: 1,
+                                py: 0.5,
+                                fontSize: "14px",
+                                borderRadius: 2,
+                                display: "flex",
+                                justifyContent: "flex-start",
+                                alignItems: "center",
+                              },
+                            }}
+                          >
+                            {CanvasCard?.locked && (
+                              <LockOutlinedIcon
+                                fontSize="small"
+                                sx={{ mr: 2 }}
+                              />
+                            )}
+                            {CanvasCard?.name}
+                          </ListItemText>
+                        </MenuItem>
+                      );
+                    })}
+                </MenuList>
+              </AccordionDetails>
+            </Accordion>
+          </AccordionDetails>
+        </Accordion>
       </Popover>
     </>
   );

@@ -6,6 +6,7 @@ import {
   Avatar,
   Box,
   Button,
+  CircularProgress,
   Container,
   Paper,
   Stack,
@@ -83,15 +84,29 @@ const Header = () => {
           direction={"row"}
           justifyContent={"flex-end"}
           alignItems={"center"}
-          spacing={2}
+          spacing={4}
           component={"div"}
         >
-          {pathName?.includes("Thinkbeyond") &&
-            project_data?.project?.is_owner && (
-              <Button onClick={shareThinkbeyond} variant="contained" size="small">
-                Share
-              </Button>
-            )}
+          {pathName?.includes("Thinkbeyond") && (
+            <>
+              {!project_data_loading && !project_data_error && (
+                <>
+                  {project_data?.project?.is_owner && (
+                    <Button
+                      onClick={shareThinkbeyond}
+                      variant="contained"
+                      size="small"
+                    >
+                      Share
+                    </Button>
+                  )}
+                </>
+              )}
+              {project_data_loading && !project_data_error && (
+                <CircularProgress size={15}/>
+              )}
+            </>
+          )}
           {/* <NotificationBtn /> */}
           <UserProfileBtn />
         </Stack>

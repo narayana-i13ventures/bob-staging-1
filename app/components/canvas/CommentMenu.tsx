@@ -22,7 +22,7 @@ import {
   selectedCardsSlice,
   selectedFuture1BMCCard,
 } from "@/lib/redux/slices/SelectedSlice";
-import { BMCSlice, useUpdateFuture1BMCCardMutation } from "@/lib/redux/BMCApi";
+import { BMCSlice, useUpdateBMCCardMutation } from "@/lib/redux/BMCApi";
 import {
   commentSlice,
   useDeleteCommentMutation,
@@ -55,13 +55,13 @@ const CommentMenu = (props: any) => {
     },
   ] = useLazyGetProjectByIdQuery();
   const [
-    updateFuture1BMCCard,
+    updateBMCCard,
     {
       isError: UpdateFuture1BMCError,
       isSuccess: UpdateFuture1BMCSuccess,
       isLoading: UpdateFuture1BMCLoading,
     },
-  ] = useUpdateFuture1BMCCardMutation();
+  ] = useUpdateBMCCardMutation();
   const [
     deleteComment,
     {
@@ -222,7 +222,7 @@ const CommentMenu = (props: any) => {
               }
             )
           );
-          updateFuture1BMCCard({
+          updateBMCCard({
             card: responseCard,
             projectId,
             currentFuture,
@@ -234,7 +234,7 @@ const CommentMenu = (props: any) => {
         console.log("connection closed");
         dispatch(appSlice.actions.toggleBobThinking(false));
         if (pathName.includes("/Future1/Microframeworks/BMC")) {
-          updateFuture1BMCCard({
+          updateBMCCard({
             card: responseCard,
             projectId,
             future: currentFuture,

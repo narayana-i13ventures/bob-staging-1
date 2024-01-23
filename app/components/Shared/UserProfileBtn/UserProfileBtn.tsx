@@ -9,6 +9,7 @@ import {
   MenuItem,
   MenuList,
   Popover,
+  Stack,
 } from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
@@ -17,10 +18,10 @@ import { useRouter } from "next/navigation";
 
 const UserProfileBtn = () => {
   const router = useRouter();
-  const { data }: any = useSession();
   const dispatch = useDispatch();
+  const { data }: any = useSession();
   const UserProfileMenuRef: any = useRef(null);
-  const { userMenu }:any = useSelector(selectApp);
+  const { userMenu }: any = useSelector(selectApp);
 
   const handleUserProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
     dispatch(appSlice.actions.toggleUserMenu(true));
@@ -34,12 +35,12 @@ const UserProfileBtn = () => {
 
   return (
     <>
-      <Box
+      <Stack
         ref={UserProfileMenuRef}
         onClick={handleUserProfileMenu}
         component={"div"}
         sx={{
-          cursor:'pointer'
+          cursor: "pointer",
         }}
       >
         <img
@@ -52,7 +53,7 @@ const UserProfileBtn = () => {
           }}
           src={data?.user?.image}
         />
-      </Box>
+      </Stack>
       <Popover
         disablePortal
         open={userMenu}
@@ -70,10 +71,9 @@ const UserProfileBtn = () => {
         PaperProps={{
           elevation: 3,
           sx: {
-            p: 1,
+            p: 0.5,
             mt: 1,
             zIndex: 100,
-            width: "200px",
             borderRadius: 2,
             overflow: "hidden",
             backgroundColor: "#fff",
@@ -94,7 +94,6 @@ const UserProfileBtn = () => {
             }}
           >
             <ListItemIcon>
-              <Box component={"div"}>
                 <img
                   referrerPolicy="no-referrer"
                   className="!bg-indigo-500"
@@ -105,7 +104,6 @@ const UserProfileBtn = () => {
                   }}
                   src={data?.user?.image}
                 />
-              </Box>
             </ListItemIcon>
             <ListItemText
               sx={{
@@ -117,49 +115,6 @@ const UserProfileBtn = () => {
               {data?.user?.name}
             </ListItemText>
           </MenuItem>
-          {/* <MenuItem
-            sx={{
-              borderRadius: 2,
-              "&:hover": {
-                backgroundColor: `#f6f5f4`,
-              },
-            }}
-          >
-            <ListItemIcon>
-              <ContentCopy fontSize="small" />
-            </ListItemIcon>
-            <ListItemText
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 14,
-                },
-              }}
-            >
-              Settings
-            </ListItemText>
-          </MenuItem>
-          <MenuItem
-            sx={{
-              borderRadius: 2,
-              "&:hover": {
-                backgroundColor: `#f6f5f4`,
-              },
-            }}
-          >
-            <ListItemIcon>
-              <ContentPaste fontSize="small" />
-            </ListItemIcon>
-            <ListItemText
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: 14,
-                },
-              }}
-            >
-              Payments
-            </ListItemText>
-          </MenuItem>
-          <Divider /> */}
           <MenuItem
             onClick={() => signOut()}
             sx={{

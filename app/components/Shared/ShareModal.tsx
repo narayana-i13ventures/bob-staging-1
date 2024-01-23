@@ -32,7 +32,7 @@ import { useLazyGetThinkbeyondSharedUsersQuery } from "@/lib/redux/ThinkbeyondAp
 const ShareModal = (props: any) => {
   const dispatch = useDispatch();
   const { data }: any = useSession();
-  const { ShareOpen }:any = useSelector(selectApp);
+  const { ShareOpen }: any = useSelector(selectApp);
 
   const [status, setStatus] = useState({
     loading: false,
@@ -52,17 +52,6 @@ const ShareModal = (props: any) => {
     },
   ] = useLazyGetSharedUsersProjectQuery();
 
-  // const [
-  //   getThinkbeyondSharedUsers,
-  //   {
-  //     data: thinkbeyond_shared_users,
-  //     isLoading: thinkbeyond_loading_shared_users,
-  //     isFetching: thinkbeyond_fetching_shared_users,
-  //     isError: thinkbeyond_error_shared_users,
-  //     isSuccess: thinkbeyond_shared_users_success,
-  //   },
-  // ] = useLazyGetThinkbeyondSharedUsersQuery();
-
   const [
     getProjectById,
     {
@@ -74,20 +63,13 @@ const ShareModal = (props: any) => {
     },
   ] = useLazyGetProjectByIdQuery();
 
+  //Get Shared Users and Project By Id
   useEffect(() => {
     if (ShareOpen?.data !== "" && ShareOpen?.open) {
       getShareUsersProject({
         projectId: ShareOpen?.data?.projectId,
         userId: data?.user?.user_id,
       });
-      // if (ShareOpen?.type === "project") {
-      // }
-      // if (ShareOpen?.type === "thinkbeyond") {
-      //   getThinkbeyondSharedUsers({
-      //     projectId: ShareOpen?.data?.projectId,
-      //     userId: data?.user?.user_id,
-      //   });
-      // }
       getProjectById({
         projectId: ShareOpen?.data?.projectId,
         userId: data?.user?.user_id,
@@ -95,14 +77,10 @@ const ShareModal = (props: any) => {
     }
   }, [ShareOpen?.data?.projectId, data?.user?.user_id, ShareOpen?.open]);
 
+  //Set Shared Users
   useEffect(() => {
     if (ShareOpen?.data !== "") {
       setSharedUsers(shared_users);
-      // if (ShareOpen?.type === "project") {
-      // }
-      // if (ShareOpen?.type === "thinkbeyond") {
-      //   setSharedUsers(thinkbeyond_shared_users);
-      // }
     }
   }, [
     shared_users,
@@ -110,13 +88,9 @@ const ShareModal = (props: any) => {
     fetching_shared_users,
     error_shared_users,
     shared_users_success,
-    // thinkbeyond_shared_users,
-    // thinkbeyond_loading_shared_users,
-    // thinkbeyond_fetching_shared_users,
-    // thinkbeyond_error_shared_users,
-    // thinkbeyond_shared_users_success,
   ]);
 
+  //Set Status
   useEffect(() => {
     if (ShareOpen?.data !== "") {
       setStatus({
@@ -124,31 +98,16 @@ const ShareModal = (props: any) => {
         error: error_shared_users,
         success: shared_users_success,
       });
-      // if (ShareOpen?.type === "project") {
-      // }
-      // if (ShareOpen?.type === "thinkbeyond") {
-      //   setStatus({
-      //     loading: thinkbeyond_fetching_shared_users,
-      //     error: thinkbeyond_error_shared_users,
-      //     success: thinkbeyond_shared_users_success,
-      //   });
-      // }
     }
   }, [
     loading_shared_users,
     fetching_shared_users,
     error_shared_users,
     shared_users_success,
-    // thinkbeyond_fetching_shared_users,
-    // thinkbeyond_error_shared_users,
-    // thinkbeyond_shared_users_success,
   ]);
 
   const retry = () => {
-    if (
-      // ShareOpen?.type === "project" &&
-      ShareOpen?.data?.projectId !== ""
-    ) {
+    if (ShareOpen?.data?.projectId !== "") {
       getShareUsersProject({
         projectId: ShareOpen?.data?.projectId,
         userId: data?.user?.user_id,
@@ -158,20 +117,8 @@ const ShareModal = (props: any) => {
         userId: data?.user?.user_id,
       });
     }
-    // if (
-    //   ShareOpen?.type === "thinkbeyond" &&
-    //   ShareOpen?.data?.projectId !== ""
-    // ) {
-    //   getThinkbeyondSharedUsers({
-    //     projectId: ShareOpen?.data?.projectId,
-    //     userId: data?.user?.user_id,
-    //   });
-    //   getProjectById({
-    //     projectId: ShareOpen?.data?.projectId,
-    //     userId: data?.user?.user_id,
-    //   });
-    // }
   };
+
   const closeProjectShareModal = () => {
     dispatch(
       appSlice.actions.toggleShareModal({ open: false, data: "", type: "" })

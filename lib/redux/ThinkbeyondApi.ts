@@ -220,6 +220,16 @@ export const thinkbeyondSlice = createApi({
         } catch {}
       },
     }),
+    prefillFuture2: builder.mutation({
+      query: ({ projectId, userId }) => ({
+        url: `/v1/think_beyond/farfuture2`,
+        method: "POST",
+        body: JSON.stringify({
+          user_id: userId,
+          project_id: projectId,
+        }),
+      }),
+    }),
     getThinkbeyondSharedUsers: builder.query({
       query: ({ userId, projectId }: any) => ({
         url: `/v1/think_beyond/shared_with?user_id=${userId}&project_id=${projectId}`,
@@ -260,8 +270,11 @@ export const {
   useNextThinknbeyondCardMutation,
   useBobSuggestionMutation,
   usePrefillFuture3Mutation,
+  usePrefillFuture2Mutation,
   useLazyGetThinkbeyondSharedUsersQuery,
   useShareThinkbeyondMutation,
   useUnshareThinkbeyondMutation,
   useSelectThinkbeyondCardMutation
 } = thinkbeyondSlice;
+
+

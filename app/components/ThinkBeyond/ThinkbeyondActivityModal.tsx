@@ -20,16 +20,21 @@ import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import { useSession } from "next-auth/react";
 import {
   useNextThinknbeyondCardMutation,
+  usePrefillFuture2Mutation,
   usePrefillFuture3Mutation,
 } from "@/lib/redux/ThinkbeyondApi";
 import { useParams } from "next/navigation";
 import { selectedThinkbeyond } from "@/lib/redux/slices/SelectedSlice";
-import { usePrefillFutuer1BMCMutation } from "@/lib/redux/BMCApi";
+import {
+  usePrefillFutuer1BMCMutation,
+  usePrefillFutuer2BMCMutation,
+  usePrefillFutuer3BMCMutation,
+} from "@/lib/redux/BMCApi";
 const ThinkbeyondActivityModal = () => {
   const dispatch = useDispatch();
   const { data }: any = useSession();
   const { projectId } = useParams();
-  const { ThinkbeyondActivity }:any= useSelector(selectApp);
+  const { ThinkbeyondActivity }: any = useSelector(selectApp);
   const [status, setStatus] = useState({
     loading: false,
     error: false,
@@ -52,6 +57,14 @@ const ThinkbeyondActivityModal = () => {
       isError: prefillFuture3ThinkbeyondError,
     },
   ] = usePrefillFuture3Mutation();
+  const [
+    prefillFuture2Thinkbeyond,
+    {
+      isSuccess: prefillFuture2ThinkbeyondSuccess,
+      isLoading: prefillFuture2ThinkbeyondLoading,
+      isError: prefillFuture2ThinkbeyondError,
+    },
+  ] = usePrefillFuture2Mutation();
 
   const [
     prefillFuture1BMC,
@@ -61,10 +74,26 @@ const ThinkbeyondActivityModal = () => {
       isError: prefillFuture1Error,
     },
   ] = usePrefillFutuer1BMCMutation();
+  const [
+    prefillFuture2BMC,
+    {
+      isSuccess: prefillFuture2BMCSuccess,
+      isLoading: prefillFuture2BMCLoading,
+      isError: prefillFuture2Error,
+    },
+  ] = usePrefillFutuer2BMCMutation();
+  const [
+    prefillFuture3BMC,
+    {
+      isSuccess: prefillFuture3BMCSuccess,
+      isLoading: prefillFuture3BMCLoading,
+      isError: prefillFuture3Error,
+    },
+  ] = usePrefillFutuer3BMCMutation();
 
   useEffect(() => {
     setStatus({
-      loading: prefillFuture3ThinkbeyondLoading || prefillFuture1BMCLoading,
+      loading: prefillFuture3ThinkbeyondLoading || prefillFuture1BMCLoading ||prefillFuture2BMCLoading,
       error: prefillFuture3ThinkbeyondError || prefillFuture1Error,
       success: prefillFuture3ThinkbeyondSuccess && prefillFuture1BMCSuccess,
     });
@@ -101,6 +130,23 @@ const ThinkbeyondActivityModal = () => {
         projectId,
       });
       prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
+    } else if (
+      ThinkbeyondActivity?.open &&
+      ThinkbeyondActivity?.type === "future2_microframeworks"
+    ) {
+      prefillFuture2BMC({
+        userId: data?.user?.user_id,
+        projectId,
+      });
+    } else if (
+      ThinkbeyondActivity?.open &&
+      ThinkbeyondActivity?.type === "future3_microframeworks"
+    ) {
+      prefillFuture3BMC({
+        userId: data?.user?.user_id,
+        projectId,
+      });
+      prefillFuture2Thinkbeyond({ userId: data?.user?.user_id, projectId });
     }
   }, [
     projectId,
@@ -108,36 +154,27 @@ const ThinkbeyondActivityModal = () => {
     ThinkbeyondActivity?.open,
     ThinkbeyondActivity?.type,
   ]);
-
-  const retryPrefillBMC = () => {
+  const retry = () => {
     if (
       ThinkbeyondActivity?.open &&
       ThinkbeyondActivity?.type === "future1_microframeworks"
     ) {
-      prefillFuture1BMC({
-        userId: data?.user?.user_id,
-        projectId,
-      });
-    }
-  };
-  const retryThinkbeyondFuture = () => {
-    if (
-      ThinkbeyondActivity?.open &&
-      ThinkbeyondActivity?.type === "future1_microframeworks"
-    ) {
-      prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
-    }
-  };
-  const fullRetry = () => {
-    if (
-      ThinkbeyondActivity?.open &&
-      ThinkbeyondActivity?.type === "future1_microframeworks"
-    ) {
-      prefillFuture1BMC({
-        userId: data?.user?.user_id,
-        projectId,
-      });
-      prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
+      if (prefillFuture1Error && prefillFuture3ThinkbeyondError) {
+        prefillFuture1BMC({
+          userId: data?.user?.user_id,
+          projectId,
+        });
+        prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
+      }
+      if (!prefillFuture1Error && prefillFuture3ThinkbeyondError) {
+        prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
+      }
+      if (prefillFuture1Error && !prefillFuture3ThinkbeyondError) {
+        prefillFuture1BMC({
+          userId: data?.user?.user_id,
+          projectId,
+        });
+      }
     }
   };
   return (
@@ -159,21 +196,6 @@ const ThinkbeyondActivityModal = () => {
           },
         }}
       >
-        {/* <DialogTitle
-          component={"div"}
-          sx={{
-            p: 2,
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-          }}
-        >
-          <IconButton size="small" onClick={closeThinkbeyondActivity}>
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle> */}
-
-        {/* <Divider /> */}
         <DialogContent
           sx={{
             p: 2,
@@ -199,7 +221,7 @@ const ThinkbeyondActivityModal = () => {
               Bob
             </Typography>
           </Stack>
-          <CircularProgress size={18} sx={{ mb: 5 }} />
+          {status?.loading && <CircularProgress size={18} sx={{ mb: 5 }} />}
           <Typography variant="body1">
             Thank you {data?.user?.name} for your inputs. It's time to relax
             while bob works on your project. You will receive an email when Bob
@@ -212,68 +234,13 @@ const ThinkbeyondActivityModal = () => {
             justifyContent={"center"}
             sx={{ mt: 5 }}
           >
-            {prefillFuture1Error &&
-              !prefillFuture3ThinkbeyondError &&
-              !status?.loading && (
-                <Button
-                  onClick={retryPrefillBMC}
-                  size="small"
-                  variant="contained"
-                >
-                  Retry
-                </Button>
-              )}
-
-            {!prefillFuture1Error &&
-              prefillFuture3ThinkbeyondError &&
-              !status?.loading && (
-                <Button
-                  onClick={retryThinkbeyondFuture}
-                  size="small"
-                  variant="contained"
-                >
-                  Retry
-                </Button>
-              )}
-            {prefillFuture1Error &&
-              prefillFuture3ThinkbeyondError &&
-              !status?.loading && (
-                <Button onClick={fullRetry} size="small" variant="contained">
-                  Retry
-                </Button>
-              )}
+            {!status?.loading && status?.error && (
+              <Button onClick={retry} size="small" variant="contained">
+                Retry
+              </Button>
+            )}
           </Stack>
         </DialogContent>
-        {/* <Divider />
-        <DialogActions
-          sx={{
-            p: 2,
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-          }}
-        >
-          <Button
-            disabled={nextCardTransition}
-            variant="outlined"
-            onClick={goToMicroframeworks}
-          >
-            Continue To{" "}
-            {ThinkbeyondActivity?.type === "future1_microframeworks"
-              ? "Future 1 Micro Frameworks"
-              : ""}
-          </Button>
-          <Button
-            disabled={nextCardTransition}
-            variant="contained"
-            onClick={goToNextFuture}
-          >
-            Go To{" "}
-            {ThinkbeyondActivity?.type === "future1_microframeworks"
-              ? "Future 3"
-              : ""}
-          </Button>
-        </DialogActions> */}
       </Dialog>
     </>
   );

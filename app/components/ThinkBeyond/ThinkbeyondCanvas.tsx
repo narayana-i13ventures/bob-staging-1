@@ -6,7 +6,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ThinkbeyondCard from "./ThinkbeyondCard";
 import { useLazyGetThinkbeyondCanvasQuery } from "@/lib/redux/ThinkbeyondApi";
 import { useParams } from "next/navigation";
@@ -15,18 +15,62 @@ import ThinkBeyondSettings from "./ThinkbeyondSettings";
 import ShareModal from "../Shared/ShareModal";
 import ThinkbeyondNewModal from "./ThinkbeyondNewModal";
 import ThinkbeyondActivityModal from "./ThinkbeyondActivityModal";
+import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
 
 const ThinkbeyondCanvas = () => {
-  const { data }: any = useSession();
   const { projectId } = useParams();
+  const { data }: any = useSession();
+
   const [
     getThinkbeyondCanvas,
-    { data: ThinkbeyondCanvasCards, isLoading, isError, isSuccess, isFetching },
+    {
+      data: ThinkbeyondCanvasCards,
+      isLoading: thinkbeyond_canvas_loading,
+      isError: thinkbeyond_canvas_error,
+      isSuccess: thinkbeyond_canvas_success,
+      isFetching: thinkbeyond_canvas_fetching,
+    },
   ] = useLazyGetThinkbeyondCanvasQuery();
+
+  const [
+    getProjectById,
+    {
+      data: project_data,
+      isLoading: project_data_loading,
+      isError: project_data_error,
+      isFetching: project_data_fetching,
+      isSuccess: project_data_success,
+    },
+  ] = useLazyGetProjectByIdQuery();
+
+  const [status, setStatus] = useState({
+    loading: true,
+    error: false,
+    success: false,
+  });
 
   useEffect(() => {
     getThinkbeyondCanvas({ projectId, userId: data?.user?.user_id });
-  }, [projectId]);
+    getProjectById({
+      projectId: projectId,
+      userId: data?.user?.user_id,
+    });
+  }, [projectId, data?.user?.user_id]);
+
+  useEffect(() => {
+    setStatus({
+      loading: thinkbeyond_canvas_loading || project_data_loading,
+      error: thinkbeyond_canvas_error || project_data_error,
+      success: thinkbeyond_canvas_success || project_data_success,
+    });
+  }, [
+    project_data_error,
+    project_data_loading,
+    project_data_success,
+    thinkbeyond_canvas_error,
+    thinkbeyond_canvas_loading,
+    thinkbeyond_canvas_success,
+  ]);
 
   const retry = () => {
     getThinkbeyondCanvas({ projectId, userId: data?.user?.user_id });
@@ -34,7 +78,7 @@ const ThinkbeyondCanvas = () => {
 
   return (
     <>
-      {!isError && isSuccess && !isFetching && (
+      {!status?.loading && status?.success && !status?.error && (
         <Stack
           component={"div"}
           flexDirection={"column"}
@@ -286,11 +330,14 @@ const ThinkbeyondCanvas = () => {
           </Box>
           <ShareModal />
           {/* <ThinkBeyondSettings /> */}
-          <ThinkbeyondNewModal ThinkbeyondCards={ThinkbeyondCanvasCards} />
+          <ThinkbeyondNewModal
+            ThinkbeyondCards={ThinkbeyondCanvasCards}
+            project={project_data}
+          />
           <ThinkbeyondActivityModal />
         </Stack>
       )}
-      {isFetching && !isError && (
+      {status?.loading && !status?.error && (
         <Stack
           component={"div"}
           flexDirection={"column"}
@@ -305,7 +352,7 @@ const ThinkbeyondCanvas = () => {
           <CircularProgress />
         </Stack>
       )}
-      {isError && !isSuccess && !isFetching && (
+      {status?.error && !status?.success && !status?.loading && (
         <Stack
           component={"div"}
           flexDirection={"column"}

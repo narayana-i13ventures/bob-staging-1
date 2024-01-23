@@ -99,14 +99,48 @@ const Microframeworks = () => {
                 sx={{ width: "100%" }}
                 spacing={3}
               >
-                {canvas_data?.frameworks?.[0]?.canvases
-                  ?.filter(
-                    (canvas: any) =>
-                      canvas.canvas_type === 2 || canvas.canvas_type === 3
-                  )
-                  ?.map((canvas: any, index: any) => {
-                    return <MicroframeworkCard key={index} canvas={canvas} />;
-                  })}
+                {futureId === "Future1" && (
+                  <>
+                    {canvas_data?.future_1
+                      ?.filter(
+                        (canvas: any) =>
+                          canvas.canvas_type === 2 || canvas.canvas_type === 3
+                      )
+                      ?.map((canvas: any, index: any) => {
+                        return (
+                          <MicroframeworkCard key={index} canvas={canvas} />
+                        );
+                      })}
+                  </>
+                )}
+                {futureId === "Future2" && (
+                  <>
+                    {canvas_data?.future_2
+                      ?.filter(
+                        (canvas: any) =>
+                          canvas.canvas_type === 2 || canvas.canvas_type === 3
+                      )
+                      ?.map((canvas: any, index: any) => {
+                        return (
+                          <MicroframeworkCard key={index} canvas={canvas} />
+                        );
+                      })}
+                  </>
+                )}
+                {futureId === "Future3" && (
+                  <>
+                    {canvas_data?.future_3
+                      ?.filter(
+                        (canvas: any) =>
+                          canvas.canvas_type === 2 || canvas.canvas_type === 3
+                      )
+                      ?.map((canvas: any, index: any) => {
+                        return (
+                          <MicroframeworkCard key={index} canvas={canvas} />
+                        );
+                      })}
+                  </>
+                )}
               </Stack>
             )}
             {canvas_data_loading && !canvas_data_error && (

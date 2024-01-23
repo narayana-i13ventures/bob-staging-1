@@ -32,7 +32,7 @@ import { useParams, usePathname } from "next/navigation";
 import {
   BMCSlice,
   useNextFuture1BMCCardMutation,
-  useUpdateFuture1BMCCardMutation,
+  useUpdateBMCCardMutation,
 } from "@/lib/redux/BMCApi";
 import { useLazyGetThinkbeyondCanvasQuery } from "@/lib/redux/ThinkbeyondApi";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
@@ -47,30 +47,22 @@ import {
   useCreateCommentMutation,
   useLazyGetAllCommentsQuery,
 } from "@/lib/redux/CommentApi";
-const CanvasModal = () => {
+const CanvasModal = (props: any) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const pathName = usePathname();
+  const { project, canvas } = props;
   const { data }: any = useSession();
   const { projectId, futureId } = useParams();
   const [activeBubble, setActiveBubble] = useState("bob");
   const Future1BMCCard = useSelector(selectedFuture1BMCCard);
   const [selectedCard, setSelectedCard] = useState<any>(null);
-  const [CardChat, setCardChat] = useState<any>([]);
   const [
     getChat,
     { data: chat, isLoading: chat_loading, isFetching: chat_fetching },
   ] = useLazyGetChatQuery();
+
   const [saveChat, { isLoading: save_chat_loading }] = useSaveChatMutation();
-  const [
-    getProjectById,
-    {
-      data: project_data,
-      isLoading: project_data_loading,
-      isError: project_data_error,
-      isFetching: project_data_fetching,
-    },
-  ] = useLazyGetProjectByIdQuery();
 
   const { canvasModalOpen, bobThinking, bobGenerating }: any =
     useSelector(selectApp);
@@ -83,6 +75,7 @@ const CanvasModal = () => {
       isError: comment_error,
     },
   ] = useCreateCommentMutation();
+
   const [
     getComments,
     {
@@ -97,75 +90,16 @@ const CanvasModal = () => {
     futureId === "Future1"
       ? 1
       : futureId === "Future2"
-        ? 2
-        : futureId === "Future3"
-          ? 3
-          : 0;
-  useEffect(() => {
-    if (selectedCard !== null && canvasModalOpen) {
-      getProjectById({
-        projectId: projectId,
-        userId: data?.user?.user_id,
-      });
-    }
-  }, [
-    projectId,
-    data?.user?.user_id,
-    canvasModalOpen,
-    selectedCard?.cardNumber,
-  ]);
+      ? 2
+      : futureId === "Future3"
+      ? 3
+      : 0;
 
   const [cardStatus, setCardStatus] = useState({
     loading: false,
     error: false,
     success: true,
   });
-
-  useEffect(() => {
-    if (
-      pathName.includes("/Future1/Microframeworks/BMC") &&
-      selectedCard !== null &&
-      canvasModalOpen &&
-      project_data?.project?.owner?.[0]?.user_id !== undefined
-    ) {
-      getChat({
-        userId: project_data?.project?.owner?.[0]?.user_id,
-        projectId,
-        future: currentFuture,
-        canvas_type: 2,
-        cardNumber: selectedCard?.cardNumber,
-      });
-      getComments({
-        userId: data?.user?.user_id,
-        projectId,
-        future: currentFuture,
-        canvas_type: 2,
-        cardNumber: selectedCard?.cardNumber,
-      });
-    }
-  }, [
-    currentFuture,
-    projectId,
-    selectedCard?.cardNumber,
-    canvasModalOpen,
-    project_data?.project?.owner?.[0]?.user_id,
-  ]);
-
-  useEffect(() => {
-    if (
-      pathName.includes("/Future1/Microframeworks/BMC") &&
-      selectedCard !== null
-    ) {
-      setCardChat(chat);
-    }
-  }, [
-    currentFuture,
-    data?.user?.user_id,
-    projectId,
-    selectedCard?.cardNumber,
-    chat,
-    dispatch,
-  ]);
 
   const [nextCardTransition, setNextCardTransition] = useState(false);
 
@@ -182,20 +116,20 @@ const CanvasModal = () => {
   ] = useNextFuture1BMCCardMutation();
 
   const [
-    updateFuture1BMCCard,
+    updateBMCCard,
     {
       isError: UpdateFuture1BMCError,
       isSuccess: UpdateFuture1BMCSuccess,
       isLoading: UpdateFuture1BMCLoading,
     },
-  ] = useUpdateFuture1BMCCardMutation();
+  ] = useUpdateBMCCardMutation();
 
   useEffect(() => {
     getThinkbeyondCanvas({ projectId, userId: data?.user?.user_id });
   }, [projectId, data?.user?.user_id]);
 
   useEffect(() => {
-    if (pathName.includes("/Future1/Microframeworks/BMC")) {
+    if (pathName.includes("BMC")) {
       setCardStatus({
         error: UpdateFuture1BMCError,
         loading: UpdateFuture1BMCLoading,
@@ -205,7 +139,7 @@ const CanvasModal = () => {
   }, [UpdateFuture1BMCError, UpdateFuture1BMCSuccess, UpdateFuture1BMCLoading]);
 
   useEffect(() => {
-    if (pathName.includes("/Future1/Microframeworks/BMC")) {
+    if (pathName.includes("BMC")) {
       setSelectedCard(Future1BMCCard);
     } else {
       setSelectedCard(null);
@@ -214,11 +148,94 @@ const CanvasModal = () => {
       setSelectedCard(null);
     };
   }, [pathName, Future1BMCCard]);
+
   useEffect(() => {
-    if (!project_data?.project?.is_owner && canvasModalOpen) {
-      setActiveBubble("comment");
+    if (canvasModalOpen === true) {
+      if (!project?.project?.is_owner) {
+        setActiveBubble("comment");
+      } else {
+        setActiveBubble("bob");
+      }
     }
-  }, [project_data?.project?.is_owner, canvasModalOpen]);
+  }, [project?.project?.is_owner, canvasModalOpen]);
+
+  useEffect(() => {
+    if (
+      selectedCard !== null &&
+      selectedCard !== undefined &&
+      canvasModalOpen === true
+    ) {
+      if (pathName.includes("/Future1/Microframeworks/BMC")) {
+        getChat({
+          userId: data?.user?.user_id,
+          projectId,
+          future: currentFuture,
+          canvas_type: 2,
+          cardNumber: selectedCard?.cardNumber,
+        });
+
+        getComments({
+          userId: data?.user?.user_id,
+          projectId,
+          future: currentFuture,
+          canvas_type: 2,
+          cardNumber: selectedCard?.cardNumber,
+        });
+      }
+      if (pathName.includes("/Future1/Microframeworks/CVP")) {
+        getChat({
+          userId: data?.user?.user_id,
+          projectId,
+          future: 1,
+          canvas_type: 3,
+          cardNumber: selectedCard?.cardNumber,
+        });
+
+        getComments({
+          userId: data?.user?.user_id,
+          projectId,
+          future: 1,
+          canvas_type: 3,
+          cardNumber: selectedCard?.cardNumber,
+        });
+      }
+      if (pathName.includes("/Future2/Microframeworks/CVP")) {
+        getChat({
+          userId: data?.user?.user_id,
+          projectId,
+          future: 2,
+          canvas_type: 3,
+          cardNumber: selectedCard?.cardNumber,
+        });
+
+        getComments({
+          userId: data?.user?.user_id,
+          projectId,
+          future: 2,
+          canvas_type: 3,
+          cardNumber: selectedCard?.cardNumber,
+        });
+      }
+      if (pathName.includes("/Future3/Microframeworks/CVP")) {
+        getChat({
+          userId: data?.user?.user_id,
+          projectId,
+          future: 3,
+          canvas_type: 3,
+          cardNumber: selectedCard?.cardNumber,
+        });
+
+        getComments({
+          userId: data?.user?.user_id,
+          projectId,
+          future: 3,
+          canvas_type: 3,
+          cardNumber: selectedCard?.cardNumber,
+        });
+      }
+    }
+  }, [selectedCard?.cardNumber, projectId, data?.user?.user_id]);
+
   const closeCanvasModal = () => {
     setActiveBubble("bob");
     dispatch(appSlice.actions.toggleCanvasModalOpen(false));
@@ -284,7 +301,7 @@ const CanvasModal = () => {
       if (message === "" || bobThinking) {
         return;
       }
-      if (pathName.includes("/Future1/Microframeworks/BMC")) {
+      if (pathName.includes("BMC")) {
         saveChat({
           userId: data?.user?.user_id,
           projectId,
@@ -314,13 +331,14 @@ const CanvasModal = () => {
       }
     }
   };
+
   const postUserComment = (content: any) => {
     if (selectedCard !== undefined) {
       if (content === "") {
         return;
       }
 
-      if (pathName.includes("/Future1/Microframeworks/BMC")) {
+      if (pathName.includes("BMC")) {
         postComment({
           userId: data?.user?.user_id,
           projectId: projectId,
@@ -337,9 +355,34 @@ const CanvasModal = () => {
     const ResponseCard: any = { ...selectedCard };
     ResponseCard.loadingKeyPoints = true;
     ResponseCard.keyPoints = "";
-    if (pathName.includes("/Future1/Microframeworks/BMC")) {
+    if (pathName.includes("BMC")) {
+      if (currentFuture === 1) {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture1BMCCard(ResponseCard)
+        );
+      }
       dispatch(
-        selectedCardsSlice.actions.updateSelectedFuture1BMCCard(ResponseCard)
+        BMCSlice.util.updateQueryData(
+          "GetFuture1BMCCanvas",
+          {
+            projectId: projectId,
+            future: currentFuture,
+            userId: data?.user?.user_id,
+          },
+          (draft: any) => {
+            return draft.map((card: any) => {
+              if (card.cardNumber === ResponseCard?.cardNumber) {
+                return {
+                  ...card,
+                  loadingKeyPoints: true,
+                  keyPoints: "",
+                };
+              } else {
+                return card;
+              }
+            });
+          }
+        )
       );
       streamResponse(ResponseCard, true, next, null);
     }
@@ -360,7 +403,7 @@ const CanvasModal = () => {
       project_id: projectId,
       future: currentFuture,
       card_number: ResponseCard?.cardNumber,
-      chat: CardChat.map((message: any) => ({
+      chat: chat?.map((message: any) => ({
         role: message?.role_text,
         content: message?.chat_text,
         time: message?.created_at,
@@ -372,7 +415,7 @@ const CanvasModal = () => {
         streamBody = {
           futureData: getFutureData(),
           chat: [
-            ...CardChat.map((message: any) => ({
+            ...chat?.map((message: any) => ({
               role: message?.role_text,
               content: message?.chat_text,
               time: message?.created_at,
@@ -380,7 +423,7 @@ const CanvasModal = () => {
             message,
           ],
         };
-        if (pathName.includes("/Future1/Microframeworks/BMC")) {
+        if (pathName.includes("BMC")) {
           dispatch(
             chatSlice.util.updateQueryData(
               "getChat",
@@ -427,12 +470,14 @@ const CanvasModal = () => {
             if (keypoints) {
               fullKeypoints = fullKeypoints + suggestion;
               ResponseCard.keyPoints = fullKeypoints;
-              if (pathName.includes("/Future1/Microframeworks/BMC")) {
-                dispatch(
-                  selectedCardsSlice.actions.updateFuture1BMCKeyPoints(
-                    suggestion
-                  )
-                );
+              if (pathName.includes("BMC")) {
+                if (currentFuture === 1) {
+                  dispatch(
+                    selectedCardsSlice.actions.updateFuture1BMCKeyPoints(
+                      suggestion
+                    )
+                  );
+                }
                 dispatch(
                   BMCSlice.util.updateQueryData(
                     "GetFuture1BMCCanvas",
@@ -446,6 +491,7 @@ const CanvasModal = () => {
                         if (card.cardNumber === ResponseCard?.cardNumber) {
                           return {
                             ...card,
+                            loadingKeyPoints: false,
                             keyPoints: fullKeypoints,
                           };
                         } else {
@@ -457,7 +503,7 @@ const CanvasModal = () => {
                 );
               }
             } else {
-              if (pathName.includes("/Future1/Microframeworks/BMC")) {
+              if (pathName.includes("BMC")) {
                 fullMessage = fullMessage + suggestion;
                 dispatch(
                   chatSlice.util.updateQueryData(
@@ -494,8 +540,8 @@ const CanvasModal = () => {
           console.log(error);
           if (keypoints) {
             ResponseCard.loadingKeyPoints = false;
-            if (pathName.includes("/Future1/Microframeworks/BMC")) {
-              updateFuture1BMCCard({
+            if (pathName.includes("BMC")) {
+              updateBMCCard({
                 card: ResponseCard,
                 projectId,
                 currentFuture,
@@ -507,51 +553,9 @@ const CanvasModal = () => {
         onclose: function () {
           console.log("connection closed");
           dispatch(appSlice.actions.toggleBobThinking(false));
-          if (pathName.includes("/Future1/Microframeworks/BMC")) {
-            // if (next && ResponseCard?.cardName !== "Revenue Streams") {
-            //   setNextCardTransition(true);
-            //   nextFuture1BMCCard({
-            //     projectId,
-            //     future: currentFuture,
-            //     cardNumber: ResponseCard?.cardNumber,
-            //     userId: data?.user?.user_id,
-            //   })
-            //     .unwrap()
-            //     .then((response: any) => {
-            //       setNextCardTransition(false);
-            //       dispatch(appSlice.actions.toggleBobGenerating(false));
-            //     })
-            //     .catch((error: any) => {
-            //       setNextCardTransition(false);
-            //     });
-            //   // updateFuture1BMCCard({
-            //   //   card: ResponseCard,
-            //   //   projectId,
-            //   //   future: currentFuture,
-            //   //   userId: data?.user?.user_id,
-            //   // })
-            //   //   .unwrap()
-            //   //   .then((response: any) => {
-            //   //     fullKeypoints = "";
-            //   //     dispatch(appSlice.actions.toggleBobGenerating(false));
-            //   //     setNextCardTransition(true);
-            //   //     nextFuture1BMCCard({
-            //   //       projectId,
-            //   //       future: currentFuture,
-            //   //       cardNumber: ResponseCard?.cardNumber,
-            //   //       userId: data?.user?.user_id,
-            //   //     })
-            //   //       .unwrap()
-            //   //       .then((response: any) => {
-            //   //         setNextCardTransition(false);
-            //   //       })
-            //   //       .catch((error: any) => {
-            //   //         setNextCardTransition(false);
-            //   //       });
-            //   //   });
-            // }
-            if (!next && keypoints) {
-              updateFuture1BMCCard({
+          if (pathName.includes("BMC")) {
+            if (keypoints) {
+              updateBMCCard({
                 card: ResponseCard,
                 projectId,
                 future: currentFuture,
@@ -565,8 +569,7 @@ const CanvasModal = () => {
                 .catch((error: any) => {
                   dispatch(appSlice.actions.toggleBobGenerating(false));
                 });
-            }
-            if (!next && !keypoints) {
+            } else {
               saveChat({
                 userId: data?.user?.user_id,
                 projectId,
@@ -628,6 +631,46 @@ const CanvasModal = () => {
       .catch((error: any) => {
         setNextCardTransition(false);
       });
+  };
+  const testNextCard = () => {
+    if (pathName.includes("/Future1/Microframeworks/BMC")) {
+      if (selectedCard?.cardNumber + 1 < 9) {
+        dispatch(
+          selectedCardsSlice.actions.setSelectedFuture1BMCCard(
+            canvas?.find(
+              (canvasCard: any) =>
+                canvasCard?.cardNumber === selectedCard?.cardNumber + 1
+            )
+          )
+        );
+      } else {
+        dispatch(
+          selectedCardsSlice.actions.setSelectedFuture1BMCCard(
+            canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 0)
+          )
+        );
+      }
+    }
+  };
+  const testPreviousCard = () => {
+    if (pathName.includes("/Future1/Microframeworks/BMC")) {
+      if (selectedCard?.cardNumber - 1 >= 0) {
+        dispatch(
+          selectedCardsSlice.actions.setSelectedFuture1BMCCard(
+            canvas?.find(
+              (canvasCard: any) =>
+                canvasCard?.cardNumber === selectedCard?.cardNumber - 1
+            )
+          )
+        );
+      } else {
+        dispatch(
+          selectedCardsSlice.actions.setSelectedFuture1BMCCard(
+            canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 8)
+          )
+        );
+      }
+    }
   };
   return (
     <>
@@ -708,69 +751,6 @@ const CanvasModal = () => {
                       ))}
                   </ul>
                 ) : (
-                  // <>
-                  //   {!cardStatus?.loading && !cardStatus?.error && (
-                  //     <>
-                  //       {selectedCard?.keyPoints !== "" &&
-                  //       selectedCard?.keyPoints !== null ? (
-                  //         <ul
-                  //           style={{
-                  //             margin: "0px",
-                  //             padding: "0px 0px 0px 20px",
-                  //           }}
-                  //         >
-                  //           {selectedCard?.keyPoints
-                  //             ?.split("--")
-                  //             .filter((keypoint: any) => keypoint !== "")
-                  //             .map((keypoint: any, index: number) => (
-                  //               <li key={index}>
-                  //                 <Typography
-                  //                   variant="body1"
-                  //                   sx={{ fontSize: "14px", mb: 1 }}
-                  //                 >
-                  //                   {keypoint}
-                  //                 </Typography>
-                  //               </li>
-                  //             ))}
-                  //         </ul>
-                  //       ) : (
-                  //         <Typography
-                  //           variant="h6"
-                  //           sx={{
-                  //             my: 5,
-                  //             width: "100%",
-                  //             fontSize: "16PX",
-                  //             textAlign: "center",
-                  //           }}
-                  //         >
-                  //           No Information Available
-                  //         </Typography>
-                  //       )}
-                  //     </>
-                  //   )}
-                  //   {cardStatus?.loading && !cardStatus?.error && (
-                  //     <Stack
-                  //       direction={"column"}
-                  //       flexGrow={1}
-                  //       justifyContent={"center"}
-                  //       alignItems={"center"}
-                  //       sx={{ width: "100%" }}
-                  //     >
-                  //       <CircularProgress />
-                  //     </Stack>
-                  //   )}
-                  //   {!cardStatus?.loading && cardStatus?.error && (
-                  //     <Stack
-                  //       direction={"column"}
-                  //       flexGrow={1}
-                  //       justifyContent={"center"}
-                  //       alignItems={"center"}
-                  //       sx={{ width: "100%" }}
-                  //     >
-                  //       <Typography>Something went Wrong..!</Typography>
-                  //     </Stack>
-                  //   )}
-                  // </>
                   <Stack
                     flexGrow={1}
                     justifyContent={"center"}
@@ -792,21 +772,23 @@ const CanvasModal = () => {
                 }}
               >
                 <Box component={"div"} sx={{ width: "90%", pr: 4 }}>
-                  {activeBubble === "bob" &&
-                    project_data?.project?.is_owner && (
-                      <MessageBox
-                        header={false}
-                        height={1000}
-                        sendMessage={userMessage}
-                        messages={CardChat}
-                        color={`#f6f5f4`}
-                        textbox={project_data?.project?.is_owner}
-                        loading={chat_fetching}
-                        saving={save_chat_loading}
-                      />
-                    )}
+                  {project?.project?.is_owner && (
+                    <>
+                      {activeBubble === "bob" && (
+                        <MessageBox
+                          header={false}
+                          height={1000}
+                          sendMessage={userMessage}
+                          messages={chat}
+                          color={`#f6f5f4`}
+                          textbox={project?.project?.is_owner}
+                          loading={chat_fetching}
+                          saving={save_chat_loading}
+                        />
+                      )}
+                    </>
+                  )}
                   {activeBubble === "comment" && (
-                    // <></>
                     <CommentBox
                       postComment={postUserComment}
                       comments={comments}
@@ -826,16 +808,18 @@ const CanvasModal = () => {
                     pt: 1,
                   }}
                 >
-                  {project_data?.project?.is_owner && (
+                  {project?.project?.is_owner && (
                     <IconButton
                       onClick={() => setActiveBubble("bob")}
                       sx={{
                         p: 1.5,
-                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                          }`,
+                        backgroundColor: `${theme.palette.primary.main}${
+                          activeBubble === "bob" ? "" : "30"
+                        }`,
                         "&:hover": {
-                          backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
-                            }`,
+                          backgroundColor: `${theme.palette.primary.main}${
+                            activeBubble === "bob" ? "" : "30"
+                          }`,
                         },
                       }}
                     >
@@ -851,11 +835,13 @@ const CanvasModal = () => {
                     onClick={() => setActiveBubble("comment")}
                     sx={{
                       p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
-                        }`,
+                      backgroundColor: `${theme.palette.primary.main}${
+                        activeBubble === "comment" ? "" : "30"
+                      }`,
                       "&:hover": {
-                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
-                          }`,
+                        backgroundColor: `${theme.palette.primary.main}${
+                          activeBubble === "comment" ? "" : "30"
+                        }`,
                       },
                     }}
                   >
@@ -866,26 +852,6 @@ const CanvasModal = () => {
                       }}
                     />
                   </IconButton>
-                  {/* <IconButton
-                    sx={{
-                      p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "settings" ? "" : "30"
-                      }`,
-                      "&:hover": {
-                        backgroundColor: `${theme.palette.primary.main}${
-                          activeBubble === "settings" ? "" : "30"
-                        }`,
-                      },
-                    }}
-                  >
-                    <TuneSharpIcon
-                      sx={{
-                        color: `${activeBubble === "settings" ? "white" : ""}`,
-                        fontSize: "25px",
-                      }}
-                    />
-                  </IconButton> */}
                 </Stack>
               </Stack>
             </Stack>
@@ -906,33 +872,51 @@ const CanvasModal = () => {
           <Stack
             direction={"row"}
             alignItems={"center"}
-            justifyContent={"flex-end"}
+            justifyContent={"space-between"}
             sx={{
               width: "100%",
             }}
           >
-            {project_data?.project?.is_owner && (
-              <Button
-                disabled={nextCardTransition || bobGenerating}
-                onClick={() => generateKeypoints(false)}
-                size="small"
-                variant="outlined"
-                color="primary"
-                sx={{ mr: 2 }}
-              >
-                Load Keypoints
-              </Button>
-            )}
             <Button
+              disableElevation
               disabled={nextCardTransition || bobGenerating}
-              // onClick={() => generateKeypoints(true)}
-              onClick={nextCard}
+              onClick={testPreviousCard}
               size="small"
               variant="contained"
               color="primary"
             >
-              Next Card
+              Previous Card
             </Button>
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              justifyContent={"flex-end"}
+            >
+              {project?.project?.is_owner && (
+                <Button
+                  disableElevation
+                  disabled={nextCardTransition || bobGenerating}
+                  onClick={() => generateKeypoints(false)}
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  sx={{ mr: 2 }}
+                >
+                  Load Keypoints
+                </Button>
+              )}
+              <Button
+                disableElevation
+                disabled={nextCardTransition || bobGenerating}
+                // onClick={nextCard}
+                onClick={testNextCard}
+                size="small"
+                variant="contained"
+                color="primary"
+              >
+                Next Card
+              </Button>
+            </Stack>
           </Stack>
         </DialogActions>
       </Dialog>

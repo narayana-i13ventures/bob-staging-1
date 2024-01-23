@@ -26,9 +26,10 @@ import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import { useSession } from "next-auth/react";
 const ProjectDetails = () => {
-  const { data }: any = useSession();
   const dispatch = useDispatch();
-  const { projectDetailsOpen }:any = useSelector(selectApp);
+  const { data }: any = useSession();
+  const { projectDetailsOpen }: any = useSelector(selectApp);
+
   const [editProjectTitle, setEditProjectTitle] = useState({
     focus: true,
     edit: false,
@@ -79,6 +80,7 @@ const ProjectDetails = () => {
       })
     );
   };
+
   const openProjectShare = () => {
     if (project_data?.project?.is_owner) {
       dispatch(
@@ -95,6 +97,7 @@ const ProjectDetails = () => {
       );
     }
   };
+
   const retry = () => {
     if (projectDetailsOpen?.projectId !== "" && projectDetailsOpen?.open) {
       getProjectById(
@@ -121,30 +124,22 @@ const ProjectDetails = () => {
           sx={{
             p: 2,
             display: "flex",
-            justifyContent:
-              !fetch_project_loading &&
-                !fetch_project_error &&
-                !fetching_project
-                ? "space-between"
-                : "flex-end",
             alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          {!fetch_project_loading &&
-            !fetch_project_error &&
-            !fetching_project && (
-              <Typography
-                variant="h6"
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
-                <InfoOutlinedIcon sx={{ mr: 2 }} />
-                Details
-              </Typography>
-            )}
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+          >
+            <InfoOutlinedIcon sx={{ mr: 2 }} fontSize="small" />
+            Details
+          </Typography>
           <IconButton size="small" onClick={closeProjectDetails}>
             <CloseIcon />
           </IconButton>

@@ -9,7 +9,7 @@ interface AppState {
     open: boolean;
     projectId: string;
   };
-  show_projects:String;
+  show_projects: String;
   ShareOpen: {
     open: boolean;
     type: String;
@@ -39,12 +39,12 @@ interface AppState {
   bobThinking: boolean;
   bobGenerating: boolean;
   bobPrefill: {
-    loading: boolean,
-    error: boolean,
-    projectId: String,
-    userId: String,
-    futureId: String
-  },
+    loading: boolean;
+    error: boolean;
+    projectId: String;
+    userId: String;
+    futureId: String;
+  };
   BobMessages: any[];
   globalSnackBar: {
     open: boolean;
@@ -55,6 +55,10 @@ interface AppState {
   canvasSettings: boolean;
   canvasRoadmap: boolean;
   activeProfileTab: string;
+  canvasActivity: {
+    open: boolean;
+    type: String;
+  };
 }
 
 const initialState: AppState = {
@@ -65,7 +69,7 @@ const initialState: AppState = {
     open: false,
     projectId: "",
   },
-  show_projects:'all',
+  show_projects: "all",
   ShareOpen: {
     open: false,
     type: "",
@@ -97,9 +101,9 @@ const initialState: AppState = {
   bobPrefill: {
     loading: false,
     error: false,
-    projectId: '',
-    userId: '',
-    futureId: ''
+    projectId: "",
+    userId: "",
+    futureId: "",
   },
   BobMessages: [
     {
@@ -117,6 +121,10 @@ const initialState: AppState = {
   canvasSettings: false,
   canvasRoadmap: false,
   activeProfileTab: "profile",
+  canvasActivity: {
+    open: false,
+    type: "",
+  },
 };
 
 export const appSlice = createSlice({
@@ -176,6 +184,9 @@ export const appSlice = createSlice({
     },
     toggleActiveProfileTab: (state, action) => {
       state.activeProfileTab = action.payload;
+    },
+    setCanvasActivity: (state, action) => {
+      state.canvasActivity = action?.payload;
     },
     //==============================================
     //=====================Bob======================

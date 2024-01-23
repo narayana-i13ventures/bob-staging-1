@@ -16,22 +16,28 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import RedoOutlinedIcon from "@mui/icons-material/RedoOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-import TuneSharpIcon from '@mui/icons-material/TuneSharp';
+import TuneSharpIcon from "@mui/icons-material/TuneSharp";
 import AutorenewOutlinedIcon from "@mui/icons-material/AutorenewOutlined";
-const CanvasSettingsBtn = () => {
+import { useParams, usePathname } from "next/navigation";
+const CanvasSettingsBtn = (props: any) => {
+    const { canvas } = props;
     const theme = useTheme();
     const dispatch = useDispatch();
+    const pathName = usePathname();
+    const { projectId, futureId } = useParams();
     const CanvasSettingsRef = useRef(null);
-    const { canvasSettings }:any = useSelector(selectApp);
+    const { canvasSettings }: any = useSelector(selectApp);
+
     const openCanvasSettings = () => {
         dispatch(
             appSlice.actions.toggleCanvasSettings(Boolean(CanvasSettingsRef?.current))
         );
     };
-    const openCanvasShare = () => {
-        dispatch(appSlice.actions.toggleCanvasSettings(false));
-        dispatch(appSlice.actions.toggleShareModal({ open: true, data: {}, type: 'cvp' }))
-    }
+    const goToNextCanvas = () => {
+        if (pathName.includes('BMC') && futureId === 'Future1') {
+            dispatch(appSlice.actions.setCanvasActivity({ open: true, type: 'cvp' }))
+        }
+    };
     return (
         <>
             <IconButton
@@ -73,7 +79,7 @@ const CanvasSettingsBtn = () => {
                 }}
             >
                 <MenuList>
-                    <MenuItem
+                    {/* <MenuItem
                         sx={{
                             borderRadius: 2,
                             mb: 1,
@@ -90,8 +96,8 @@ const CanvasSettingsBtn = () => {
                         >
                             Lock Canvas
                         </ListItemText>
-                    </MenuItem>
-                    <MenuItem
+                    </MenuItem> */}
+                    {/* <MenuItem
                         sx={{
                             borderRadius: 2,
                             mb: 1,
@@ -108,27 +114,9 @@ const CanvasSettingsBtn = () => {
                         >
                             Refill Canvas
                         </ListItemText>
-                    </MenuItem>
-                    {/* <MenuItem
-                        onClick={openCanvasShare}
-                        sx={{
-                            borderRadius: 2,
-                            mb: 1,
-                            "&:hover": {
-                                backgroundColor: `#f6f5f4`,
-                            },
-                        }}
-                    >
-                        <ListItemIcon>
-                            <ShareOutlinedIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText
-                            sx={{ "& .MuiTypography-root": { fontSize: "14px" } }}
-                        >
-                            Share Canvas
-                        </ListItemText>
                     </MenuItem> */}
                     <MenuItem
+                        onClick={goToNextCanvas}
                         sx={{
                             borderRadius: 2,
                             mb: 1,

@@ -13,10 +13,14 @@ import {
 } from "@mui/material";
 import SettingsOverscanOutlinedIcon from "@mui/icons-material/SettingsOverscanOutlined";
 import { useParams, usePathname } from "next/navigation";
-import { selectedFuture1BMCCard } from "@/lib/redux/slices/SelectedSlice";
 import {
+  selectedCardsSlice,
+  selectedFuture1BMCCard,
+} from "@/lib/redux/slices/SelectedSlice";
+import {
+  BMCSlice,
   useSelectFuture1BMCCardMutation,
-  useUpdateFuture1BMCCardMutation,
+  useUpdateBMCCardMutation,
 } from "@/lib/redux/BMCApi";
 import { useSession } from "next-auth/react";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
@@ -27,7 +31,6 @@ const CanvasCard = (props: any) => {
   const dispatch = useDispatch();
   const { data }: any = useSession();
   const { projectId, futureId } = useParams();
-  // const { bobThinking }:any = useSelector(selectApp);
   const Future1BMCCard = useSelector(selectedFuture1BMCCard);
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const future =
@@ -59,13 +62,13 @@ const CanvasCard = (props: any) => {
     dispatch(appSlice.actions.toggleCanvasModalOpen(true));
   };
   const [
-    updateFuture1BMCCard,
+    updateBMCCard,
     {
       isError: UpdateFuture1BMCError,
       isSuccess: UpdateFuture1BMCSuccess,
       isLoading: UpdateFuture1BMCLoading,
     },
-  ] = useUpdateFuture1BMCCardMutation();
+  ] = useUpdateBMCCardMutation();
 
   const [
     selectFuture1BMCCard,
@@ -101,6 +104,31 @@ const CanvasCard = (props: any) => {
       }
     }
   };
+  const testSelectCard = () => {
+    if (pathName.includes("/Future1/Microframeworks/BMC")) {
+      dispatch(
+        BMCSlice.util.updateQueryData(
+          "GetFuture1BMCCanvas",
+          {
+            projectId: projectId,
+            future: future,
+            userId: data?.user?.user_id,
+          },
+          (draft: any) => {
+            draft?.map((CanvasCard: any) => {
+              if (CanvasCard?.cardNumber === card?.cardNumber) {
+                return { ...CanvasCard, selected: true };
+              } else {
+                return { ...CanvasCard, selected: false };
+              }
+            });
+          }
+        )
+      );
+      dispatch(selectedCardsSlice.actions.setSelectedFuture1BMCCard(card));
+      dispatch(appSlice.actions.toggleCanvasModalOpen(true));
+    }
+  };
 
   useEffect(() => {
     if (pathName.includes("/Future1/Microframeworks/BMC")) {
@@ -122,7 +150,7 @@ const CanvasCard = (props: any) => {
     <>
       <Stack
         component={"div"}
-        onClick={selectCard}
+        onClick={testSelectCard}
         direction={"column"}
         alignItems={"flex-start"}
         justifyContent={"flex-start"}
@@ -133,7 +161,8 @@ const CanvasCard = (props: any) => {
           borderRadius: 2,
           // backgroundColor: props?.color,
           opacity: card?.locked ? 0.38 : 1,
-          backgroundColor: !card?.selected ? "#f6f5f4" : "#fff",
+          // backgroundColor: !card?.selected ? "#f6f5f4" : "#fff",
+          backgroundColor: "#f6f5f4",
           border: "1px solid #000",
           overflow: "hidden",
           cursor: card?.locked ? "auto" : "pointer",
@@ -157,11 +186,11 @@ const CanvasCard = (props: any) => {
               alignItems={"center"}
               spacing={2}
             >
-              {card?.selected && (
+              {/* {card?.selected && (
                 <IconButton size="small" onClick={openCanvasModal}>
                   <SettingsOverscanOutlinedIcon fontSize="small" />
                 </IconButton>
-              )}
+              )} */}
               <Tooltip
                 title={`Surety : ${card?.surety}%`}
                 arrow
@@ -196,55 +225,50 @@ const CanvasCard = (props: any) => {
         >
           {!card?.locked ? (
             <>
-              {!cardStatus?.loading &&
-                !cardStatus?.error &&
-                !card?.loadingKeyPoints && (
-                  <>
-                    {card?.keyPoints !== "" && card?.keyPoints !== null ? (
-                      <ul
-                        style={{ margin: "0px", padding: "0px 0px 0px 20px" }}
-                      >
-                        {card?.keyPoints
-                          ?.split("--")
-                          .filter((keypoint: any) => keypoint !== "")
-                          .map((keypoint: any, index: number) => (
-                            <li key={index}>
-                              <Typography
-                                variant="body1"
-                                sx={{ fontSize: "14px", mb: 1 }}
-                              >
-                                {keypoint}
-                              </Typography>
-                            </li>
-                          ))}
-                      </ul>
-                    ) : (
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          my: 5,
-                          width: "100%",
-                          fontSize: "16PX",
-                          textAlign: "center",
-                        }}
-                      >
-                        No Information Available
-                      </Typography>
-                    )}
-                  </>
-                )}
-              {(cardStatus?.loading || card?.loadingKeyPoints) &&
-                !cardStatus?.error && (
-                  <Stack
-                    direction={"column"}
-                    flexGrow={1}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    sx={{ width: "100%" }}
-                  >
-                    <CircularProgress />
-                  </Stack>
-                )}
+              {!card?.loadingKeyPoints && (
+                <>
+                  {card?.keyPoints !== "" && card?.keyPoints !== null ? (
+                    <ul style={{ margin: "0px", padding: "0px 0px 0px 20px" }}>
+                      {card?.keyPoints
+                        ?.split("--")
+                        .filter((keypoint: any) => keypoint !== "")
+                        .map((keypoint: any, index: number) => (
+                          <li key={index}>
+                            <Typography
+                              variant="body1"
+                              sx={{ fontSize: "14px", mb: 1 }}
+                            >
+                              {keypoint}
+                            </Typography>
+                          </li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        my: 5,
+                        width: "100%",
+                        fontSize: "16PX",
+                        textAlign: "center",
+                      }}
+                    >
+                      No Information Available
+                    </Typography>
+                  )}
+                </>
+              )}
+              {card?.loadingKeyPoints && (
+                <Stack
+                  direction={"column"}
+                  flexGrow={1}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  sx={{ width: "100%" }}
+                >
+                  <CircularProgress />
+                </Stack>
+              )}
             </>
           ) : (
             <Stack

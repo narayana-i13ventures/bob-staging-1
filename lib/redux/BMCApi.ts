@@ -9,7 +9,7 @@ export const BMCSlice = createApi({
     },
   }),
   keepUnusedDataFor: 10000000,
-  tagTypes: ["Future1BMC", "Future1BMCSharedUsers"],
+  tagTypes: ["BMC"],
   endpoints: (builder) => ({
     prefillFutuer1BMC: builder.mutation({
       query: ({ projectId, userId }) => ({
@@ -22,13 +22,33 @@ export const BMCSlice = createApi({
         }),
       }),
     }),
-    GetFuture1BMCCanvas: builder.query({
+    prefillFutuer2BMC: builder.mutation({
+      query: ({ projectId, userId }) => ({
+        url: `/v1/bmc/future2prefill`,
+        method: "POST",
+        body: JSON.stringify({
+          user_id: userId,
+          project_id: projectId,
+        }),
+      }),
+    }),
+    prefillFutuer3BMC: builder.mutation({
+      query: ({ projectId, userId }) => ({
+        url: `/v1/bmc/future3prefill`,
+        method: "POST",
+        body: JSON.stringify({
+          user_id: userId,
+          project_id: projectId,
+        }),
+      }),
+    }),
+    GetBMCCanvas: builder.query({
       query: ({ projectId, future, userId }) => ({
         url: `/v1/bmc/getcanvas?user_id=${userId}&future=${future}&project_id=${projectId}`,
       }),
-      providesTags: ["Future1BMC"],
+      providesTags: ["BMC"],
     }),
-    updateFuture1BMCCard: builder.mutation({
+    updateBMCCard: builder.mutation({
       query: ({ projectId, card, future, userId }) => ({
         url: `/v1/bmc/updatecard`,
         method: "POST",
@@ -51,7 +71,7 @@ export const BMCSlice = createApi({
           const response: any = await queryFulfilled;
           const patchResult = dispatch(
             BMCSlice.util.updateQueryData(
-              "GetFuture1BMCCanvas",
+              "GetBMCCanvas",
               {
                 projectId: data?.projectId,
                 future: data?.future,
@@ -68,7 +88,7 @@ export const BMCSlice = createApi({
               }
             )
           );
-        } catch (error) {}
+        } catch (error) { }
       },
     }),
     nextFuture1BMCCard: builder.mutation({
@@ -87,7 +107,7 @@ export const BMCSlice = createApi({
           const response: any = await queryFulfilled;
           const patchResult = dispatch(
             BMCSlice.util.updateQueryData(
-              "GetFuture1BMCCanvas",
+              "GetBMCCanvas",
               {
                 projectId: data?.projectId,
                 future: data?.future,
@@ -108,7 +128,7 @@ export const BMCSlice = createApi({
               }
             )
           );
-        } catch (error) {}
+        } catch (error) { }
       },
     }),
     selectFuture1BMCCard: builder.mutation({
@@ -134,7 +154,7 @@ export const BMCSlice = createApi({
           const response: any = await queryFulfilled;
           const patchResult = dispatch(
             BMCSlice.util.updateQueryData(
-              "GetFuture1BMCCanvas",
+              "GetBMCCanvas",
               {
                 projectId: data?.projectId,
                 future: data?.future,
@@ -157,14 +177,13 @@ export const BMCSlice = createApi({
               }
             )
           );
-        } catch (error) {}
+        } catch (error) { }
       },
     }),
     getFuture1BMCSharedUsers: builder.query({
       query: ({ projectId, future, userId }) => ({
         url: `v1/bmc/shared_with?user_id=${userId}&project_id=${projectId}&future=${future}`,
       }),
-      providesTags: ["Future1BMCSharedUsers"],
     }),
     shareFuture1BMC: builder.mutation({
       query: ({ projectId, future, userId, shared_users }) => ({
@@ -177,15 +196,16 @@ export const BMCSlice = createApi({
           shared_users: shared_users,
         }),
       }),
-      invalidatesTags: ["Future1BMCSharedUsers"],
     }),
   }),
 });
 
 export const {
-  useLazyGetFuture1BMCCanvasQuery,
+  useLazyGetBMCCanvasQuery,
   usePrefillFutuer1BMCMutation,
-  useUpdateFuture1BMCCardMutation,
+  usePrefillFutuer2BMCMutation,
+  usePrefillFutuer3BMCMutation,
+  useUpdateBMCCardMutation,
   useNextFuture1BMCCardMutation,
   useSelectFuture1BMCCardMutation,
 } = BMCSlice;

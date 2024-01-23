@@ -3,11 +3,9 @@ import React from "react";
 import {
   Container,
   Divider,
-  IconButton,
   MenuItem,
   Select,
   Stack,
-  Tooltip,
 } from "@mui/material";
 import ShareModal from "../Shared/ShareModal";
 import DashboardSidebar from "./DashboardSidebar";
@@ -18,7 +16,8 @@ import CreateProjectModal from "../Project/CreateProjectModal";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 const DashboardSpace = () => {
   const dispatch = useDispatch();
-  const { show_projects }:any = useSelector(selectApp);
+  const { show_projects }: any = useSelector(selectApp);
+
   const changeDashboardView = (e: any) => {
     dispatch(appSlice.actions.toggleShowProjects(e?.target?.value));
   };
@@ -89,16 +88,6 @@ const DashboardSpace = () => {
             alignItems={"center"}
             component={"div"}
           >
-            {/* <Tooltip title={"Grid View"} arrow>
-              <IconButton size="medium" sx={{ mr: 1 }}>
-                <GridViewOutlinedIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={"List View"} arrow>
-              <IconButton size="medium">
-                <ListOutlinedIcon fontSize="small" />
-              </IconButton>
-            </Tooltip> */}
             <Select
               size="small"
               sx={{
@@ -114,9 +103,15 @@ const DashboardSpace = () => {
               }}
               value={show_projects}
             >
-              <MenuItem sx={{fontSize:'14px'}} value="all">All</MenuItem>
-              <MenuItem sx={{fontSize:'14px'}} value="only_me">Only Me</MenuItem>
-              <MenuItem sx={{fontSize:'14px'}} value="shared">Shared</MenuItem>
+              <MenuItem sx={{ fontSize: "14px" }} value="all">
+                All
+              </MenuItem>
+              <MenuItem sx={{ fontSize: "14px" }} value="only_me">
+                Only Me
+              </MenuItem>
+              <MenuItem sx={{ fontSize: "14px" }} value="shared">
+                Shared
+              </MenuItem>
             </Select>
           </Stack>
         </Stack>

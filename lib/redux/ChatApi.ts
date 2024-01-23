@@ -9,13 +9,11 @@ export const chatSlice = createApi({
     },
   }),
   keepUnusedDataFor: 10000000,
-  tagTypes: ["chat"],
   endpoints: (builder) => ({
     getChat: builder.query({
       query: ({ userId, projectId, future, canvas_type, cardNumber }) => ({
         url: `/v1/chats/getchats?user_id=${userId}&project_id=${projectId}&future=${future}&canvas_type=${canvas_type}&card_number=${cardNumber}`,
       }),
-      providesTags: ["chat"],
     }),
     saveChat: builder.mutation({
       query: ({
@@ -57,7 +55,7 @@ export const chatSlice = createApi({
               }
             )
           );
-        } catch (error) { }
+        } catch (error) {}
       },
     }),
   }),

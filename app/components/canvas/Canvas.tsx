@@ -2,13 +2,11 @@
 import React, { useEffect } from "react";
 import BMCCanvas from "./BMCCanvas";
 import CVPCanvas from "./CVPCanvas";
-import CanvasModal from "./CanvasModal";
 import Dialog from "@mui/material/Dialog";
 import { useParams, useRouter } from "next/navigation";
 import SlideTransition from "../Utils/Slide";
 import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
-import CanvasSettingsBtn from "./CanvasSettingsBtn";
 import DialogContent from "@mui/material/DialogContent";
 import {
   Avatar,
@@ -26,8 +24,13 @@ import CanvasRoadmapBtn from "./CanvasRoadmapBtn";
 import ShareModal from "../Shared/ShareModal";
 import { appSlice, useDispatch } from "@/lib/redux";
 import Link from "next/link";
-import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
+import {
+  useLazyGetAllCanvasQuery,
+  useLazyGetProjectByIdQuery,
+} from "@/lib/redux/projectApi";
 import { useSession } from "next-auth/react";
+import CanvasSettingsBtn from "./CanvasSettingsBtn";
+import CanvasdActivityModal from "./CanvasActivityModal";
 
 const Canvas = (props: any) => {
   const router = useRouter();
@@ -61,8 +64,20 @@ const Canvas = (props: any) => {
     getProjectById,
     { data: project_data, isLoading, isSuccess, isFetching, isError },
   ] = useLazyGetProjectByIdQuery();
+  const [
+    getAllCanvas,
+    {
+      data: canvas_data,
+      isLoading: canvas_data_loading,
+      isError: canvas_data_error,
+    },
+  ] = useLazyGetAllCanvasQuery();
 
   useEffect(() => {
+    getAllCanvas({
+      userId: data?.user?.user_id,
+      projectId: projectId,
+    });
     getProjectById({ projectId, userId: data?.user?.user_id });
   }, [projectId, data?.user?.user_id]);
 
@@ -152,8 +167,12 @@ const Canvas = (props: any) => {
                       Share
                     </Button>
                   )}
-                  <CanvasRoadmapBtn canvasName={canvasName} />
-                  {/* {project_data?.project?.is_owner && <CanvasSettingsBtn />} */}
+                  <CanvasRoadmapBtn
+                    loading={canvas_data_loading}
+                    canvasName={canvasName}
+                    canvas={canvas_data}
+                  />
+                  <CanvasSettingsBtn canvas={canvas_data} />
                 </>
               )}
               <IconButton size="small" onClick={closeCanvas}>
@@ -173,7 +192,13 @@ const Canvas = (props: any) => {
           }}
         >
           {!isLoading && !isError && (
-            <>{canvasName === "BMC" ? <BMCCanvas /> : <CVPCanvas />}</>
+            <>
+              {canvasName === "BMC" ? (
+                <BMCCanvas project={project_data} />
+              ) : (
+                <CVPCanvas />
+              )}
+            </>
           )}
           {isLoading && !isError && (
             <Stack
@@ -202,8 +227,8 @@ const Canvas = (props: any) => {
           )}
         </DialogContent>
       </Dialog>
-      <CanvasModal />
       <ShareModal />
+      <CanvasdActivityModal/>
     </>
   );
 };

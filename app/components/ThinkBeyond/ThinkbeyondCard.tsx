@@ -11,13 +11,18 @@ import {
   Typography,
 } from "@mui/material";
 import { useParams, useRouter } from "next/navigation";
-import { selectedThinkbeyond } from "@/lib/redux/slices/SelectedSlice";
 import {
+  selectedCardsSlice,
+  selectedThinkbeyond,
+} from "@/lib/redux/slices/SelectedSlice";
+import {
+  thinkbeyondSlice,
   useSelectThinkbeyondCardMutation,
   useUpdateThinkbeyondCardMutation,
 } from "@/lib/redux/ThinkbeyondApi";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import SpaceDashboardOutlinedIcon from "@mui/icons-material/SpaceDashboardOutlined";
 import { useSession } from "next-auth/react";
 const ThinkbeyondCard = (props: any) => {
   const router = useRouter();
@@ -28,9 +33,6 @@ const ThinkbeyondCard = (props: any) => {
   const selectedCard = useSelector(selectedThinkbeyond);
   const [selectThinkbeyondCard, { isLoading, isSuccess, isError }] =
     useSelectThinkbeyondCardMutation();
-
-  // const [updatedThinkbeyondCard, { isLoading, isSuccess, isError }] =
-  //   useUpdateThinkbeyondCardMutation();
 
   const openThinkbeyondModalOpen = () => {
     if (card?.cardName === "Microframeworks" && card?.cardNumber === 4) {
@@ -61,35 +63,48 @@ const ThinkbeyondCard = (props: any) => {
 
   const selectCard = () => {
     if (!card?.locked) {
+      // dispatch(
+      //   thinkbeyondSlice.util.updateQueryData(
+      //     "getThinkbeyondCanvas",
+      //     {
+      //       projectId: projectId,
+      //       userId: data?.user?.user_id,
+      //     },
+      //     (draft: any) => {
+      //       for (const ThinkbeyondCard of draft) {
+      //         for (const key in ThinkbeyondCard) {
+      //           if (
+      //             typeof ThinkbeyondCard[key] === "object" &&
+      //             ThinkbeyondCard[key] !== null
+      //           ) {
+      //             if (ThinkbeyondCard[key].cardNumber !== card?.cardNumber) {
+      //               ThinkbeyondCard[key].selected = false;
+      //             } else if (card?.cardNumber !== (4 || 7 || 10)) {
+      //               ThinkbeyondCard[key].selected = true;
+      //             }
+      //           }
+      //         }
+      //       }
+      //     }
+      //   )
+      // );
+      // dispatch(selectedCardsSlice.actions.setSelectedThinkbeyondCard(card));
+      // dispatch(appSlice.actions.toggleThinkbeyondModalOpen(true));
+
       if (selectedCard && selectedCard.cardNumber !== card.cardNumber) {
         selectThinkbeyondCard({
-          userId: data?.user?.user_id,
           projectId,
-          current_card_number: selectedCard.cardNumber,
+          userId: data?.user?.user_id,
           next_card_number: card.cardNumber,
+          current_card_number: selectedCard.cardNumber,
         });
-        // const updatedSelectedCard = { ...selectedCard, selected: false };
-        // updatedThinkbeyondCard({
-        //   card: updatedSelectedCard,
-        //   projectId,
-        //   userId: data?.user?.user_id,
-        // })
-        //   .unwrap()
-        //   .then((response: any) => {
-        //     const updatedCard = { ...card, selected: true };
-        //     updatedThinkbeyondCard({
-        //       card: updatedCard,
-        //       projectId,
-        //       userId: data?.user?.user_id,
-        //     });
-        //   });
       }
     }
   };
 
   return (
     <Paper
-      elevation={card?.locked ? 0 : 3}
+      elevation={card?.locked ? 0 : 2}
       onClick={selectCard}
       component={"div"}
       sx={{
@@ -100,7 +115,8 @@ const ThinkbeyondCard = (props: any) => {
         overflow: "hidden",
         transition: "all ease-in 200ms",
         cursor: !card?.locked ? "pointer" : "auto",
-        backgroundColor: !card?.selected ? "#fff" : "#f6f5f4  ",
+        // backgroundColor: "#fff",
+        backgroundColor: !card?.selected ? "#fff" : "#f6f5f4",
         border: card?.locked ? "2px solid #00000040" : "2px solid #000",
       }}
     >
@@ -114,7 +130,9 @@ const ThinkbeyondCard = (props: any) => {
             variant="body1"
             sx={{ color: card?.locked ? "#00000040" : "" }}
           >
-            {card?.cardName === "Microframeworks" ? "Micro Frameworks" : card?.cardName}
+            {card?.cardName === "Microframeworks"
+              ? "Micro Frameworks"
+              : card?.cardName}
           </Typography>
           <IconButton
             disableRipple
@@ -123,6 +141,32 @@ const ThinkbeyondCard = (props: any) => {
             disabled={card?.locked}
             onClick={() =>
               card?.selected ? openThinkbeyondModalOpen() : () => {}
+            }
+            size="large"
+            sx={{
+              // backgroundColor: card?.selected ? "black" : "white",
+              "&:hover": {
+                backgroundColor: "white",
+                // backgroundColor: card?.selected ? "black" : "white",
+                // transition: "all ease-in 200ms",
+              },
+            }}
+          >
+            {card?.locked ? (
+              <LockOutlinedIcon />
+            ) : card?.cardNumber === (4 || 7 || 10) ? (
+              <SpaceDashboardOutlinedIcon />
+            ) : (
+              <ModeEditOutlineOutlinedIcon />
+            )}
+          </IconButton>
+          {/* <IconButton
+            disableRipple
+            disableFocusRipple
+            disableTouchRipple
+            disabled={card?.locked}
+            onClick={() =>
+              card?.selected ? openThinkbeyondModalOpen() : () => { }
             }
             size="large"
             sx={{
@@ -135,7 +179,7 @@ const ThinkbeyondCard = (props: any) => {
             }}
           >
             {card?.type ===
-            ("future_1_bmc" || "future_2_bmc" || "future_3_bmc") ? (
+              ("future_1_bmc" || "future_2_bmc" || "future_3_bmc") ? (
               card?.locked ? (
                 <LockOutlinedIcon />
               ) : (
@@ -160,7 +204,7 @@ const ThinkbeyondCard = (props: any) => {
                 sx={{ color: card?.selected ? "#fff" : "" }}
               />
             )}
-          </IconButton>
+          </IconButton> */}
         </Stack>
       ) : (
         <Stack
