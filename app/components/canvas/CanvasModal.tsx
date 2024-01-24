@@ -27,6 +27,11 @@ import CommentBox from "./CommentBox";
 import {
   selectedCardsSlice,
   selectedFuture1BMCCard,
+  selectedFuture1CVPCard,
+  selectedFuture2BMCCard,
+  selectedFuture2CVPCard,
+  selectedFuture3BMCCard,
+  selectedFuture3CVPCard,
 } from "@/lib/redux/slices/SelectedSlice";
 import { useParams, usePathname } from "next/navigation";
 import {
@@ -42,11 +47,11 @@ import {
   useLazyGetChatQuery,
   useSaveChatMutation,
 } from "@/lib/redux/ChatApi";
-import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
 import {
   useCreateCommentMutation,
   useLazyGetAllCommentsQuery,
 } from "@/lib/redux/CommentApi";
+import { CVPSlice, useUpdateCVPCardMutation } from "@/lib/redux/CVPApi";
 const CanvasModal = (props: any) => {
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -56,6 +61,11 @@ const CanvasModal = (props: any) => {
   const { projectId, futureId } = useParams();
   const [activeBubble, setActiveBubble] = useState("bob");
   const Future1BMCCard = useSelector(selectedFuture1BMCCard);
+  const Future2BMCCard = useSelector(selectedFuture2BMCCard);
+  const Future3BMCCard = useSelector(selectedFuture3BMCCard);
+  const Future1CVPCard = useSelector(selectedFuture1CVPCard);
+  const Future2CVPCard = useSelector(selectedFuture2CVPCard);
+  const Future3CVPCard = useSelector(selectedFuture3CVPCard);
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [
     getChat,
@@ -90,10 +100,10 @@ const CanvasModal = (props: any) => {
     futureId === "Future1"
       ? 1
       : futureId === "Future2"
-      ? 2
-      : futureId === "Future3"
-      ? 3
-      : 0;
+        ? 2
+        : futureId === "Future3"
+          ? 3
+          : 0;
 
   const [cardStatus, setCardStatus] = useState({
     loading: false,
@@ -118,11 +128,20 @@ const CanvasModal = (props: any) => {
   const [
     updateBMCCard,
     {
-      isError: UpdateFuture1BMCError,
-      isSuccess: UpdateFuture1BMCSuccess,
-      isLoading: UpdateFuture1BMCLoading,
+      isError: update_bmc_error,
+      isSuccess: update_bmc_success,
+      isLoading: update_bmc_loading,
     },
   ] = useUpdateBMCCardMutation();
+
+  const [
+    updateCVPCard,
+    {
+      isError: update_cvp_error,
+      isSuccess: update_cvp_success,
+      isLoading: update_cvp_loading,
+    },
+  ] = useUpdateCVPCardMutation();
 
   useEffect(() => {
     getThinkbeyondCanvas({ projectId, userId: data?.user?.user_id });
@@ -131,23 +150,61 @@ const CanvasModal = (props: any) => {
   useEffect(() => {
     if (pathName.includes("BMC")) {
       setCardStatus({
-        error: UpdateFuture1BMCError,
-        loading: UpdateFuture1BMCLoading,
-        success: UpdateFuture1BMCSuccess,
+        error: update_bmc_error,
+        loading: update_bmc_loading,
+        success: update_bmc_success,
       });
     }
-  }, [UpdateFuture1BMCError, UpdateFuture1BMCSuccess, UpdateFuture1BMCLoading]);
+    if (pathName.includes("CVP")) {
+      setCardStatus({
+        error: update_cvp_error,
+        loading: update_cvp_loading,
+        success: update_cvp_success,
+      });
+    }
+  }, [
+    update_bmc_error,
+    update_bmc_loading,
+    update_bmc_success,
+    update_cvp_error,
+    update_cvp_loading,
+    update_cvp_success,
+  ]);
 
   useEffect(() => {
-    if (pathName.includes("BMC")) {
-      setSelectedCard(Future1BMCCard);
-    } else {
-      setSelectedCard(null);
+    if (futureId === "Future1") {
+      if (pathName.includes("BMC")) {
+        setSelectedCard(Future1BMCCard);
+      } else if (pathName.includes("CVP")) {
+        setSelectedCard(Future1CVPCard);
+      }
+    }
+    if (futureId === "Future2") {
+      if (pathName.includes("BMC")) {
+        setSelectedCard(Future2BMCCard);
+      } else if (pathName.includes("CVP")) {
+        setSelectedCard(Future2CVPCard);
+      }
+    }
+    if (futureId === "Future3") {
+      if (pathName.includes("BMC")) {
+        setSelectedCard(Future3BMCCard);
+      } else if (pathName.includes("CVP")) {
+        setSelectedCard(Future3CVPCard);
+      }
     }
     return () => {
       setSelectedCard(null);
     };
-  }, [pathName, Future1BMCCard]);
+  }, [
+    pathName,
+    Future1BMCCard,
+    Future1CVPCard,
+    Future2BMCCard,
+    Future2CVPCard,
+    Future3BMCCard,
+    Future3CVPCard,
+  ]);
 
   useEffect(() => {
     if (canvasModalOpen === true) {
@@ -165,7 +222,7 @@ const CanvasModal = (props: any) => {
       selectedCard !== undefined &&
       canvasModalOpen === true
     ) {
-      if (pathName.includes("/Future1/Microframeworks/BMC")) {
+      if (pathName.includes("BMC")) {
         getChat({
           userId: data?.user?.user_id,
           projectId,
@@ -182,11 +239,11 @@ const CanvasModal = (props: any) => {
           cardNumber: selectedCard?.cardNumber,
         });
       }
-      if (pathName.includes("/Future1/Microframeworks/CVP")) {
+      if (pathName.includes("CVP")) {
         getChat({
           userId: data?.user?.user_id,
           projectId,
-          future: 1,
+          future: currentFuture,
           canvas_type: 3,
           cardNumber: selectedCard?.cardNumber,
         });
@@ -194,41 +251,7 @@ const CanvasModal = (props: any) => {
         getComments({
           userId: data?.user?.user_id,
           projectId,
-          future: 1,
-          canvas_type: 3,
-          cardNumber: selectedCard?.cardNumber,
-        });
-      }
-      if (pathName.includes("/Future2/Microframeworks/CVP")) {
-        getChat({
-          userId: data?.user?.user_id,
-          projectId,
-          future: 2,
-          canvas_type: 3,
-          cardNumber: selectedCard?.cardNumber,
-        });
-
-        getComments({
-          userId: data?.user?.user_id,
-          projectId,
-          future: 2,
-          canvas_type: 3,
-          cardNumber: selectedCard?.cardNumber,
-        });
-      }
-      if (pathName.includes("/Future3/Microframeworks/CVP")) {
-        getChat({
-          userId: data?.user?.user_id,
-          projectId,
-          future: 3,
-          canvas_type: 3,
-          cardNumber: selectedCard?.cardNumber,
-        });
-
-        getComments({
-          userId: data?.user?.user_id,
-          projectId,
-          future: 3,
+          future: currentFuture,
           canvas_type: 3,
           cardNumber: selectedCard?.cardNumber,
         });
@@ -329,6 +352,34 @@ const CanvasModal = (props: any) => {
             });
           });
       }
+      if (pathName.includes("CVP")) {
+        saveChat({
+          userId: data?.user?.user_id,
+          projectId,
+          future: currentFuture,
+          canvas_type: 3,
+          cardNumber: selectedCard?.cardNumber,
+          chat: [
+            {
+              role: "user",
+              content: message,
+              time: moment(Date.now()).format(
+                "ddd, DD MMM YYYY HH:mm:ss [GMT]"
+              ),
+            },
+          ],
+        })
+          .unwrap()
+          .then(({ chat }: any) => {
+            streamResponse(selectedCard, false, false, {
+              role: chat?.role_text,
+              content: chat?.chat_text,
+              time: moment(chat?.created_at).format(
+                "ddd, DD MMM YYYY HH:mm:ss [GMT]"
+              ),
+            });
+          });
+      }
     }
   };
 
@@ -348,6 +399,16 @@ const CanvasModal = (props: any) => {
           content,
         });
       }
+      if (pathName.includes("CVP")) {
+        postComment({
+          userId: data?.user?.user_id,
+          projectId: projectId,
+          future: currentFuture,
+          cardNumber: selectedCard?.cardNumber,
+          canvas_type: 3,
+          content,
+        });
+      }
     }
   };
 
@@ -361,9 +422,60 @@ const CanvasModal = (props: any) => {
           selectedCardsSlice.actions.updateSelectedFuture1BMCCard(ResponseCard)
         );
       }
+      if (currentFuture === 2) {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture2BMCCard(ResponseCard)
+        );
+      }
+      if (currentFuture === 3) {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture3BMCCard(ResponseCard)
+        );
+      }
       dispatch(
         BMCSlice.util.updateQueryData(
-          "GetFuture1BMCCanvas",
+          "GetBMCCanvas",
+          {
+            projectId: projectId,
+            future: currentFuture,
+            userId: data?.user?.user_id,
+          },
+          (draft: any) => {
+            return draft.map((card: any) => {
+              if (card.cardNumber === ResponseCard?.cardNumber) {
+                return {
+                  ...card,
+                  loadingKeyPoints: true,
+                  keyPoints: "",
+                };
+              } else {
+                return card;
+              }
+            });
+          }
+        )
+      );
+      streamResponse(ResponseCard, true, next, null);
+    }
+    if (pathName.includes("CVP")) {
+      if (currentFuture === 1) {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture1CVPCard(ResponseCard)
+        );
+      }
+      if (currentFuture === 2) {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture2CVPCard(ResponseCard)
+        );
+      }
+      if (currentFuture === 3) {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture3CVPCard(ResponseCard)
+        );
+      }
+      dispatch(
+        CVPSlice.util.updateQueryData(
+          "GetCVPCanvas",
           {
             projectId: projectId,
             future: currentFuture,
@@ -440,26 +552,43 @@ const CanvasModal = (props: any) => {
             )
           );
         }
+        if (pathName.includes("CVP")) {
+          dispatch(
+            chatSlice.util.updateQueryData(
+              "getChat",
+              {
+                userId: data?.user?.user_id,
+                projectId,
+                future: currentFuture,
+                canvas_type: 3,
+                cardNumber: selectedCard?.cardNumber,
+              },
+              (draft: any) => {
+                draft?.push({ role_text: "assistant", chat_text: "" });
+              }
+            )
+          );
+        }
       }
       dispatch(appSlice.actions.toggleBobThinking(true));
       dispatch(appSlice.actions.toggleBobGenerating(true));
       const baseUrl = "https://bobapi.azurewebsites.net/v1";
-      let apiUrl = `${baseUrl}/bmc`;
+      let apiUrl = pathName.includes("BMC")
+        ? `${baseUrl}/bmc`
+        : pathName.includes("CVP")
+          ? `${baseUrl}/cvp`
+          : "";
       await fetchEventSource(`${apiUrl}/${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(streamBody),
+        keepalive: true,
+                
         onopen: async function (response: Response) {
-          if (keypoints) {
-            ResponseCard.loadingKeyPoints = false;
-            dispatch(
-              selectedCardsSlice.actions.updateSelectedFuture1BMCCard(
-                ResponseCard
-              )
-            );
-          }
+          console.log(response);
+          
           return Promise.resolve();
         },
         onmessage: function (res: any) {
@@ -471,16 +600,76 @@ const CanvasModal = (props: any) => {
               fullKeypoints = fullKeypoints + suggestion;
               ResponseCard.keyPoints = fullKeypoints;
               if (pathName.includes("BMC")) {
-                if (currentFuture === 1) {
+                if (futureId === "Future1") {
                   dispatch(
                     selectedCardsSlice.actions.updateFuture1BMCKeyPoints(
                       suggestion
                     )
                   );
                 }
+                if (futureId === "Future2") {
+                  dispatch(
+                    selectedCardsSlice.actions.updateFuture2BMCKeyPoints(
+                      suggestion
+                    )
+                  );
+                }
+                if (futureId === "Future3") {
+                  dispatch(
+                    selectedCardsSlice.actions.updateFuture3BMCKeyPoints(
+                      suggestion
+                    )
+                  );
+                }
                 dispatch(
                   BMCSlice.util.updateQueryData(
-                    "GetFuture1BMCCanvas",
+                    "GetBMCCanvas",
+                    {
+                      projectId: projectId,
+                      future: currentFuture,
+                      userId: data?.user?.user_id,
+                    },
+                    (draft: any) => {
+                      return draft.map((card: any) => {
+                        if (card.cardNumber === ResponseCard?.cardNumber) {
+                          return {
+                            ...card,
+                            loadingKeyPoints: false,
+                            keyPoints: fullKeypoints,
+                          };
+                        } else {
+                          return card;
+                        }
+                      });
+                    }
+                  )
+                );
+              }
+              if (pathName.includes("CVP")) {
+                if (futureId === "Future1") {
+                  dispatch(
+                    selectedCardsSlice.actions.updateFuture1CVPKeyPoints(
+                      suggestion
+                    )
+                  );
+                }
+                if (futureId === "Future2") {
+                  dispatch(
+                    selectedCardsSlice.actions.updateFuture2CVPKeyPoints(
+                      suggestion
+                    )
+                  );
+                }
+                if (futureId === "Future3") {
+                  dispatch(
+                    selectedCardsSlice.actions.updateFuture3CVPKeyPoints(
+                      suggestion
+                    )
+                  );
+                }
+                dispatch(
+                  CVPSlice.util.updateQueryData(
+                    "GetCVPCanvas",
                     {
                       projectId: projectId,
                       future: currentFuture,
@@ -531,6 +720,34 @@ const CanvasModal = (props: any) => {
                   )
                 );
               }
+              if (pathName.includes("CVP")) {
+                fullMessage = fullMessage + suggestion;
+                dispatch(
+                  chatSlice.util.updateQueryData(
+                    "getChat",
+                    {
+                      userId: data?.user?.user_id,
+                      projectId,
+                      future: currentFuture,
+                      canvas_type: 3,
+                      cardNumber: selectedCard?.cardNumber,
+                    },
+                    (draft: any) => {
+                      return draft?.map((chat: any, index: any) => {
+                        if (index === draft?.length - 1) {
+                          return {
+                            ...chat,
+                            chat_text: chat?.chat_text + suggestion,
+                            temp: true,
+                          };
+                        } else {
+                          return chat;
+                        }
+                      });
+                    }
+                  )
+                );
+              }
             }
           }
         },
@@ -544,9 +761,60 @@ const CanvasModal = (props: any) => {
               updateBMCCard({
                 card: ResponseCard,
                 projectId,
-                currentFuture,
+                future: currentFuture,
                 userId: data?.user?.user_id,
               });
+              throw error
+            }
+            if (pathName.includes("CVP")) {
+              updateCVPCard({
+                card: ResponseCard,
+                projectId,
+                future: currentFuture,
+                userId: data?.user?.user_id,
+              });
+              throw error
+            }
+          } else {
+            if (pathName.includes("BMC")) {
+              dispatch(
+                chatSlice.util.updateQueryData(
+                  "getChat",
+                  {
+                    userId: data?.user?.user_id,
+                    projectId,
+                    future: currentFuture,
+                    canvas_type: 2,
+                    cardNumber: selectedCard?.cardNumber,
+                  },
+                  (draft: any) => {
+                    return draft?.filter(
+                      (chat: any, index: any) => chat?.temp !== true
+                    );
+                  }
+                )
+              );
+              throw error
+            }
+            if (pathName.includes("CVP")) {
+              dispatch(
+                chatSlice.util.updateQueryData(
+                  "getChat",
+                  {
+                    userId: data?.user?.user_id,
+                    projectId,
+                    future: currentFuture,
+                    canvas_type: 3,
+                    cardNumber: selectedCard?.cardNumber,
+                  },
+                  (draft: any) => {
+                    return draft?.filter(
+                      (chat: any, index: any) => chat?.temp !== true
+                    );
+                  }
+                )
+              );
+              throw error
             }
           }
         },
@@ -570,45 +838,107 @@ const CanvasModal = (props: any) => {
                   dispatch(appSlice.actions.toggleBobGenerating(false));
                 });
             } else {
-              saveChat({
-                userId: data?.user?.user_id,
+              if (fullMessage !== "") {
+                saveChat({
+                  userId: data?.user?.user_id,
+                  projectId,
+                  future: currentFuture,
+                  canvas_type: 2,
+                  cardNumber: ResponseCard?.cardNumber,
+                  chat: [
+                    {
+                      role: "assistant",
+                      content: fullMessage,
+                      time: moment(Date.now()).format(
+                        "ddd, DD MMM YYYY HH:mm:ss [GMT]"
+                      ),
+                    },
+                  ],
+                  cacheUpdate: false,
+                })
+                  .unwrap()
+                  .then((response: any) => {
+                    fullMessage = "";
+                    dispatch(appSlice.actions.toggleBobGenerating(false));
+                    dispatch(
+                      chatSlice.util.updateQueryData(
+                        "getChat",
+                        {
+                          userId: data?.user?.user_id,
+                          projectId,
+                          future: currentFuture,
+                          canvas_type: 2,
+                          cardNumber: selectedCard?.cardNumber,
+                        },
+                        (draft: any) => {
+                          return draft?.filter(
+                            (chat: any, index: any) => chat?.temp !== true
+                          );
+                        }
+                      )
+                    );
+                  });
+              }
+            }
+          }
+          if (pathName.includes("CVP")) {
+            if (keypoints) {
+              updateCVPCard({
+                card: ResponseCard,
                 projectId,
                 future: currentFuture,
-                canvas_type: 2,
-                cardNumber: ResponseCard?.cardNumber,
-                chat: [
-                  {
-                    role: "assistant",
-                    content: fullMessage,
-                    time: moment(Date.now()).format(
-                      "ddd, DD MMM YYYY HH:mm:ss [GMT]"
-                    ),
-                  },
-                ],
-                cacheUpdate: false,
+                userId: data?.user?.user_id,
               })
                 .unwrap()
                 .then((response: any) => {
-                  fullMessage = "";
+                  fullKeypoints = "";
                   dispatch(appSlice.actions.toggleBobGenerating(false));
-                  dispatch(
-                    chatSlice.util.updateQueryData(
-                      "getChat",
-                      {
-                        userId: data?.user?.user_id,
-                        projectId,
-                        future: currentFuture,
-                        canvas_type: 2,
-                        cardNumber: selectedCard?.cardNumber,
-                      },
-                      (draft: any) => {
-                        return draft?.filter(
-                          (chat: any, index: any) => chat?.temp !== true
-                        );
-                      }
-                    )
-                  );
+                })
+                .catch((error: any) => {
+                  dispatch(appSlice.actions.toggleBobGenerating(false));
                 });
+            } else {
+              if (fullMessage !== "") {
+                saveChat({
+                  userId: data?.user?.user_id,
+                  projectId,
+                  future: currentFuture,
+                  canvas_type: 3,
+                  cardNumber: ResponseCard?.cardNumber,
+                  chat: [
+                    {
+                      role: "assistant",
+                      content: fullMessage,
+                      time: moment(Date.now()).format(
+                        "ddd, DD MMM YYYY HH:mm:ss [GMT]"
+                      ),
+                    },
+                  ],
+                  cacheUpdate: false,
+                })
+                  .unwrap()
+                  .then((response: any) => {
+                    fullMessage = "";
+                    dispatch(appSlice.actions.toggleBobGenerating(false));
+                    dispatch(
+                      chatSlice.util.updateQueryData(
+                        "getChat",
+                        {
+                          userId: data?.user?.user_id,
+                          projectId,
+                          future: currentFuture,
+                          canvas_type: 3,
+                          cardNumber: selectedCard?.cardNumber,
+                        },
+                        (draft: any) => {
+                          return draft?.filter(
+                            (chat: any, index: any) => chat?.temp !== true
+                          );
+                        }
+                      )
+                    );
+                  });
+              }
             }
           }
         },
@@ -633,42 +963,234 @@ const CanvasModal = (props: any) => {
       });
   };
   const testNextCard = () => {
-    if (pathName.includes("/Future1/Microframeworks/BMC")) {
-      if (selectedCard?.cardNumber + 1 < 9) {
-        dispatch(
-          selectedCardsSlice.actions.setSelectedFuture1BMCCard(
-            canvas?.find(
-              (canvasCard: any) =>
-                canvasCard?.cardNumber === selectedCard?.cardNumber + 1
+    if (futureId === "Future1") {
+      if (pathName.includes("BMC")) {
+        if (selectedCard?.cardNumber + 1 < 9) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1BMCCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber + 1
+              )
             )
-          )
-        );
-      } else {
-        dispatch(
-          selectedCardsSlice.actions.setSelectedFuture1BMCCard(
-            canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 0)
-          )
-        );
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1BMCCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 0)
+            )
+          );
+        }
+      }
+      if (pathName.includes("CVP")) {
+        if (selectedCard?.cardNumber + 1 < 5) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1CVPCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber + 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1CVPCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 0)
+            )
+          );
+        }
+      }
+    }
+    if (futureId === "Future2") {
+      if (pathName.includes("BMC")) {
+        if (selectedCard?.cardNumber + 1 < 9) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture2BMCCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber + 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture2BMCCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 0)
+            )
+          );
+        }
+      }
+      if (pathName.includes("CVP")) {
+        if (selectedCard?.cardNumber + 1 < 5) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture2CVPCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber + 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture2CVPCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 0)
+            )
+          );
+        }
+      }
+    }
+    if (futureId === "Future3") {
+      if (pathName.includes("BMC")) {
+        if (selectedCard?.cardNumber + 1 < 9) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture3BMCCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber + 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture3BMCCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 0)
+            )
+          );
+        }
+      }
+      if (pathName.includes("CVP")) {
+        if (selectedCard?.cardNumber + 1 < 5) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture3CVPCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber + 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture3CVPCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 0)
+            )
+          );
+        }
       }
     }
   };
   const testPreviousCard = () => {
-    if (pathName.includes("/Future1/Microframeworks/BMC")) {
-      if (selectedCard?.cardNumber - 1 >= 0) {
-        dispatch(
-          selectedCardsSlice.actions.setSelectedFuture1BMCCard(
-            canvas?.find(
-              (canvasCard: any) =>
-                canvasCard?.cardNumber === selectedCard?.cardNumber - 1
+    if (futureId === "Future1") {
+      if (pathName.includes("BMC")) {
+        if (selectedCard?.cardNumber - 1 >= 0) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1BMCCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber - 1
+              )
             )
-          )
-        );
-      } else {
-        dispatch(
-          selectedCardsSlice.actions.setSelectedFuture1BMCCard(
-            canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 8)
-          )
-        );
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1BMCCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 8)
+            )
+          );
+        }
+      }
+      if (pathName.includes("CVP")) {
+        if (selectedCard?.cardNumber - 1 >= 0) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1CVPCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber - 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1CVPCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 5)
+            )
+          );
+        }
+      }
+    }
+    if (futureId === "Future2") {
+      if (pathName.includes("BMC")) {
+        if (selectedCard?.cardNumber - 1 >= 0) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture2BMCCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber - 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture2BMCCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 8)
+            )
+          );
+        }
+      }
+      if (pathName.includes("CVP")) {
+        if (selectedCard?.cardNumber - 1 >= 0) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture2CVPCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber - 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture2CVPCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 5)
+            )
+          );
+        }
+      }
+    }
+    if (futureId === "Future3") {
+      if (pathName.includes("BMC")) {
+        if (selectedCard?.cardNumber - 1 >= 0) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture3CVPCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber - 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture3CVPCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 8)
+            )
+          );
+        }
+      }
+      if (pathName.includes("CVP")) {
+        if (selectedCard?.cardNumber - 1 >= 0) {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1CVPCard(
+              canvas?.find(
+                (canvasCard: any) =>
+                  canvasCard?.cardNumber === selectedCard?.cardNumber - 1
+              )
+            )
+          );
+        } else {
+          dispatch(
+            selectedCardsSlice.actions.setSelectedFuture1CVPCard(
+              canvas?.find((canvasCard: any) => canvasCard?.cardNumber === 5)
+            )
+          );
+        }
       }
     }
   };
@@ -790,6 +1312,7 @@ const CanvasModal = (props: any) => {
                   )}
                   {activeBubble === "comment" && (
                     <CommentBox
+                      project={project}
                       postComment={postUserComment}
                       comments={comments}
                       color={`#f6f5f4`}
@@ -813,13 +1336,11 @@ const CanvasModal = (props: any) => {
                       onClick={() => setActiveBubble("bob")}
                       sx={{
                         p: 1.5,
-                        backgroundColor: `${theme.palette.primary.main}${
-                          activeBubble === "bob" ? "" : "30"
-                        }`,
-                        "&:hover": {
-                          backgroundColor: `${theme.palette.primary.main}${
-                            activeBubble === "bob" ? "" : "30"
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
                           }`,
+                        "&:hover": {
+                          backgroundColor: `${theme.palette.primary.main}${activeBubble === "bob" ? "" : "30"
+                            }`,
                         },
                       }}
                     >
@@ -835,13 +1356,11 @@ const CanvasModal = (props: any) => {
                     onClick={() => setActiveBubble("comment")}
                     sx={{
                       p: 1.5,
-                      backgroundColor: `${theme.palette.primary.main}${
-                        activeBubble === "comment" ? "" : "30"
-                      }`,
-                      "&:hover": {
-                        backgroundColor: `${theme.palette.primary.main}${
-                          activeBubble === "comment" ? "" : "30"
+                      backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
                         }`,
+                      "&:hover": {
+                        backgroundColor: `${theme.palette.primary.main}${activeBubble === "comment" ? "" : "30"
+                          }`,
                       },
                     }}
                   >

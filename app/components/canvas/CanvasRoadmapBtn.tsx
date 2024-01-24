@@ -47,6 +47,12 @@ const CanvasRoadmapBtn = (props: any) => {
     if (futureId === "Future1") {
       setExpanded({ future1: true, future2: false, future3: false });
     }
+    if (futureId === "Future2") {
+      setExpanded({ future1: false, future2: true, future3: false });
+    }
+    if (futureId === "Future3") {
+      setExpanded({ future1: false, future2: false, future3: true });
+    }
   }, [futureId]);
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -173,7 +179,9 @@ const CanvasRoadmapBtn = (props: any) => {
                   Future 1
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ ml: 3, minWidth: "auto", width: "auto" }}>
+              <AccordionDetails
+                sx={{ ml: 3, p: 0, minWidth: "auto", width: "auto" }}
+              >
                 <MenuList sx={{ p: 0, minWidth: "auto", width: "auto" }}>
                   {canvas?.future_1
                     ?.filter(
@@ -183,10 +191,22 @@ const CanvasRoadmapBtn = (props: any) => {
                     .map((CanvasCard: any, index: any) => {
                       return (
                         <MenuItem
+                          onClick={() => {
+                            router?.push(
+                              `/${projectId}/Future1/Microframeworks/${CanvasCard?.route}`
+                            );
+                            dispatch(
+                              appSlice.actions.toggleCanvasRoadmap(false)
+                            );
+                          }}
                           sx={{
+                            mb: 1,
                             borderRadius: 2,
                           }}
-                          selected={pathName.includes(CanvasCard?.route)}
+                          selected={
+                            pathName.includes(CanvasCard?.route) &&
+                            futureId === "Future1"
+                          }
                           key={index}
                           disabled={CanvasCard?.locked}
                         >
@@ -253,7 +273,9 @@ const CanvasRoadmapBtn = (props: any) => {
                   Future 2
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ ml: 3, minWidth: "auto", width: "auto" }}>
+              <AccordionDetails
+                sx={{ ml: 3, p: 0, minWidth: "auto", width: "auto" }}
+              >
                 <MenuList sx={{ p: 0, minWidth: "auto", width: "auto" }}>
                   {canvas?.future_2
                     ?.filter(
@@ -262,7 +284,22 @@ const CanvasRoadmapBtn = (props: any) => {
                     )
                     .map((CanvasCard: any, index: any) => {
                       return (
-                        <MenuItem key={index} disabled={CanvasCard?.locked}>
+                        <MenuItem
+                          key={index}
+                          disabled={CanvasCard?.locked}
+                          onClick={() => {
+                            router?.push(
+                              `/${projectId}/Future2/Microframeworks/${CanvasCard?.route}`
+                            );
+                            dispatch(
+                              appSlice.actions.toggleCanvasRoadmap(false)
+                            );
+                          }}
+                          selected={
+                            pathName.includes(CanvasCard?.route) &&
+                            futureId === "Future2"
+                          }
+                        >
                           <ListItemText
                             sx={{
                               "& .MuiTypography-root": {
@@ -327,7 +364,9 @@ const CanvasRoadmapBtn = (props: any) => {
                   Future 3
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ ml: 3, minWidth: "auto", width: "auto" }}>
+              <AccordionDetails
+                sx={{ ml: 3, p: 0, minWidth: "auto", width: "auto" }}
+              >
                 <MenuList sx={{ p: 0, minWidth: "auto", width: "auto" }}>
                   {canvas?.future_3
                     ?.filter(
@@ -336,7 +375,22 @@ const CanvasRoadmapBtn = (props: any) => {
                     )
                     .map((CanvasCard: any, index: any) => {
                       return (
-                        <MenuItem key={index} disabled={CanvasCard?.locked}>
+                        <MenuItem
+                          key={index}
+                          disabled={CanvasCard?.locked}
+                          onClick={() => {
+                            router?.push(
+                              `/${projectId}/Future3/Microframeworks/${CanvasCard?.route}`
+                            );
+                            dispatch(
+                              appSlice.actions.toggleCanvasRoadmap(false)
+                            );
+                          }}
+                          selected={
+                            pathName.includes(CanvasCard?.route) &&
+                            futureId === "Future3"
+                          }
+                        >
                           <ListItemText
                             sx={{
                               "& .MuiTypography-root": {

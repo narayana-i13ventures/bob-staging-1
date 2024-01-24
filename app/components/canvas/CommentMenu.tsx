@@ -21,6 +21,11 @@ import { appSlice, useDispatch, useSelector } from "@/lib/redux";
 import {
   selectedCardsSlice,
   selectedFuture1BMCCard,
+  selectedFuture1CVPCard,
+  selectedFuture2BMCCard,
+  selectedFuture2CVPCard,
+  selectedFuture3BMCCard,
+  selectedFuture3CVPCard,
 } from "@/lib/redux/slices/SelectedSlice";
 import { BMCSlice, useUpdateBMCCardMutation } from "@/lib/redux/BMCApi";
 import {
@@ -29,16 +34,22 @@ import {
   useParkCommentMutation,
 } from "@/lib/redux/CommentApi";
 import { useLazyGetProjectByIdQuery } from "@/lib/redux/projectApi";
+import { CVPSlice, useUpdateCVPCardMutation } from "@/lib/redux/CVPApi";
 const CommentMenu = (props: any) => {
-  const { comment } = props;
+  const { comment, project } = props;
   const dispatch = useDispatch();
   const pathName = usePathname();
   const commenMenuRef = useRef(null);
   const { data }: any = useSession();
   const { projectId, futureId } = useParams();
-  const Future1BMCCard = useSelector(selectedFuture1BMCCard);
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [commentMenuOpen, setCommenMenuOpen] = useState(false);
+  const Future1BMCCard = useSelector(selectedFuture1BMCCard);
+  const Future2BMCCard = useSelector(selectedFuture2BMCCard);
+  const Future3BMCCard = useSelector(selectedFuture3BMCCard);
+  const Future1CVPCard = useSelector(selectedFuture1CVPCard);
+  const Future2CVPCard = useSelector(selectedFuture2CVPCard);
+  const Future3CVPCard = useSelector(selectedFuture3CVPCard);
   const [status, setStatus] = useState({
     loading: false,
     error: false,
@@ -57,11 +68,19 @@ const CommentMenu = (props: any) => {
   const [
     updateBMCCard,
     {
-      isError: UpdateFuture1BMCError,
-      isSuccess: UpdateFuture1BMCSuccess,
-      isLoading: UpdateFuture1BMCLoading,
+      isError: update_bmc_error,
+      isSuccess: update_bmc_success,
+      isLoading: update_bmc_loading,
     },
   ] = useUpdateBMCCardMutation();
+  const [
+    updateCVPCard,
+    {
+      isError: update_cvp_error,
+      isSuccess: update_cvp_success,
+      isLoading: update_cvp_loading,
+    },
+  ] = useUpdateCVPCardMutation();
   const [
     deleteComment,
     {
@@ -75,25 +94,49 @@ const CommentMenu = (props: any) => {
     { isLoading: park_comment_loading, isError: park_comment_error },
   ] = useParkCommentMutation();
 
-  useEffect(() => {
-    if (selectedCard !== null) {
-      getProjectById({
-        projectId: projectId,
-        userId: data?.user?.user_id,
-      });
-    }
-  }, [projectId, data?.user?.user_id, selectedCard?.cardNumber]);
+  // useEffect(() => {
+  //   if (selectedCard !== null) {
+  //     getProjectById({
+  //       projectId: projectId,
+  //       userId: data?.user?.user_id,
+  //     });
+  //   }
+  // }, [projectId, data?.user?.user_id, selectedCard?.cardNumber]);
 
   useEffect(() => {
-    if (pathName.includes("/Future1/Microframeworks/BMC")) {
-      setSelectedCard(Future1BMCCard);
-    } else {
-      setSelectedCard(null);
+    if (futureId === "Future1") {
+      if (pathName.includes("BMC")) {
+        setSelectedCard(Future1BMCCard);
+      } else if (pathName.includes("CVP")) {
+        setSelectedCard(Future1CVPCard);
+      }
+    }
+    if (futureId === "Future2") {
+      if (pathName.includes("BMC")) {
+        setSelectedCard(Future2BMCCard);
+      } else if (pathName.includes("CVP")) {
+        setSelectedCard(Future2CVPCard);
+      }
+    }
+    if (futureId === "Future3") {
+      if (pathName.includes("BMC")) {
+        setSelectedCard(Future3BMCCard);
+      } else if (pathName.includes("CVP")) {
+        setSelectedCard(Future3CVPCard);
+      }
     }
     return () => {
       setSelectedCard(null);
     };
-  }, [pathName, Future1BMCCard]);
+  }, [
+    pathName,
+    Future1BMCCard,
+    Future1CVPCard,
+    Future2BMCCard,
+    Future2CVPCard,
+    Future3BMCCard,
+    Future3CVPCard,
+  ]);
 
   useEffect(() => {
     setStatus({
@@ -120,10 +163,39 @@ const CommentMenu = (props: any) => {
   const incorporateComment = async () => {
     const responseCard = { ...selectedCard };
     responseCard.keyPoints = "";
-    if (pathName.includes("/Future1/Microframeworks/BMC")) {
-      dispatch(
-        selectedCardsSlice.actions.updateSelectedFuture1BMCCard(responseCard)
-      );
+    if (pathName.includes("BMC")) {
+      if (futureId === "Future1") {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture1BMCCard(responseCard)
+        );
+      }
+      if (futureId === "Future2") {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture2BMCCard(responseCard)
+        );
+      }
+      if (futureId === "Future3") {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture3BMCCard(responseCard)
+        );
+      }
+    }
+    if (pathName.includes("CVP")) {
+      if (futureId === "Future1") {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture1CVPCard(responseCard)
+        );
+      }
+      if (futureId === "Future2") {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture2CVPCard(responseCard)
+        );
+      }
+      if (futureId === "Future3") {
+        dispatch(
+          selectedCardsSlice.actions.updateSelectedFuture3CVPCard(responseCard)
+        );
+      }
     }
     setCommenMenuOpen(false);
     let fullKeypoints = "";
@@ -144,10 +216,6 @@ const CommentMenu = (props: any) => {
         canvas_type: 2,
       }),
       onopen: async function (response: Response) {
-        responseCard.loadingKeyPoints = false;
-        dispatch(
-          selectedCardsSlice.actions.updateSelectedFuture1BMCCard(responseCard)
-        );
         return Promise.resolve();
       },
       onmessage: function (res: any) {
@@ -157,13 +225,64 @@ const CommentMenu = (props: any) => {
           if (suggestion === "") return;
           fullKeypoints = fullKeypoints + suggestion;
           responseCard.keyPoints = fullKeypoints;
-          if (pathName.includes("/Future1/Microframeworks/BMC")) {
-            dispatch(
-              selectedCardsSlice.actions.updateFuture1BMCKeyPoints(suggestion)
-            );
+          if (pathName.includes("BMC")) {
+            if (futureId === "Future1") {
+              dispatch(
+                selectedCardsSlice.actions.updateFuture1BMCKeyPoints(suggestion)
+              );
+            }
+            if (futureId === "Future2") {
+              dispatch(
+                selectedCardsSlice.actions.updateFuture2BMCKeyPoints(suggestion)
+              );
+            }
+            if (futureId === "Future3") {
+              dispatch(
+                selectedCardsSlice.actions.updateFuture3BMCKeyPoints(suggestion)
+              );
+            }
             dispatch(
               BMCSlice.util.updateQueryData(
-                "GetFuture1BMCCanvas",
+                "GetBMCCanvas",
+                {
+                  projectId: projectId,
+                  future: currentFuture,
+                  userId: data?.user?.user_id,
+                },
+                (draft: any) => {
+                  return draft.map((card: any) => {
+                    if (card.cardNumber === responseCard?.cardNumber) {
+                      return {
+                        ...card,
+                        keyPoints: fullKeypoints,
+                      };
+                    } else {
+                      return card;
+                    }
+                  });
+                }
+              )
+            );
+          }
+          if (pathName.includes("CVP")) {
+            if (futureId === "Future1") {
+              dispatch(
+                selectedCardsSlice.actions.updateFuture1CVPKeyPoints(suggestion)
+              );
+            }
+            if (futureId === "Future2") {
+              dispatch(
+                selectedCardsSlice.actions.updateFuture2CVPKeyPoints(suggestion)
+              );
+            }
+            if (futureId === "Future3") {
+              dispatch(
+                selectedCardsSlice.actions.updateFuture3CVPKeyPoints(suggestion)
+              );
+            }
+            dispatch(
+              CVPSlice.util.updateQueryData(
+                "GetCVPCanvas",
                 {
                   projectId: projectId,
                   future: currentFuture,
@@ -190,23 +309,128 @@ const CommentMenu = (props: any) => {
         dispatch(appSlice.actions.toggleBobThinking(false));
         dispatch(appSlice.actions.toggleBobGenerating(false));
         console.log(error);
-        if (pathName.includes("/Future1/Microframeworks/BMC")) {
+        if (pathName.includes("BMC")) {
           responseCard.loadingKeyPoints = false;
-
-          dispatch(
-            selectedCardsSlice.actions.updateSelectedFuture1BMCCard(
-              responseCard
-            )
-          );
+          if (futureId === "Future1") {
+            dispatch(
+              selectedCardsSlice.actions.updateSelectedFuture1BMCCard(
+                responseCard
+              )
+            );
+          }
+          if (futureId === "Future2") {
+            dispatch(
+              selectedCardsSlice.actions.updateSelectedFuture2BMCCard(
+                responseCard
+              )
+            );
+          }
+          if (futureId === "Future3") {
+            dispatch(
+              selectedCardsSlice.actions.updateSelectedFuture3BMCCard(
+                responseCard
+              )
+            );
+          }
           dispatch(
             commentSlice.util.updateQueryData(
               "getAllComments",
               {
-                userId: data?.userId,
-                projectId: data?.projectId,
-                future: data?.future,
-                canvas_type: data?.canvas_type,
-                cardNumber: data?.cardNumber,
+                userId: data?.user?.user_id,
+                projectId: projectId,
+                future: currentFuture,
+                canvas_type: 2,
+                cardNumber: responseCard?.cardNumber,
+              },
+              (draft: any) => {
+                return draft?.map((comment: any) => {
+                  if (comment?.comment_id === data?.comment_id) {
+                    return {
+                      ...comment,
+                      incorporated: false,
+                    };
+                  } else {
+                    return comment;
+                  }
+                });
+              }
+            )
+          );
+          updateBMCCard({
+            card: responseCard,
+            projectId,
+            currentFuture,
+            userId: data?.user?.user_id,
+          });
+        }
+        if (pathName.includes("CVP")) {
+          responseCard.loadingKeyPoints = false;
+          if (futureId === "Future1") {
+            dispatch(
+              selectedCardsSlice.actions.updateSelectedFuture1CVPCard(
+                responseCard
+              )
+            );
+          }
+          if (futureId === "Future2") {
+            dispatch(
+              selectedCardsSlice.actions.updateSelectedFuture2CVPCard(
+                responseCard
+              )
+            );
+          }
+          if (futureId === "Future3") {
+            dispatch(
+              selectedCardsSlice.actions.updateSelectedFuture3CVPCard(
+                responseCard
+              )
+            );
+          }
+          dispatch(
+            commentSlice.util.updateQueryData(
+              "getAllComments",
+              {
+                userId: data?.user?.user_id,
+                projectId: projectId,
+                future: currentFuture,
+                canvas_type: 3,
+                cardNumber: responseCard?.cardNumber,
+              },
+              (draft: any) => {
+                return draft?.map((comment: any) => {
+                  if (comment?.comment_id === data?.comment_id) {
+                    return {
+                      ...comment,
+                      incorporated: true,
+                    };
+                  } else {
+                    return comment;
+                  }
+                });
+              }
+            )
+          );
+          updateCVPCard({
+            card: responseCard,
+            projectId,
+            currentFuture,
+            userId: data?.user?.user_id,
+          });
+        }
+      },
+      onclose: function () {
+        console.log("connection closed");
+        dispatch(appSlice.actions.toggleBobThinking(false));
+        if (pathName.includes("BMC")) {
+          dispatch(
+            commentSlice.util.updateQueryData(
+              "getAllComments",
+              {
+                userId: data?.user?.user_id,
+                projectId: projectId,
+                future: currentFuture,
+                canvas_type: 2,
+                cardNumber: responseCard?.cardNumber,
               },
               (draft: any) => {
                 return draft?.map((comment: any) => {
@@ -225,16 +449,44 @@ const CommentMenu = (props: any) => {
           updateBMCCard({
             card: responseCard,
             projectId,
-            currentFuture,
+            future: currentFuture,
             userId: data?.user?.user_id,
-          });
+          })
+            .unwrap()
+            .then((response: any) => {
+              fullKeypoints = "";
+              dispatch(appSlice.actions.toggleBobGenerating(false));
+            })
+            .catch((error: any) => {
+              dispatch(appSlice.actions.toggleBobGenerating(false));
+            });
         }
-      },
-      onclose: function () {
-        console.log("connection closed");
-        dispatch(appSlice.actions.toggleBobThinking(false));
-        if (pathName.includes("/Future1/Microframeworks/BMC")) {
-          updateBMCCard({
+        if (pathName.includes("CVP")) {
+          dispatch(
+            commentSlice.util.updateQueryData(
+              "getAllComments",
+              {
+                userId: data?.user?.user_id,
+                projectId: projectId,
+                future: currentFuture,
+                canvas_type: 3,
+                cardNumber: responseCard?.cardNumber,
+              },
+              (draft: any) => {
+                return draft?.map((comment: any) => {
+                  if (comment?.comment_id === data?.comment_id) {
+                    return {
+                      ...comment,
+                      incorporated: true,
+                    };
+                  } else {
+                    return comment;
+                  }
+                });
+              }
+            )
+          );
+          updateCVPCard({
             card: responseCard,
             projectId,
             future: currentFuture,
@@ -332,74 +584,76 @@ const CommentMenu = (props: any) => {
           },
         }}
       >
-        <MenuList>
-          {project_data?.project?.is_owner && (
-            <MenuItem
-              disabled={comment?.parked}
-              onClick={parkUserComment}
-              sx={{
-                borderRadius: 2,
-                "&:hover": {
-                  backgroundColor: `#f6f5f4`,
-                },
-              }}
-            >
-              <ListItemText
+        <>
+          <MenuList>
+            {project?.project?.is_owner && (
+              <MenuItem
+                disabled={comment?.parked}
+                onClick={parkUserComment}
                 sx={{
-                  "& .MuiTypography-root": {
-                    fontSize: 12,
+                  borderRadius: 2,
+                  "&:hover": {
+                    backgroundColor: `#f6f5f4`,
                   },
                 }}
               >
-                Park Comment
-              </ListItemText>
-            </MenuItem>
-          )}
-          {project_data?.project?.is_owner && (
-            <MenuItem
-              disabled={comment?.incorporated}
-              onClick={incorporateComment}
-              sx={{
-                borderRadius: 2,
-                "&:hover": {
-                  backgroundColor: `#f6f5f4`,
-                },
-              }}
-            >
-              <ListItemText
+                <ListItemText
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 12,
+                    },
+                  }}
+                >
+                  Park Comment
+                </ListItemText>
+              </MenuItem>
+            )}
+            {project?.project?.is_owner && (
+              <MenuItem
+                disabled={comment?.incorporated}
+                onClick={incorporateComment}
                 sx={{
-                  "& .MuiTypography-root": {
-                    fontSize: 12,
+                  borderRadius: 2,
+                  "&:hover": {
+                    backgroundColor: `#f6f5f4`,
                   },
                 }}
               >
-                Incorporate Comment
-              </ListItemText>
-            </MenuItem>
-          )}
-          {data?.user?.user_id === comment?.commenter?.user_id && (
-            <MenuItem
-              onClick={deleteUserComment}
-              sx={{
-                borderRadius: 2,
-                "&:hover": {
-                  backgroundColor: `#f6f5f4`,
-                },
-              }}
-            >
-              <ListItemText
+                <ListItemText
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 12,
+                    },
+                  }}
+                >
+                  Incorporate Comment
+                </ListItemText>
+              </MenuItem>
+            )}
+            {data?.user?.user_id === comment?.commenter?.user_id && (
+              <MenuItem
+                onClick={deleteUserComment}
                 sx={{
-                  "& .MuiTypography-root": {
-                    fontSize: 12,
-                    color: "red",
+                  borderRadius: 2,
+                  "&:hover": {
+                    backgroundColor: `#f6f5f4`,
                   },
                 }}
               >
-                Delete Comment
-              </ListItemText>
-            </MenuItem>
-          )}
-        </MenuList>
+                <ListItemText
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontSize: 12,
+                      color: "red",
+                    },
+                  }}
+                >
+                  Delete Comment
+                </ListItemText>
+              </MenuItem>
+            )}
+          </MenuList>
+        </>
       </Popover>
     </>
   );

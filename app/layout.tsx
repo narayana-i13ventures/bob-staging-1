@@ -1,12 +1,12 @@
 /* Components */
 import './styles/globals.css';
 import type { Metadata } from 'next';
-import { Providers } from '@/lib/providers'
-import ThemeRegistry from './components/ThemeRegistry/ThemeRegistry'
-import GlobalSnackbar from './components/Shared/GlobalSnackbar';
+import { Providers } from '@/lib/providers';
+import ThemeRegistry from './components/ThemeRegistry/ThemeRegistry';
 import AuthProvider from './components/ThemeRegistry/AuthProvider';
 import Loading from './loading';
 import { Suspense } from 'react';
+import GlobalSnackbar from './components/Shared/GlobalSnackbar';
 
 export const metadata: Metadata = {
   title: "Bob",

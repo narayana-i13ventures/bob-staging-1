@@ -9,7 +9,7 @@ const CommentBox = (props: any) => {
     const [comment, setComment] = useState<any>("");
     const textFieldRef = useRef<HTMLInputElement | null>(null);
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-    const { comments, postComment, color, loading, saving } = props;
+    const { comments, postComment, color, loading, saving,project } = props;
 
     const handlePostComment = () => {
         if (comment.trim() !== "") {
@@ -75,7 +75,7 @@ const CommentBox = (props: any) => {
                                 .reverse()
                                 .filter((comment: any) => comment.role !== "system")
                                 .map((comment: any, index: number) => {
-                                    return <Comment key={index} comment={comment} />;
+                                    return <Comment key={index} comment={comment} project={project} />;
                                 })}
                         </>
                     ) : (

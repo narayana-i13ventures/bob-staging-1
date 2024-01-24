@@ -111,6 +111,7 @@ const ThinkbeyondCard = (props: any) => {
         p: 2,
         mx: "auto",
         width: width,
+        height: "100%",
         borderRadius: 2,
         overflow: "hidden",
         transition: "all ease-in 200ms",
@@ -125,6 +126,9 @@ const ThinkbeyondCard = (props: any) => {
           direction={"row"}
           justifyContent={"space-between"}
           alignItems={"center"}
+          sx={{
+            height:'100%'
+          }}
         >
           <Typography
             variant="body1"
@@ -144,17 +148,20 @@ const ThinkbeyondCard = (props: any) => {
             }
             size="large"
             sx={{
-              // backgroundColor: card?.selected ? "black" : "white",
+              backgroundColor: card?.selected ? "black" : "white",
+              color: card?.selected ? "white" : "black",
               "&:hover": {
-                backgroundColor: "white",
-                // backgroundColor: card?.selected ? "black" : "white",
-                // transition: "all ease-in 200ms",
+                // backgroundColor: "white",
+                backgroundColor: card?.selected ? "black" : "white",
+                transition: "all ease-in 200ms",
               },
             }}
           >
             {card?.locked ? (
               <LockOutlinedIcon />
-            ) : card?.cardNumber === (4 || 7 || 10) ? (
+            ) : card?.cardNumber === 4 ||
+              card?.cardNumber === 7 ||
+              card?.cardNumber === 10 ? (
               <SpaceDashboardOutlinedIcon />
             ) : (
               <ModeEditOutlineOutlinedIcon />

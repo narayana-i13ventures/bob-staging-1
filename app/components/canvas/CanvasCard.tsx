@@ -25,6 +25,7 @@ import {
 import { useSession } from "next-auth/react";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { CVPSlice } from "@/lib/redux/CVPApi";
 const CanvasCard = (props: any) => {
   const { card }: any = props;
   const pathName = usePathname();
@@ -61,6 +62,7 @@ const CanvasCard = (props: any) => {
   const openCanvasModal = () => {
     dispatch(appSlice.actions.toggleCanvasModalOpen(true));
   };
+
   const [
     updateBMCCard,
     {
@@ -105,28 +107,149 @@ const CanvasCard = (props: any) => {
     }
   };
   const testSelectCard = () => {
-    if (pathName.includes("/Future1/Microframeworks/BMC")) {
-      dispatch(
-        BMCSlice.util.updateQueryData(
-          "GetFuture1BMCCanvas",
-          {
-            projectId: projectId,
-            future: future,
-            userId: data?.user?.user_id,
-          },
-          (draft: any) => {
-            draft?.map((CanvasCard: any) => {
-              if (CanvasCard?.cardNumber === card?.cardNumber) {
-                return { ...CanvasCard, selected: true };
-              } else {
-                return { ...CanvasCard, selected: false };
-              }
-            });
-          }
-        )
-      );
-      dispatch(selectedCardsSlice.actions.setSelectedFuture1BMCCard(card));
-      dispatch(appSlice.actions.toggleCanvasModalOpen(true));
+    if (futureId === "Future1") {
+      if (pathName.includes("BMC")) {
+        dispatch(
+          BMCSlice.util.updateQueryData(
+            "GetBMCCanvas",
+            {
+              projectId: projectId,
+              future: future,
+              userId: data?.user?.user_id,
+            },
+            (draft: any) => {
+              draft?.map((CanvasCard: any) => {
+                if (CanvasCard?.cardNumber === card?.cardNumber) {
+                  return { ...CanvasCard, selected: true };
+                } else {
+                  return { ...CanvasCard, selected: false };
+                }
+              });
+            }
+          )
+        );
+        dispatch(selectedCardsSlice.actions.setSelectedFuture1BMCCard(card));
+        dispatch(appSlice.actions.toggleCanvasModalOpen(true));
+      }
+      if (pathName.includes("CVP")) {
+        dispatch(
+          CVPSlice.util.updateQueryData(
+            "GetCVPCanvas",
+            {
+              projectId: projectId,
+              future: future,
+              userId: data?.user?.user_id,
+            },
+            (draft: any) => {
+              draft?.map((CanvasCard: any) => {
+                if (CanvasCard?.cardNumber === card?.cardNumber) {
+                  return { ...CanvasCard, selected: true };
+                } else {
+                  return { ...CanvasCard, selected: false };
+                }
+              });
+            }
+          )
+        );
+        dispatch(selectedCardsSlice.actions.setSelectedFuture1CVPCard(card));
+        dispatch(appSlice.actions.toggleCanvasModalOpen(true));
+      }
+    }
+    if (futureId === "Future2") {
+      if (pathName.includes("BMC")) {
+        dispatch(
+          BMCSlice.util.updateQueryData(
+            "GetBMCCanvas",
+            {
+              projectId: projectId,
+              future: future,
+              userId: data?.user?.user_id,
+            },
+            (draft: any) => {
+              draft?.map((CanvasCard: any) => {
+                if (CanvasCard?.cardNumber === card?.cardNumber) {
+                  return { ...CanvasCard, selected: true };
+                } else {
+                  return { ...CanvasCard, selected: false };
+                }
+              });
+            }
+          )
+        );
+        dispatch(selectedCardsSlice.actions.setSelectedFuture2BMCCard(card));
+        dispatch(appSlice.actions.toggleCanvasModalOpen(true));
+      }
+      if (pathName.includes("CVP")) {
+        dispatch(
+          CVPSlice.util.updateQueryData(
+            "GetCVPCanvas",
+            {
+              projectId: projectId,
+              future: future,
+              userId: data?.user?.user_id,
+            },
+            (draft: any) => {
+              draft?.map((CanvasCard: any) => {
+                if (CanvasCard?.cardNumber === card?.cardNumber) {
+                  return { ...CanvasCard, selected: true };
+                } else {
+                  return { ...CanvasCard, selected: false };
+                }
+              });
+            }
+          )
+        );
+        dispatch(selectedCardsSlice.actions.setSelectedFuture2CVPCard(card));
+        dispatch(appSlice.actions.toggleCanvasModalOpen(true));
+      }
+    }
+    if (futureId === "Future3") {
+      if (pathName.includes("BMC")) {
+        dispatch(
+          BMCSlice.util.updateQueryData(
+            "GetBMCCanvas",
+            {
+              projectId: projectId,
+              future: future,
+              userId: data?.user?.user_id,
+            },
+            (draft: any) => {
+              draft?.map((CanvasCard: any) => {
+                if (CanvasCard?.cardNumber === card?.cardNumber) {
+                  return { ...CanvasCard, selected: true };
+                } else {
+                  return { ...CanvasCard, selected: false };
+                }
+              });
+            }
+          )
+        );
+        dispatch(selectedCardsSlice.actions.setSelectedFuture3BMCCard(card));
+        dispatch(appSlice.actions.toggleCanvasModalOpen(true));
+      }
+      if (pathName.includes("CVP")) {
+        dispatch(
+          CVPSlice.util.updateQueryData(
+            "GetCVPCanvas",
+            {
+              projectId: projectId,
+              future: future,
+              userId: data?.user?.user_id,
+            },
+            (draft: any) => {
+              draft?.map((CanvasCard: any) => {
+                if (CanvasCard?.cardNumber === card?.cardNumber) {
+                  return { ...CanvasCard, selected: true };
+                } else {
+                  return { ...CanvasCard, selected: false };
+                }
+              });
+            }
+          )
+        );
+        dispatch(selectedCardsSlice.actions.setSelectedFuture3CVPCard(card));
+        dispatch(appSlice.actions.toggleCanvasModalOpen(true));
+      }
     }
   };
 

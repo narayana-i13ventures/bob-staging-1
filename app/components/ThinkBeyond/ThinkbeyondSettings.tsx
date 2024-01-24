@@ -2,7 +2,6 @@
 import React from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { SpeedDial, SpeedDialAction } from "@mui/material";
-import { useResetThinkBeyondMutation } from "@/lib/redux/Api";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
@@ -11,7 +10,6 @@ import { useParams } from "next/navigation";
 const ThinkBeyondSettings = () => {
   const dispatch = useDispatch();
   const { projectId } = useParams();
-  const [ResetThinkBeyond] = useResetThinkBeyondMutation();
   const { ThinkbeyondSettings }:any = useSelector(selectApp);
 
   const handleThinkBeyondReset = () => {

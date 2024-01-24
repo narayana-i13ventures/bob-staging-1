@@ -6,25 +6,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import {
-  Button,
-  CircularProgress,
-  DialogActions,
-  Divider,
-  IconButton,
-  LinearProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import { useSession } from "next-auth/react";
 import {
-  useNextThinknbeyondCardMutation,
   usePrefillFuture2Mutation,
   usePrefillFuture3Mutation,
 } from "@/lib/redux/ThinkbeyondApi";
 import { useParams } from "next/navigation";
-import { selectedThinkbeyond } from "@/lib/redux/slices/SelectedSlice";
 import {
   usePrefillFutuer1BMCMutation,
   usePrefillFutuer2BMCMutation,
@@ -40,70 +29,84 @@ const ThinkbeyondActivityModal = () => {
     error: false,
     success: true,
   });
-  const [
-    nextThinkbeyondCard,
-    {
-      isLoading: next_card_loading,
-      isError: next_card_error,
-      isSuccess: next_card_success,
-    },
-  ] = useNextThinknbeyondCardMutation();
 
   const [
     prefillFuture3Thinkbeyond,
     {
-      isSuccess: prefillFuture3ThinkbeyondSuccess,
-      isLoading: prefillFuture3ThinkbeyondLoading,
-      isError: prefillFuture3ThinkbeyondError,
+      isSuccess: prefill_future3_thinkbeyond_success,
+      isLoading: prefill_future3_thinkbeyond_loading,
+      isError: prefill_future3_thinkbeyond_error,
     },
   ] = usePrefillFuture3Mutation();
   const [
     prefillFuture2Thinkbeyond,
     {
-      isSuccess: prefillFuture2ThinkbeyondSuccess,
-      isLoading: prefillFuture2ThinkbeyondLoading,
-      isError: prefillFuture2ThinkbeyondError,
+      isSuccess: prefill_future2_thinkbeyond_success,
+      isLoading: prefill_future2_thinkbeyond_loading,
+      isError: prefill_future2_thinkbeyond_error,
     },
   ] = usePrefillFuture2Mutation();
 
   const [
     prefillFuture1BMC,
     {
-      isSuccess: prefillFuture1BMCSuccess,
-      isLoading: prefillFuture1BMCLoading,
-      isError: prefillFuture1Error,
+      isSuccess: prefill_future1_bmc_success,
+      isLoading: prefill_future1_bmc_loading,
+      isError: prefill_future1_bmc_error,
     },
   ] = usePrefillFutuer1BMCMutation();
   const [
     prefillFuture2BMC,
     {
-      isSuccess: prefillFuture2BMCSuccess,
-      isLoading: prefillFuture2BMCLoading,
-      isError: prefillFuture2Error,
+      isSuccess: prefill_future2_bmc_success,
+      isLoading: prefill_future2_bmc_loading,
+      isError: prefill_future2_bmc_error,
     },
   ] = usePrefillFutuer2BMCMutation();
   const [
     prefillFuture3BMC,
     {
-      isSuccess: prefillFuture3BMCSuccess,
-      isLoading: prefillFuture3BMCLoading,
-      isError: prefillFuture3Error,
+      isSuccess: prefill_future3_bmc_success,
+      isLoading: prefill_future3_bmc_loading,
+      isError: prefill_future3_bmc_error,
     },
   ] = usePrefillFutuer3BMCMutation();
 
   useEffect(() => {
     setStatus({
-      loading: prefillFuture3ThinkbeyondLoading || prefillFuture1BMCLoading ||prefillFuture2BMCLoading,
-      error: prefillFuture3ThinkbeyondError || prefillFuture1Error,
-      success: prefillFuture3ThinkbeyondSuccess && prefillFuture1BMCSuccess,
+      loading:
+        prefill_future3_thinkbeyond_loading ||
+        prefill_future2_thinkbeyond_loading ||
+        prefill_future1_bmc_loading ||
+        prefill_future2_bmc_loading ||
+        prefill_future3_bmc_loading,
+      error:
+        prefill_future3_thinkbeyond_error ||
+        prefill_future2_thinkbeyond_error ||
+        prefill_future1_bmc_error ||
+        prefill_future2_bmc_error ||
+        prefill_future3_bmc_error,
+      success:
+        (prefill_future3_thinkbeyond_success && prefill_future1_bmc_success) ||
+        (prefill_future3_bmc_success && prefill_future2_thinkbeyond_success) ||
+        prefill_future2_bmc_success,
     });
   }, [
-    prefillFuture3ThinkbeyondSuccess,
-    prefillFuture3ThinkbeyondLoading,
-    prefillFuture3ThinkbeyondError,
-    prefillFuture1BMCSuccess,
-    prefillFuture1BMCLoading,
-    prefillFuture1Error,
+    prefill_future3_thinkbeyond_loading,
+    prefill_future2_thinkbeyond_loading,
+    prefill_future1_bmc_loading,
+    prefill_future2_bmc_loading,
+    prefill_future3_bmc_loading,
+    prefill_future3_thinkbeyond_error,
+    prefill_future2_thinkbeyond_error,
+    prefill_future1_bmc_error,
+    prefill_future2_bmc_error,
+    prefill_future3_bmc_error,
+    prefill_future3_thinkbeyond_success,
+    prefill_future1_bmc_success,
+    prefill_future3_bmc_success,
+    prefill_future2_thinkbeyond_success,
+    prefill_future2_bmc_success,
   ]);
 
   const closeThinkbeyondActivity = () => {
@@ -113,12 +116,28 @@ const ThinkbeyondActivityModal = () => {
   };
 
   useEffect(() => {
-    if (prefillFuture3ThinkbeyondSuccess && prefillFuture1BMCSuccess) {
+    if (prefill_future3_thinkbeyond_success && prefill_future1_bmc_success) {
       dispatch(
         appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
       );
     }
-  }, [prefillFuture3ThinkbeyondSuccess, prefillFuture1BMCSuccess]);
+    if (prefill_future2_thinkbeyond_success && prefill_future3_bmc_success) {
+      dispatch(
+        appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
+      );
+    }
+    if (prefill_future2_bmc_success) {
+      dispatch(
+        appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
+      );
+    }
+  }, [
+    prefill_future3_thinkbeyond_success,
+    prefill_future1_bmc_success,
+    prefill_future2_thinkbeyond_success,
+    prefill_future3_bmc_success,
+    prefill_future2_bmc_success,
+  ]);
 
   useEffect(() => {
     if (
@@ -159,18 +178,32 @@ const ThinkbeyondActivityModal = () => {
       ThinkbeyondActivity?.open &&
       ThinkbeyondActivity?.type === "future1_microframeworks"
     ) {
-      if (prefillFuture1Error && prefillFuture3ThinkbeyondError) {
+      if (prefill_future1_bmc_error && prefill_future3_thinkbeyond_error) {
         prefillFuture1BMC({
           userId: data?.user?.user_id,
           projectId,
         });
         prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
       }
-      if (!prefillFuture1Error && prefillFuture3ThinkbeyondError) {
-        prefillFuture3Thinkbeyond({ userId: data?.user?.user_id, projectId });
+    }
+    if (
+      ThinkbeyondActivity?.open &&
+      ThinkbeyondActivity?.type === "future3_microframeworks"
+    ) {
+      if (!prefill_future3_bmc_error && prefill_future2_thinkbeyond_error) {
+        prefillFuture3BMC({
+          userId: data?.user?.user_id,
+          projectId,
+        });
+        prefillFuture2Thinkbeyond({ userId: data?.user?.user_id, projectId });
       }
-      if (prefillFuture1Error && !prefillFuture3ThinkbeyondError) {
-        prefillFuture1BMC({
+    }
+    if (
+      ThinkbeyondActivity?.open &&
+      ThinkbeyondActivity?.type === "future2_microframeworks"
+    ) {
+      if (prefill_future2_bmc_error) {
+        prefillFuture2BMC({
           userId: data?.user?.user_id,
           projectId,
         });

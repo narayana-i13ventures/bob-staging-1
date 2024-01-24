@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import { styled } from "@mui/material/styles";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -15,6 +16,7 @@ import {
 import { appSlice, useDispatch } from "@/lib/redux";
 import { useParams, useRouter } from "next/navigation";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
 const MicroframeworkCard = (props: any) => {
   const { canvas } = props;
   const theme = useTheme();

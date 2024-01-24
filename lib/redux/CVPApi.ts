@@ -47,6 +47,48 @@ export const CVPSlice = createApi({
       }),
       providesTags: ["CVP"],
     }),
+    updateCVPCard: builder.mutation({
+      query: ({ projectId, card, future, userId }) => ({
+        url: `/v1/cvp/updatecard`,
+        method: "POST",
+        body: JSON.stringify({
+          user_id: userId,
+          project_id: projectId,
+          future: future,
+          keypoints: card?.keyPoints,
+          card_color: "000000",
+          is_selected: card?.selected,
+          is_locked: card?.locked,
+          is_complete: true,
+          is_loading: card?.loadingKeyPoints,
+          cardNumber: card?.cardNumber,
+        }),
+      }),
+      async onQueryStarted(data, { dispatch, queryFulfilled }) {
+        try {
+          const response: any = await queryFulfilled;
+          const patchResult = dispatch(
+            CVPSlice.util.updateQueryData(
+              "GetCVPCanvas",
+              {
+                projectId: data?.projectId,
+                future: data?.future,
+                userId: data?.userId,
+              },
+              (draft: any) => {
+                const updatedCardIndex = draft.findIndex((card: any) => {
+                  return card?.cardNumber === response?.data?.[0]?.cardNumber;
+                });
+                if (updatedCardIndex !== -1) {
+                  draft[updatedCardIndex] = response?.data?.[0];
+                }
+                return draft;
+              }
+            )
+          );
+        } catch (error) { }
+      },
+    }),
   }),
 });
 
@@ -55,4 +97,5 @@ export const {
   usePrefillFutuer1CVPMutation,
   usePrefillFutuer2CVPMutation,
   usePrefillFutuer3CVPMutation,
+  useUpdateCVPCardMutation
 } = CVPSlice;

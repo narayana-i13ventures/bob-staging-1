@@ -96,7 +96,7 @@ const UserSearch = (props: any) => {
 
   const canvasChildren = (
     <Box sx={{ display: "flex", flexDirection: "column", ml: 6 }}>
-      {canvas_data?.frameworks?.[0]?.canvases
+      {canvas_data?.future_1
         ?.filter(
           (canvas: any) => canvas.canvas_type === 2 || canvas.canvas_type === 3
         )
@@ -108,7 +108,7 @@ const UserSearch = (props: any) => {
               sx={{ my: 1 }}
               label={canvas?.name}
               control={
-                canvas?.canvas_type === 2 ? (
+                !canvas?.locked ? (
                   <Checkbox checked={canvasChecked[0]} onChange={BMCChecked} />
                 ) : (
                   <>

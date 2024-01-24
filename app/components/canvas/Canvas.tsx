@@ -42,10 +42,10 @@ const Canvas = (props: any) => {
     futureId === "Future1"
       ? 1
       : futureId === "Future2"
-      ? 2
-      : futureId === "Future3"
-      ? 3
-      : 0;
+        ? 2
+        : futureId === "Future3"
+          ? 3
+          : 0;
   const closeCanvas = () => {
     router.push(`/${projectId}/${futureId}/Microframeworks`);
   };
@@ -196,7 +196,7 @@ const Canvas = (props: any) => {
               {canvasName === "BMC" ? (
                 <BMCCanvas project={project_data} />
               ) : (
-                <CVPCanvas />
+                <CVPCanvas project={project_data}/>
               )}
             </>
           )}
@@ -228,7 +228,7 @@ const Canvas = (props: any) => {
         </DialogContent>
       </Dialog>
       <ShareModal />
-      <CanvasdActivityModal/>
+      <CanvasdActivityModal canvas={canvas_data} />
     </>
   );
 };

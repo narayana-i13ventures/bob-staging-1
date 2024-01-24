@@ -95,7 +95,7 @@ const ThinkbeyondNewModal = (props: any) => {
         projectId,
         future: 123,
         canvas_type: 1,
-        cardNumber: 0,
+        cardNumber: selectedThinkbeyondCard?.cardNumber,
       });
     } else {
       getComments({
@@ -103,10 +103,10 @@ const ThinkbeyondNewModal = (props: any) => {
         projectId,
         future: 123,
         canvas_type: 1,
-        cardNumber: 0,
+        cardNumber: selectedThinkbeyondCard?.cardNumber,
       });
     }
-  }, [projectId, data?.user?.user_id]);
+  }, [projectId, data?.user?.user_id, selectedThinkbeyondCard?.cardNumber]);
 
   useEffect(() => {
     if (!project?.project?.is_owner) {
@@ -157,7 +157,7 @@ const ThinkbeyondNewModal = (props: any) => {
         userId: data?.user?.user_id,
         projectId: projectId,
         future: 123,
-        cardNumber: 0,
+        cardNumber: selectedThinkbeyondCard?.cardNumber,
         canvas_type: 1,
         content,
       });
@@ -619,7 +619,7 @@ const ThinkbeyondNewModal = (props: any) => {
               projectId,
               future: 123,
               canvas_type: 1,
-              cardNumber: 0,
+              cardNumber: selectedThinkbeyondCard?.cardNumber,
               chat: [
                 {
                   role: "assistant",

@@ -6,29 +6,20 @@ import CloseIcon from "@mui/icons-material/Close";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import {
-  Button,
-  CircularProgress,
-  DialogActions,
-  Divider,
-  IconButton,
-  LinearProgress,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { appSlice, selectApp, useDispatch, useSelector } from "@/lib/redux";
 import { useSession } from "next-auth/react";
+import { useParams, useRouter } from "next/navigation";
 import {
-  useNextThinknbeyondCardMutation,
-  usePrefillFuture2Mutation,
-  usePrefillFuture3Mutation,
-} from "@/lib/redux/ThinkbeyondApi";
-import { useParams } from "next/navigation";
-import { usePrefillFutuer1CVPMutation } from "@/lib/redux/CVPApi";
-const CanvasdActivityModal = () => {
+  usePrefillFutuer1CVPMutation,
+  usePrefillFutuer2CVPMutation,
+  usePrefillFutuer3CVPMutation,
+} from "@/lib/redux/CVPApi";
+const CanvasdActivityModal = (props: any) => {
+  const router = useRouter();
   const dispatch = useDispatch();
+  const { projectId, futureId } = useParams();
   const { data }: any = useSession();
-  const { projectId } = useParams();
   const { canvasActivity }: any = useSelector(selectApp);
   const [status, setStatus] = useState({
     loading: false,
@@ -43,41 +34,104 @@ const CanvasdActivityModal = () => {
       isSuccess: prefill_future1_cvp_success,
     },
   ] = usePrefillFutuer1CVPMutation();
+  const [
+    prefillFuture2CVP,
+    {
+      isLoading: prefill_future2_cvp_loading,
+      isError: prefill_future2_cvp_error,
+      isSuccess: prefill_future2_cvp_success,
+    },
+  ] = usePrefillFutuer2CVPMutation();
+  const [
+    prefillFuture3CVP,
+    {
+      isLoading: prefill_future3_cvp_loading,
+      isError: prefill_future3_cvp_error,
+      isSuccess: prefill_future3_cvp_success,
+    },
+  ] = usePrefillFutuer3CVPMutation();
 
   useEffect(() => {
     setStatus({
-      loading: prefill_future1_cvp_loading,
-      error: prefill_future1_cvp_error,
-      success: prefill_future1_cvp_success,
+      loading: prefill_future1_cvp_loading || prefill_future2_cvp_loading || prefill_future3_cvp_loading,
+      error: prefill_future1_cvp_error || prefill_future2_cvp_error || prefill_future3_cvp_error,
+      success: prefill_future1_cvp_success || prefill_future3_cvp_success || prefill_future3_cvp_success,
     });
   }, [
     prefill_future1_cvp_success,
     prefill_future1_cvp_loading,
     prefill_future1_cvp_error,
+    prefill_future2_cvp_success,
+    prefill_future2_cvp_loading,
+    prefill_future2_cvp_error,
+    prefill_future3_cvp_success,
+    prefill_future3_cvp_loading,
+    prefill_future3_cvp_error,
   ]);
 
   useEffect(() => {
-    if (prefill_future1_cvp_success) {
+    if (
+      prefill_future1_cvp_success ||
+      prefill_future2_cvp_success ||
+      prefill_future3_cvp_success
+    ) {
       dispatch(
-        appSlice.actions.toggleThinkbeyondActivity({ open: false, type: "" })
+        appSlice.actions.setCanvasActivity({ open: false, type: "" })
       );
     }
-  }, [prefill_future1_cvp_success]);
-
-  useEffect(() => {
-    if (canvasActivity?.open && canvasActivity?.type === "cvp") {
-      //   prefillFuture1CVP({ userId: data?.user?.user_id, projectId });
-    }
   }, [
-    projectId,
-    data?.user?.user_id,
-    canvasActivity?.open,
-    canvasActivity?.type,
+    prefill_future1_cvp_success,
+    prefill_future2_cvp_success,
+    prefill_future3_cvp_success,
   ]);
 
+  useEffect(() => {
+    if (canvasActivity?.open) {
+      if (canvasActivity?.type === "cvp" && futureId === "Future1") {
+        prefillFuture1CVP({ userId: data?.user?.user_id, projectId });
+      }
+      if (canvasActivity?.type === "cvp" && futureId === "Future2") {
+        prefillFuture2CVP({ userId: data?.user?.user_id, projectId });
+      }
+      if (canvasActivity?.type === "cvp" && futureId === "Future3") {
+        prefillFuture3CVP({ userId: data?.user?.user_id, projectId });
+      }
+    }
+  }, [
+    canvasActivity?.open,
+    canvasActivity?.type,
+    data?.user?.user_id,
+    projectId,
+    futureId,
+  ]);
+  useEffect(() => {
+    if (prefill_future1_cvp_success) {
+      dispatch(appSlice.actions.setCanvasActivity({ open: false, type: "" }));
+    }
+  }, [prefill_future1_cvp_success]);
   const retry = () => {
-    if (prefill_future1_cvp_error && canvasActivity?.type === "cvp") {
-      prefillFuture1CVP({ userId: data?.user?.user_id, projectId });
+    if (canvasActivity?.open) {
+      if (
+        prefill_future1_cvp_error &&
+        canvasActivity?.type === "cvp" &&
+        futureId === "Future1"
+      ) {
+        prefillFuture1CVP({ userId: data?.user?.user_id, projectId });
+      }
+      if (
+        prefill_future2_cvp_error &&
+        canvasActivity?.type === "cvp" &&
+        futureId === "Future2"
+      ) {
+        prefillFuture2CVP({ userId: data?.user?.user_id, projectId });
+      }
+      if (
+        prefill_future3_cvp_error &&
+        canvasActivity?.type === "cvp" &&
+        futureId === "Future3"
+      ) {
+        prefillFuture3CVP({ userId: data?.user?.user_id, projectId });
+      }
     }
   };
   return (
@@ -124,7 +178,7 @@ const CanvasdActivityModal = () => {
               Bob
             </Typography>
           </Stack>
-          {status?.loading &&<CircularProgress size={18} sx={{ mb: 5 }} />}
+          {status?.loading && <CircularProgress size={18} sx={{ mb: 5 }} />}
           {canvasActivity?.type === "cvp" && (
             <Typography variant="body1">
               Thank you {data?.user?.name} for your inputs. It's time to relax
